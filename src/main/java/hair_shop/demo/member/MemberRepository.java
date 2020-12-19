@@ -10,7 +10,8 @@ import javax.persistence.Entity;
 
 public interface MemberRepository  extends JpaRepository<Member, Long> {
 
-    @Query("select a from Member a join fetch a.orderList s join fetch s.menus")
+    @EntityGraph(attributePaths = {"orderList","orderList.menus","orderList.designers"})
+    @Query("select a from Member a")
     Member findByPhone(String phoneNumber);
 
     boolean existsByPhone(String phone);
