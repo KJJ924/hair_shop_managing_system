@@ -1,5 +1,6 @@
 package hair_shop.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ public class Member {
     private LocalDateTime joinedAt;
 
     @OneToMany(mappedBy = "member")
+    @JsonManagedReference
     private Set<OrderTable> orderTableList = new HashSet<>();
 
 }

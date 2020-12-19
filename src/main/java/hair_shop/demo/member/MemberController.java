@@ -5,7 +5,6 @@ import hair_shop.demo.member.form.MemberForm;
 import hair_shop.demo.member.validation.MemberValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;

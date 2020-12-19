@@ -1,5 +1,6 @@
 package hair_shop.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,22 +18,21 @@ public class OrderTable {
     @Id @GeneratedValue
     private Long id;
 
-    private int Price;
-
     private LocalDateTime reservationStart;
 
     private LocalDateTime reservationEnd;
 
-    private boolean status;
+    private boolean status = false;
 
     @ManyToOne
+    @JsonBackReference
     private Member  member;
 
     @OneToMany
-    private Set<Menu> menus = new HashSet<>();
+    private Set<Menu> menus;
 
-    @OneToMany
-    private Set<Designer> designers = new HashSet<>();
+    @ManyToOne
+    private Designer designers;
 
 
 }
