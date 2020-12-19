@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter @Setter
 @Builder @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class OrderTable {
 
     @Id @GeneratedValue
     private Long id;

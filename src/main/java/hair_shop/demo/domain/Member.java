@@ -25,7 +25,9 @@ public class Member {
 
     private LocalDateTime lastVisitDate;
 
+    private LocalDateTime joinedAt;
+
     @OneToMany(mappedBy = "member")
-    private Set<Order> orderList = new HashSet<>();
+    private Set<OrderTable> orderTableList = new HashSet<>();
 
 }
