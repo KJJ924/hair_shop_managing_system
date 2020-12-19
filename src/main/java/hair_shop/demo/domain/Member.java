@@ -28,7 +28,7 @@ public class Member {
 
     private LocalDateTime joinedAt;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<OrderTable> orderList = new HashSet<>();
 

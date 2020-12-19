@@ -25,14 +25,14 @@ public class OrderTable {
 
     private boolean status = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private Member  member;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Menu> menus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Designer designers;
 
 
