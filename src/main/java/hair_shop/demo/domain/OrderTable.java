@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -28,11 +29,18 @@ public class OrderTable {
     @JsonBackReference
     private Member  member;
 
-    @OneToMany
+    @ManyToMany
     private Set<Menu> menus;
 
     @ManyToOne
     private Designer designers;
 
 
+    public Integer totalPrice(){
+        int totalPrice =0;
+        for (Menu menu : menus) {
+            totalPrice += menu.getPrice();
+        }
+        return totalPrice;
+    }
 }

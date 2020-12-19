@@ -30,6 +30,6 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     @JsonManagedReference
-    private Set<OrderTable> orderTableList = new HashSet<>();
+    private Set<OrderTable> orderList = new HashSet<>();
 
 }
