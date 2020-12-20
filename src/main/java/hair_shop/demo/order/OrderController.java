@@ -17,7 +17,7 @@ public class OrderController {
     private final OrderService orderService;
 
 
-    @PostMapping("/create/order")
+    @PostMapping("/order")
     @ResponseBody
     public ResponseEntity createOrder(@RequestBody OrderForm orderForm){
 
