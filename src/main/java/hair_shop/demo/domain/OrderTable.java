@@ -14,6 +14,9 @@ import java.util.Set;
 @Getter @Setter
 @Builder @AllArgsConstructor
 @NoArgsConstructor
+@NamedEntityGraph(name = "order.withAll",attributeNodes = {
+        @NamedAttributeNode("menus"),
+})
 public class OrderTable {
 
     @Id @GeneratedValue
@@ -25,14 +28,14 @@ public class OrderTable {
 
     private boolean status = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonBackReference
     private Member  member;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     private Set<Menu> menus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Designer designers;
 
 

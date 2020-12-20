@@ -32,7 +32,7 @@ public class OrderService {
 
     private OrderTable makeOrder(OrderForm orderForm){
         Designer designer =designerRepository.findByName(orderForm.getDesignerName());
-        Member member = memberRepository.findByPhone(orderForm.getMemberPhoneNumber());
+        Member member = memberRepository.findWithPhoneByPhone(orderForm.getMemberPhoneNumber());
         Menu menu= menuRepository.findByName(orderForm.getMenuName());
         HashSet<Menu> menus = new HashSet<>();
         menus.add(menu);
@@ -83,5 +83,11 @@ public class OrderService {
             }
         });
         return tableMap;
+    }
+
+    public Map<Integer, List<OrderTable>> getWeekData(LocalDateTime standardDay, LocalDateTime plusDay) {
+        List<OrderTable> orderList = orderRepository.findByReservationStartBetween(standardDay, plusDay);
+        return daySeparated(orderList);
+
     }
 }

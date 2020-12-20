@@ -2,17 +2,16 @@ package hair_shop.demo.member;
 
 
 import hair_shop.demo.domain.Member;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import javax.persistence.Entity;
 
 public interface MemberRepository  extends JpaRepository<Member, Long> {
-
-    @EntityGraph(attributePaths = {"orderList","orderList.menus","orderList.designers"})
-    @Query("select a from Member a")
-    Member findByPhone(String phoneNumber);
+     @Query("select a from Member a  LEFT join fetch a.orderList s LEFT join fetch s.menus where a.phone = :phoneNumber")
+     Member findByPhone(@Param("phoneNumber") String phoneNumber);
 
     boolean existsByPhone(String phone);
+
+    Member findWithPhoneByPhone(String memberPhoneNumber);
 }
