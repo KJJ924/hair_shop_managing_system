@@ -1,10 +1,12 @@
 package hair_shop.demo.member;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.domain.Member;
 import hair_shop.demo.member.form.MemberForm;
-import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
+import hair_shop.demo.member.form.MemberListInfo;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +14,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -33,6 +39,24 @@ class MemberControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    MemberService memberService;
+
+
+    @BeforeEach
+    void initMember(){
+        Member testMember = Member.builder()
+                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
+                .name("TestMember")
+                .phone("1234")
+                .build();
+        memberRepository.save(testMember);
+    }
+    @AfterEach
+    void deleteAll(){
+        memberRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("회원 추가")
     void memberInsert() throws Exception{
@@ -40,7 +64,7 @@ class MemberControllerTest {
         memberForm.setName("재준");
         memberForm.setPhone("01030686687");
 
-        mockMvc.perform(post("/post/member")
+        mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberForm)))
                 .andExpect(status().isOk());
@@ -50,10 +74,28 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 받기")
+    @DisplayName("선택 회원 받기")
     void getMember() throws Exception{
-        mockMvc.perform(get("/get/member/01030686687"))
+        Member member = memberRepository.findByPhone("1234");
+        String content = objectMapper.writeValueAsString(member);
+        mockMvc.perform(get("/member/1234"))
                 .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(content))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("회원 리스트 받기")
+    void getMemberList() throws Exception {
+        List<MemberListInfo> memberListInfo = memberService.getMemberListInfo();
+        String content = objectMapper.writeValueAsString(memberListInfo);
+
+        mockMvc.perform(get("/member/list"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(content));
+
+    }
+
 }
