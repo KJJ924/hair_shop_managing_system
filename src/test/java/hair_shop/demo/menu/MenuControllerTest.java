@@ -144,6 +144,4 @@ class MenuControllerTest {
                 .param("newName","TEST"))
                 .andExpect(status().isBadRequest());
     }
-
-
 }

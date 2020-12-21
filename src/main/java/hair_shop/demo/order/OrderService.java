@@ -25,9 +25,9 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final DesignerRepository designerRepository;
 
-    public void saveOrder(OrderForm orderForm) {
+    public OrderTable saveOrder(OrderForm orderForm) {
         OrderTable order = makeOrder(orderForm);
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     private OrderTable makeOrder(OrderForm orderForm){
@@ -36,7 +36,6 @@ public class OrderService {
         Menu menu= menuRepository.findByName(orderForm.getMenuName());
         HashSet<Menu> menus = new HashSet<>();
         menus.add(menu);
-
         return OrderTable.builder()
                 .menus(menus)
                 .designers(designer)
@@ -48,46 +47,13 @@ public class OrderService {
 
     public List<MonthData> getMonthData(LocalDateTime standardMonth, LocalDateTime plusMonth) {
         List<OrderTable> orderList = orderRepository.findByReservationStartBetween(standardMonth,plusMonth);
-        Map<Integer, List<OrderTable>> daySeparated = daySeparated(orderList);
-        return remakeMonthData(daySeparated);
+        Map<Integer, List<OrderTable>> daySeparated = OrderTable.daySeparated(orderList);
+        return MonthData.remakeMonthData(daySeparated);
     }
 
-
-    private List<MonthData> remakeMonthData(Map<Integer, List<OrderTable>> daySeparated) {
-        List<MonthData> monthData = new ArrayList<>();
-        Set<Integer> DayKey = daySeparated.keySet();
-
-        for (Integer day : DayKey) {
-            List<OrderTable> orderTables = daySeparated.get(day);
-            int expectPrice = orderTables.stream().mapToInt(OrderTable::totalPrice).sum();
-            int resultPrice = orderTables.stream().filter(OrderTable::isStatus).mapToInt(OrderTable::totalPrice).sum();
-            monthData.add(MonthData.builder()
-                    .day(day)
-                    .expectSales(expectPrice)
-                    .resultSales(resultPrice)
-                    .build());
-        }
-        return monthData;
-    }
-
-    private Map<Integer, List<OrderTable>>  daySeparated(List<OrderTable> data) {
-        Map<Integer, List<OrderTable>> tableMap = new LinkedHashMap<>();
-
-        data.forEach(orderTable -> {
-            int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
-            List<OrderTable> orderList = tableMap.get(dayOfMonth);
-            if(orderList ==null){
-                tableMap.put(dayOfMonth,new ArrayList<>(Collections.singletonList(orderTable)));
-            }else {
-                orderList.add(orderTable);
-            }
-        });
-        return tableMap;
-    }
 
     public Map<Integer, List<OrderTable>> getWeekData(LocalDateTime standardDay, LocalDateTime plusDay) {
         List<OrderTable> orderList = orderRepository.findByReservationStartBetween(standardDay, plusDay);
-        return daySeparated(orderList);
-
+        return OrderTable.daySeparated(orderList);
     }
 }

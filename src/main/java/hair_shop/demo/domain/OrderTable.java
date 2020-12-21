@@ -6,9 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @EqualsAndHashCode(of = "id")
@@ -23,9 +21,9 @@ public class OrderTable {
     @Id @GeneratedValue
     private Long id;
 
-    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
+    @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationStart;
-    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
+    @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationEnd;
 
     private boolean status = false;
@@ -48,4 +46,21 @@ public class OrderTable {
         }
         return totalPrice;
     }
+
+    public static Map<Integer, List<OrderTable>> daySeparated(List<OrderTable> data) {
+        Map<Integer, List<OrderTable>> tableMap = new LinkedHashMap<>();
+
+        data.forEach(orderTable -> {
+            int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
+            List<OrderTable> orderList = tableMap.get(dayOfMonth);
+            if(orderList ==null){
+                tableMap.put(dayOfMonth,new ArrayList<>(Collections.singletonList(orderTable)));
+            }else {
+                orderList.add(orderTable);
+            }
+        });
+        return tableMap;
+    }
+
+
 }
