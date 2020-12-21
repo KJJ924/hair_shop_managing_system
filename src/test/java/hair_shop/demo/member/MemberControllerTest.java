@@ -74,6 +74,19 @@ class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("회원 실패(중복 회원)")
+    void memberJoinWrong() throws Exception{
+        MemberForm memberForm =new MemberForm();
+        memberForm.setName("TestMember");
+        memberForm.setPhone("1234");
+
+        mockMvc.perform(post("/member")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(memberForm)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("선택 회원 받기")
     void getMember() throws Exception{
         Member member = memberRepository.findByPhone("1234");
@@ -95,7 +108,6 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(content));
-
     }
 
 }
