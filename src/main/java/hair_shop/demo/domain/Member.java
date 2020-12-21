@@ -1,5 +1,6 @@
 package hair_shop.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -24,8 +25,9 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
+    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
     private LocalDateTime lastVisitDate;
-
+    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
     private LocalDateTime joinedAt;
 
     @OneToMany(mappedBy = "member")

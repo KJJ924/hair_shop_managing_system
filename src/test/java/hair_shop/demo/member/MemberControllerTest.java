@@ -74,7 +74,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 실패(중복 회원)")
+    @DisplayName("회원 추가 실패(중복 회원)")
     void memberJoinWrong() throws Exception{
         MemberForm memberForm =new MemberForm();
         memberForm.setName("TestMember");
@@ -83,6 +83,7 @@ class MemberControllerTest {
         mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberForm)))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -96,6 +97,15 @@ class MemberControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(content))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("선택 회원 받기(실패)")
+    void getMember_fail() throws Exception{
+        mockMvc.perform(get("/member/89898989"))
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

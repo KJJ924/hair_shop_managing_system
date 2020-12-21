@@ -1,6 +1,7 @@
 package hair_shop.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,8 +23,9 @@ public class OrderTable {
     @Id @GeneratedValue
     private Long id;
 
+    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
     private LocalDateTime reservationStart;
-
+    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
     private LocalDateTime reservationEnd;
 
     private boolean status = false;
