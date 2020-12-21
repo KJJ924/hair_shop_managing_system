@@ -2,7 +2,6 @@ package hair_shop.demo.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.domain.Menu;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -112,6 +111,37 @@ class MenuControllerTest {
         mockMvc.perform(put("/menu/price/NotFoundMenu")
                 .param("price","20000"))
                 .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("메뉴 이름수정-성공")
+    void editMenuName() throws Exception {
+
+        mockMvc.perform(put("/menu/name/BeforeMenu")
+                .param("newName","editName"))
+                .andExpect(status().isOk());
+
+        Menu testMenu = menuRepository.findByName("editName");
+
+        assertThat(testMenu).isNotNull();
+    }
+
+    @Test
+    @DisplayName("메뉴 이름수정-실패(변경할 메뉴 없음)")
+    void editMenuName_notFoundMenu() throws Exception {
+        mockMvc.perform(put("/menu/name/asdasdasdw")
+                .param("newName","editName"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("메뉴 이름수정-실패(변경할 이름이 이미 존재함)")
+    void editMenuName_newNameDuplicate() throws Exception {
+        menuRepository.save(Menu.builder().name("TEST").price(10000).build());
+
+        mockMvc.perform(put("/menu/name/BeforeMenu")
+                .param("newName","TEST"))
                 .andExpect(status().isBadRequest());
     }
 

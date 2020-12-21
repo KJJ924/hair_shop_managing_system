@@ -57,7 +57,28 @@ public class MenuController {
                     .errorCode("400")
                     .errorMessage(name+"에 해당하는 Menu 가 존재하지않음").build());
         }
-        menuService.EditSave(menu,price);
+        menuService.editPriceSave(menu,price);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/menu/name/{name}")
+    public ResponseEntity<Object> editMenuName(@PathVariable String name ,@RequestParam String newName){
+        if(menuRepository.existsByName(newName)){
+            return ResponseEntity.badRequest().body(ApiResponseMessage.builder()
+                    .status("400")
+                    .message("duplicate menu")
+                    .errorCode("400")
+                    .errorMessage(name+"에 해당하는 Menu 가 이미 존재함").build());
+        }
+        Menu menu = menuRepository.findByName(name);
+        if(menu==null){
+            return ResponseEntity.badRequest().body(ApiResponseMessage.builder()
+                    .status("400")
+                    .message("not found Menu")
+                    .errorCode("400")
+                    .errorMessage(name+"에 해당하는 Menu 가 존재하지않음").build());
+        }
+        menuService.editNameSave(menu,newName);
         return ResponseEntity.ok().build();
     }
 

@@ -11,7 +11,11 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class MenuService {
 
-    public void EditSave(Menu menu, Integer price) {
+    public void editPriceSave(Menu menu, Integer price) {
         menu.setPrice(price);
+    }
+
+    public void editNameSave(Menu menu, String newName) {
+        menu.setName(newName);
     }
 }
