@@ -31,13 +31,7 @@ public class MemberController {
     public ResponseEntity<Object> getMember(@PathVariable String phoneNumber){
         Member member = memberRepository.findByPhone(phoneNumber);
         if(member==null){
-            return ResponseEntity.badRequest().body(
-                            ApiResponseMessage.builder()
-                            .status("400")
-                            .message("not find Member")
-                            .errorCode("400")
-                            .errorMessage("해당하는 회원이 존재하지 않음").build()
-                    );
+            return ApiResponseMessage.createError(phoneNumber,"해당하는 회원이 존재하지 않음");
         }
         return ResponseEntity.ok(member);
     }
@@ -45,13 +39,7 @@ public class MemberController {
     @PostMapping("/member")
     public ResponseEntity<Object> saveMember(@RequestBody @Validated MemberForm memberForm , Errors errors){
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().body(
-                    ApiResponseMessage.builder()
-                    .status("400")
-                    .message("duplication Member")
-                    .errorCode("400")
-                    .errorMessage(memberForm.getPhone()+" 회원이 이미 존재함").build()
-            );
+            return ApiResponseMessage.createError(memberForm.getPhone(),"회원이 이미 존재함");
         }
         memberService.saveMember(memberForm);
         return ResponseEntity.ok().build();

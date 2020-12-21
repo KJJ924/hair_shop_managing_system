@@ -35,13 +35,13 @@ public class OrderController {
     @ResponseBody
     public ResponseEntity<Object> createOrder(@RequestBody OrderForm orderForm){
         if(!memberRepository.existsByPhone(orderForm.getMemberPhoneNumber())){
-            return createError(orderForm.getMemberPhoneNumber(), "회원이 존재하지 않음");
+            return ApiResponseMessage.createError(orderForm.getMemberPhoneNumber(), "회원이 존재하지 않음");
         }
         if(!menuRepository.existsByName(orderForm.getMenuName())){
-            return createError(orderForm.getMenuName(), "해당 메뉴가 존재하지 않음");
+            return ApiResponseMessage.createError(orderForm.getMenuName(), "해당 메뉴가 존재하지 않음");
         }
         if(!designerRepository.existsByName(orderForm.getDesignerName())){
-            return createError(orderForm.getDesignerName(),"해당 디자이너가 존재하지않음");
+            return ApiResponseMessage.createError(orderForm.getDesignerName(),"해당 디자이너가 존재하지않음");
         }
         OrderTable order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);
@@ -68,11 +68,6 @@ public class OrderController {
         return ResponseEntity.ok(content);
     }
 
-    private ResponseEntity<Object> createError(String filed, String s) {
-        return ResponseEntity.badRequest().body(
-                ApiResponseMessage.builder()
-                        .errorCode("400")
-                        .errorMessage(filed + s).build());
-    }
+
 
 }

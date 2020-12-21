@@ -28,12 +28,7 @@ public class MenuController {
     @PostMapping("/menu")
     public ResponseEntity<Object> addMenu(@RequestBody @Validated Menu menu, Errors errors){
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest()
-                    .body(ApiResponseMessage.builder()
-                            .status("400")
-                            .message("duplicate Menu")
-                            .errorCode("400")
-                            .errorMessage(menu.getName()+"이미 해당하는 메뉴가 있음").build());
+            return ApiResponseMessage.createError(menu.getName(),"이미 해당하는 메뉴가 있음");
         }
         menuRepository.save(menu);
         return ResponseEntity.ok(ApiResponseMessage.builder()
@@ -51,11 +46,7 @@ public class MenuController {
     public ResponseEntity<Object> editMenuPrice(@PathVariable String name ,@RequestParam Integer price){
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ResponseEntity.badRequest().body(ApiResponseMessage.builder()
-                    .status("400")
-                    .message("not found Menu")
-                    .errorCode("400")
-                    .errorMessage(name+"에 해당하는 Menu 가 존재하지않음").build());
+            return ApiResponseMessage.createError(name,"에 해당하는 Menu 가 존재하지않음");
         }
         menuService.editPriceSave(menu,price);
         return ResponseEntity.ok().build();
@@ -64,19 +55,11 @@ public class MenuController {
     @PutMapping("/menu/name/{name}")
     public ResponseEntity<Object> editMenuName(@PathVariable String name ,@RequestParam String newName){
         if(menuRepository.existsByName(newName)){
-            return ResponseEntity.badRequest().body(ApiResponseMessage.builder()
-                    .status("400")
-                    .message("duplicate menu")
-                    .errorCode("400")
-                    .errorMessage(name+"에 해당하는 Menu 가 이미 존재함").build());
+            return ApiResponseMessage.createError(newName,"에 해당하는 Menu 가 이미 존재함");
         }
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ResponseEntity.badRequest().body(ApiResponseMessage.builder()
-                    .status("400")
-                    .message("not found Menu")
-                    .errorCode("400")
-                    .errorMessage(name+"에 해당하는 Menu 가 존재하지않음").build());
+            return ApiResponseMessage.createError(name,"에 해당하는 Menu 가 존재하지않음");
         }
         menuService.editNameSave(menu,newName);
         return ResponseEntity.ok().build();
