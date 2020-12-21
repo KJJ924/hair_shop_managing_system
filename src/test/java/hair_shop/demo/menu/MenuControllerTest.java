@@ -2,6 +2,9 @@ package hair_shop.demo.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.domain.Menu;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,8 +34,17 @@ class MenuControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @BeforeEach
+    void initMenu(){
+        menuRepository.save(Menu.builder().name("BeforeMenu").price(10000).build());
+    }
+    @AfterEach
+    void clearMenuRepo(){
+        menuRepository.deleteAll();
+    }
+
     @Test
-    @DisplayName("메뉴 추가")
+    @DisplayName("메뉴 추가-성공")
     void addMenu() throws Exception {
         Menu menu  = new Menu();
         menu.setPrice(10000);
@@ -49,6 +60,19 @@ class MenuControllerTest {
     }
 
     @Test
+    @DisplayName("메뉴 추가-실패")
+    void addMenu_fail() throws Exception {
+        Menu menu  = new Menu();
+        menu.setPrice(2000);
+        menu.setName("BeforeMenu");
+        String content = objectMapper.writeValueAsString(menu);
+        mockMvc.perform(post("/menu")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("메뉴 리스트받기")
     void getMenuList() throws Exception {
         List<Menu> menuList = menuRepository.findAll();
@@ -61,18 +85,34 @@ class MenuControllerTest {
     }
 
     @Test
-    @DisplayName("메뉴 가격수정")
+    @DisplayName("메뉴 가격수정-성공")
     void editMenuPrice() throws Exception {
-        Menu menu  = Menu.builder().price(10000).name("testMenu2").build();
-        menuRepository.save(menu);
 
-        mockMvc.perform(put("/menu/price/testMenu2")
+        mockMvc.perform(put("/menu/price/BeforeMenu")
                 .param("price","5000"))
                 .andExpect(status().isOk());
 
-        Menu testMenu = menuRepository.findByName("testMenu2");
+        Menu testMenu = menuRepository.findByName("BeforeMenu");
 
         assertThat(testMenu.getPrice()).isEqualTo(5000);
+    }
+
+    @Test
+    @DisplayName("메뉴 가격수정-실패(가격 미입력)")
+    void editMenuPrice_nullPrice_fail() throws Exception {
+        mockMvc.perform(put("/menu/price/BeforeMenu")
+                .param("price",""))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("메뉴 가격수정-실패(수정할 메뉴가 없음)")
+    void editMenuPrice_notFoundMenu_fail() throws Exception {
+        mockMvc.perform(put("/menu/price/NotFoundMenu")
+                .param("price","20000"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
 

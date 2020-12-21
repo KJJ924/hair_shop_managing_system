@@ -48,7 +48,7 @@ public class MemberController {
             return ResponseEntity.badRequest().body(
                     ApiResponseMessage.builder()
                     .status("400")
-                    .message("duplication member")
+                    .message("duplication Member")
                     .errorCode("400")
                     .errorMessage(memberForm.getPhone()+" 회원이 이미 존재함").build()
             );
