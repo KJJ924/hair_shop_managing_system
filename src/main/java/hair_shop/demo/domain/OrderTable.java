@@ -2,6 +2,7 @@ package hair_shop.demo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import hair_shop.demo.order.form.Payment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,7 +27,8 @@ public class OrderTable {
     @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationEnd;
 
-    private boolean status = false;
+    @Enumerated(EnumType.STRING)
+    private Payment payment;
 
     @ManyToOne
     @JsonBackReference

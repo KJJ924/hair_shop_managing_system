@@ -9,6 +9,7 @@ import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.MonthData;
 import hair_shop.demo.order.form.OrderForm;
+import hair_shop.demo.order.form.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class OrderService {
 
     public OrderTable saveOrder(OrderForm orderForm) {
         OrderTable order = makeOrder(orderForm);
+        order.setPayment(Payment.NOT_PAYMENT);
         return orderRepository.save(order);
     }
 
