@@ -3,6 +3,7 @@ package hair_shop.demo.order;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.apiMessage.ApiResponseMessage;
+import hair_shop.demo.designer.DesignerController;
 import hair_shop.demo.designer.DesignerRepository;
 import hair_shop.demo.domain.OrderTable;
 import hair_shop.demo.member.MemberController;
@@ -39,7 +40,7 @@ public class OrderController {
             return ApiResponseMessage.createError(orderForm.getMenuName(), MenuController.NOT_FOUND_MENU);
         }
         if(!designerRepository.existsByName(orderForm.getDesignerName())){
-            return ApiResponseMessage.createError(orderForm.getDesignerName(),"해당 디자이너가 존재하지않음");
+            return ApiResponseMessage.createError(orderForm.getDesignerName(), DesignerController.NOT_FOUND_DESIGNER);
         }
         OrderTable order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);
