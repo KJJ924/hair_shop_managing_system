@@ -17,6 +17,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
+    public final static String NOT_FOUND_MEMBER ="해당하는 회원이 존재하지 않음";
+    public final static String DUPLICATE_MEMBER ="회원이 이미 존재함";
 
     private final MemberRepository memberRepository;
     private final MemberValidation memberValidation;
@@ -31,7 +33,7 @@ public class MemberController {
     public ResponseEntity<Object> getMember(@PathVariable String phoneNumber){
         Member member = memberRepository.findByPhone(phoneNumber);
         if(member==null){
-            return ApiResponseMessage.createError(phoneNumber,"해당하는 회원이 존재하지 않음");
+            return ApiResponseMessage.createError(phoneNumber,NOT_FOUND_MEMBER);
         }
         return ResponseEntity.ok(member);
     }
@@ -39,7 +41,7 @@ public class MemberController {
     @PostMapping("/member")
     public ResponseEntity<Object> saveMember(@RequestBody @Validated MemberForm memberForm , Errors errors){
         if(errors.hasErrors()){
-            return ApiResponseMessage.createError(memberForm.getPhone(),"회원이 이미 존재함");
+            return ApiResponseMessage.createError(memberForm.getPhone(),DUPLICATE_MEMBER);
         }
         memberService.saveMember(memberForm);
         return ResponseEntity.ok().build();

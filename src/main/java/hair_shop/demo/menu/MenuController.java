@@ -15,6 +15,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class MenuController {
+    public final static String NOT_FOUND_MENU ="해당하는 Menu 가 존재하지않음";
+    public final static String DUPLICATE_MENU ="이미 해당하는 메뉴가 있음";
 
     private final MenuRepository menuRepository;
     private final MenuValidation menuValidation;
@@ -28,7 +30,7 @@ public class MenuController {
     @PostMapping("/menu")
     public ResponseEntity<Object> addMenu(@RequestBody @Validated Menu menu, Errors errors){
         if(errors.hasErrors()){
-            return ApiResponseMessage.createError(menu.getName(),"이미 해당하는 메뉴가 있음");
+            return ApiResponseMessage.createError(menu.getName(),DUPLICATE_MENU);
         }
         menuRepository.save(menu);
         return ResponseEntity.ok(ApiResponseMessage.builder()
@@ -46,7 +48,7 @@ public class MenuController {
     public ResponseEntity<Object> editMenuPrice(@PathVariable String name ,@RequestParam Integer price){
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ApiResponseMessage.createError(name,"에 해당하는 Menu 가 존재하지않음");
+            return ApiResponseMessage.createError(name,NOT_FOUND_MENU);
         }
         menuService.editPriceSave(menu,price);
         return ResponseEntity.ok().build();
@@ -55,11 +57,11 @@ public class MenuController {
     @PutMapping("/menu/name/{name}")
     public ResponseEntity<Object> editMenuName(@PathVariable String name ,@RequestParam String newName){
         if(menuRepository.existsByName(newName)){
-            return ApiResponseMessage.createError(newName,"에 해당하는 Menu 가 이미 존재함");
+            return ApiResponseMessage.createError(newName,DUPLICATE_MENU);
         }
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ApiResponseMessage.createError(name,"에 해당하는 Menu 가 존재하지않음");
+            return ApiResponseMessage.createError(name,NOT_FOUND_MENU);
         }
         menuService.editNameSave(menu,newName);
         return ResponseEntity.ok().build();

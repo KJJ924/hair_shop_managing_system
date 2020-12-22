@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.designer.DesignerRepository;
-import hair_shop.demo.domain.Designer;
-import hair_shop.demo.domain.Member;
-import hair_shop.demo.domain.Menu;
 import hair_shop.demo.domain.OrderTable;
+import hair_shop.demo.member.MemberController;
 import hair_shop.demo.member.MemberRepository;
+import hair_shop.demo.menu.MenuController;
 import hair_shop.demo.menu.MenuRepository;
-import hair_shop.demo.order.form.MonthData;
 import hair_shop.demo.order.form.OrderForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +33,10 @@ public class OrderController {
     @ResponseBody
     public ResponseEntity<Object> createOrder(@RequestBody OrderForm orderForm){
         if(!memberRepository.existsByPhone(orderForm.getMemberPhoneNumber())){
-            return ApiResponseMessage.createError(orderForm.getMemberPhoneNumber(), "회원이 존재하지 않음");
+            return ApiResponseMessage.createError(orderForm.getMemberPhoneNumber(), MemberController.NOT_FOUND_MEMBER);
         }
         if(!menuRepository.existsByName(orderForm.getMenuName())){
-            return ApiResponseMessage.createError(orderForm.getMenuName(), "해당 메뉴가 존재하지 않음");
+            return ApiResponseMessage.createError(orderForm.getMenuName(), MenuController.NOT_FOUND_MENU);
         }
         if(!designerRepository.existsByName(orderForm.getDesignerName())){
             return ApiResponseMessage.createError(orderForm.getDesignerName(),"해당 디자이너가 존재하지않음");
@@ -47,15 +45,12 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-
-
     @GetMapping("/month/{year}/{month}")
     @ResponseBody
-    public List<MonthData> getMonthData(@PathVariable int year, @PathVariable int month){
+    public ResponseEntity<Object> getMonthData(@PathVariable int year, @PathVariable int month){
         LocalDateTime standardMonth = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime plusMonth = standardMonth.plusMonths(1);
-
-        return orderService.getMonthData(standardMonth,plusMonth);
+        return ResponseEntity.ok(orderService.getMonthData(standardMonth,plusMonth));
     }
 
     @GetMapping("/week/{year}/{month}/{baseDate}/{targetDay}")
