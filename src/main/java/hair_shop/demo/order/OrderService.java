@@ -68,6 +68,9 @@ public class OrderService {
     }
 
     private ResponseEntity<Object> paymentProcess(Payment payment,OrderTable order) {
+        if(!payment.equals(Payment.NOT_PAYMENT)){
+            return ApiResponseMessage.createError("payment_Complete","이미 결제가 완료됨");
+        }
         if(payment.equals(Payment.CASH)){
             return cashPaymentProcess(payment, order);
         }

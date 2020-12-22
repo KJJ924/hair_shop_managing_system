@@ -25,9 +25,9 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime lastVisitDate;
-    @JsonFormat(pattern = "yyyy/MM/dd/HH/mm")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime joinedAt;
 
     @OneToMany(mappedBy = "member")
@@ -35,7 +35,6 @@ public class Member {
     private Set<OrderTable> orderList;
 
     @OneToOne
-    @JoinColumn(name = "id")
     private MemberShip memberShip;
 
     public boolean isMemberShip(){

@@ -3,9 +3,7 @@ package hair_shop.demo.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +26,10 @@ public class MemberShip {
 
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime expirationDate;
+
+    @OneToOne
+    @JoinColumn(name = "id")
+    private Member member;
 
     public MemberShip(Integer point) {
         this.point = point;

@@ -30,9 +30,8 @@ public class MemberShipService {
     }
 
     private void saveMemberShip(Member member,int point){
-        MemberShip memberShip = new MemberShip(point);
-        memberShipRepository.save(memberShip);
-        member.setMemberShip(memberShip);
+        MemberShip save = memberShipRepository.save(new MemberShip(point));
+        member.setMemberShip(save);
     }
 
 }

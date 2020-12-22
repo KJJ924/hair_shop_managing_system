@@ -168,6 +168,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("포인트 결제")
     void pointPayment()throws Exception{
+        System.out.println("=====================================================");
 
         mockMvc.perform(put("/order/payment")
                 .param("order_id",String.valueOf(order_id))
