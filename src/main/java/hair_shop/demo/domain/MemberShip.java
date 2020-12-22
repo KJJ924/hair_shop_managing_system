@@ -24,9 +24,14 @@ public class MemberShip {
     private Integer point;
 
     @JsonFormat(pattern = "yyyy/MM/dd")
-    private LocalDateTime expirationDate;
-
-    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime creationDate;
 
+    @JsonFormat(pattern = "yyyy/MM/dd")
+    private LocalDateTime expirationDate;
+
+    public MemberShip(Integer point) {
+        this.point = point;
+        this.creationDate = LocalDateTime.now();
+        this.expirationDate = this.creationDate.plusYears(1);
+    }
 }

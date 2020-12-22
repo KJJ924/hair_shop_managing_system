@@ -33,4 +33,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @JsonManagedReference
     private Set<OrderTable> orderList;
+
+    @OneToOne
+    @JoinColumn(name = "id")
+    private MemberShip memberShip;
 }
