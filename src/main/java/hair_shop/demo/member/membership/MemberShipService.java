@@ -23,7 +23,7 @@ public class MemberShipService {
         if(member ==null){
             return ApiResponseMessage.createError(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
         }else if(member.getMemberShip() !=null){
-            return ApiResponseMessage.createError("alreadyMemberShip",MemberController.ALREADY_MEMBER_SHIP);
+            return ApiResponseMessage.createError("alreadyMemberShip",MemberController.ALREADY_MEMBERSHIP);
         }
         saveMemberShip(member,form.getPoint());
         return ResponseEntity.ok().build();

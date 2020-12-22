@@ -11,6 +11,7 @@ import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.menu.MenuController;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.OrderForm;
+import hair_shop.demo.order.form.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
+    public static final String NOT_FOUND_ORDER ="해당하는 예약이 없음";
 
     private final OrderService orderService;
     private final ObjectMapper objectMapper;
@@ -62,6 +64,11 @@ public class OrderController {
         Map<Integer, List<OrderTable>> weekData = orderService.getWeekData(standardDay, plusDay);
         String content = objectMapper.writeValueAsString(weekData);
         return ResponseEntity.ok(content);
+    }
+
+    @PutMapping("/order/payment")
+    public ResponseEntity<Object> payment(@RequestParam("order_id") Long id , @RequestParam Payment payment){
+        return orderService.payment(id,payment);
     }
 
 

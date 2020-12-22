@@ -32,7 +32,7 @@ public class OrderTable {
 
     @ManyToOne
     @JsonBackReference
-    private Member  member;
+    private Member member;
 
     @ManyToMany
     private Set<Menu> menus;
@@ -63,6 +63,7 @@ public class OrderTable {
         });
         return tableMap;
     }
+
 
 
 }

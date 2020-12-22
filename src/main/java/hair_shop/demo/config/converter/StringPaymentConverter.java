@@ -1,4 +1,4 @@
-package hair_shop.demo.config;
+package hair_shop.demo.config.converter;
 
 import hair_shop.demo.order.form.Payment;
 import org.springframework.core.convert.converter.Converter;

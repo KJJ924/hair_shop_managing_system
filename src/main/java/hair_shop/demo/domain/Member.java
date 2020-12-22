@@ -37,4 +37,15 @@ public class Member {
     @OneToOne
     @JoinColumn(name = "id")
     private MemberShip memberShip;
+
+    public boolean isMemberShip(){
+        return this.memberShip != null;
+    }
+
+    public int getMemberShipPoint(){
+        if(isMemberShip()) {
+            return this.memberShip.getPoint();
+        }
+        return 0;
+    }
 }

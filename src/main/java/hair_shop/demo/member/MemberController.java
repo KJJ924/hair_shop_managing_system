@@ -17,9 +17,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
-    public static final  String NOT_FOUND_MEMBER ="해당하는 회원이 존재하지 않음";
-    public static final  String DUPLICATE_MEMBER ="회원이 이미 존재함";
-    public static final String ALREADY_MEMBER_SHIP ="이미 회원권이 존재함";
+    public static final String NOT_FOUND_MEMBER ="해당하는 회원이 존재하지 않음";
+    public static final String DUPLICATE_MEMBER ="회원이 이미 존재함";
+    public static final String ALREADY_MEMBERSHIP ="이미 회원권이 존재함";
+    public static final String NOT_MEMBERSHIP ="회원권이 없음";
 
     private final MemberRepository memberRepository;
     private final MemberValidation memberValidation;
