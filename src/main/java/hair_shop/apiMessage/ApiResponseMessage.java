@@ -21,4 +21,11 @@ public class ApiResponseMessage {
                         .errorMessage(filed + s).build());
     }
 
+    public static ResponseEntity<Object> saveSuccess() {
+        return ResponseEntity.ok(
+                ApiResponseMessage.builder()
+                        .status("200")
+                        .message("성공적으로 저장됨").build());
+    }
+
 }

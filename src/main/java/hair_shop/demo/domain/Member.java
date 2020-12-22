@@ -35,6 +35,7 @@ public class Member {
     private Set<OrderTable> orderList;
 
     @OneToOne
+    @JoinColumn(name = "memberShip_id")
     private MemberShip memberShip;
 
     public boolean isMemberShip(){

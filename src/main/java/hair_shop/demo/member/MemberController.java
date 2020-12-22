@@ -46,7 +46,7 @@ public class MemberController {
             return ApiResponseMessage.createError(memberForm.getPhone(),DUPLICATE_MEMBER);
         }
         memberService.saveMember(memberForm);
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.saveSuccess();
     }
 
     @GetMapping("/member/list")

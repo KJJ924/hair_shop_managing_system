@@ -27,10 +27,6 @@ public class MemberShip {
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime expirationDate;
 
-    @OneToOne
-    @JoinColumn(name = "id")
-    private Member member;
-
     public MemberShip(Integer point) {
         this.point = point;
         this.creationDate = LocalDateTime.now();

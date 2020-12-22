@@ -23,7 +23,7 @@ public class DesignerController {
         }
         Designer designer = Designer.builder().name(name).build();
         designerRepository.save(designer);
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.saveSuccess();
     }
 
     @GetMapping("/designer")
