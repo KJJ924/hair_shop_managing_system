@@ -48,4 +48,8 @@ public class Member {
         }
         return 0;
     }
+
+    public void registerVisitDate(){
+        this.lastVisitDate = LocalDateTime.now();
+    }
 }

@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -179,6 +180,8 @@ class OrderControllerTest {
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
+        assertThat(orderTable.getMember().getLastVisitDate())
+                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
 
 
     }
@@ -196,6 +199,8 @@ class OrderControllerTest {
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
+        assertThat(orderTable.getMember().getLastVisitDate())
+                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
 
 
     }

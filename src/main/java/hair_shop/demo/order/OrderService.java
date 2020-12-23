@@ -89,13 +89,14 @@ public class OrderService {
 
         order.setPayment(payment);
         member.getMemberShip().setPoint(point -totalPrice);
-
+        member.registerVisitDate();
         return ResponseEntity.ok().build();
     }
 
 
     private ResponseEntity<Object> cashPaymentProcess(Payment payment, OrderTable order) {
         order.setPayment(payment);
+        order.getMember().registerVisitDate();
         return ResponseEntity.ok().build();
     }
 }
