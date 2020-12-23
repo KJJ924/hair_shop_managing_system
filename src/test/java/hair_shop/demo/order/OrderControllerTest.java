@@ -169,8 +169,6 @@ class OrderControllerTest {
     @Test
     @DisplayName("포인트 결제")
     void pointPayment()throws Exception{
-        System.out.println("=====================================================");
-
         mockMvc.perform(put("/order/payment")
                 .param("order_id",String.valueOf(order_id))
                 .param("payment","point"))
@@ -189,7 +187,6 @@ class OrderControllerTest {
     @Test
     @DisplayName("현금 결제")
     void cashPayment()throws Exception{
-
         mockMvc.perform(put("/order/payment")
                 .param("order_id",String.valueOf(order_id))
                 .param("payment","cash"))
@@ -226,8 +223,18 @@ class OrderControllerTest {
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.NOT_PAYMENT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
+    }
 
-
+    @Test
+    @DisplayName("결제실패-중복결제")
+    void payment_fail_duplicate_payment()throws Exception{
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+        orderTable.setPayment(Payment.CASH);
+        mockMvc.perform(put("/order/payment")
+                .param("order_id",String.valueOf(order_id))
+                .param("payment","point"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
 
