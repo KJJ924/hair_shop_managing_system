@@ -3,7 +3,6 @@ package hair_shop.demo.member;
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.domain.Member;
 import hair_shop.demo.member.form.MemberForm;
-import hair_shop.demo.member.form.MemberListInfo;
 import hair_shop.demo.member.validation.MemberValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +10,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +32,7 @@ public class MemberController {
     public ResponseEntity<Object> getMember(@PathVariable String phoneNumber){
         Member member = memberRepository.findByPhone(phoneNumber);
         if(member==null){
-            return ApiResponseMessage.createError(phoneNumber,NOT_FOUND_MEMBER);
+            return ApiResponseMessage.error(phoneNumber,NOT_FOUND_MEMBER);
         }
         return ResponseEntity.ok(member);
     }
@@ -43,10 +40,10 @@ public class MemberController {
     @PostMapping("/member")
     public ResponseEntity<Object> saveMember(@RequestBody @Validated MemberForm memberForm , Errors errors){
         if(errors.hasErrors()){
-            return ApiResponseMessage.createError(memberForm.getPhone(),DUPLICATE_MEMBER);
+            return ApiResponseMessage.error(memberForm.getPhone(),DUPLICATE_MEMBER);
         }
         memberService.saveMember(memberForm);
-        return ApiResponseMessage.saveSuccess();
+        return ApiResponseMessage.success("성공적으로 저장됨");
     }
 
     @GetMapping("/member/list")

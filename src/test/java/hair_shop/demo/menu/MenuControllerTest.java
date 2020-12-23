@@ -59,7 +59,7 @@ class MenuControllerTest {
     }
 
     @Test
-    @DisplayName("메뉴 추가-실패")
+    @DisplayName("메뉴 추가-실패(메뉴중복)")
     void addMenu_fail() throws Exception {
         Menu menu  = new Menu();
         menu.setPrice(2000);

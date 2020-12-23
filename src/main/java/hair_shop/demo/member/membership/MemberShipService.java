@@ -21,9 +21,9 @@ public class MemberShipService {
     public ResponseEntity<Object> getResponseToCreate(MemberShipForm form) {
         Member member = memberRepository.findByPhone(form.getPhone());
         if(member ==null){
-            return ApiResponseMessage.createError(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
+            return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
         }else if(member.getMemberShip() !=null){
-            return ApiResponseMessage.createError("alreadyMemberShip",MemberController.ALREADY_MEMBERSHIP);
+            return ApiResponseMessage.error("alreadyMemberShip",MemberController.ALREADY_MEMBERSHIP);
         }
         saveMemberShip(member,form.getPoint());
         return ResponseEntity.ok().build();

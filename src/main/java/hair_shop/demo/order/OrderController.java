@@ -36,13 +36,13 @@ public class OrderController {
     @ResponseBody
     public ResponseEntity<Object> createOrder(@RequestBody OrderForm orderForm){
         if(!memberRepository.existsByPhone(orderForm.getMemberPhoneNumber())){
-            return ApiResponseMessage.createError(orderForm.getMemberPhoneNumber(), MemberController.NOT_FOUND_MEMBER);
+            return ApiResponseMessage.error(orderForm.getMemberPhoneNumber(), MemberController.NOT_FOUND_MEMBER);
         }
         if(!menuRepository.existsByName(orderForm.getMenuName())){
-            return ApiResponseMessage.createError(orderForm.getMenuName(), MenuController.NOT_FOUND_MENU);
+            return ApiResponseMessage.error(orderForm.getMenuName(), MenuController.NOT_FOUND_MENU);
         }
         if(!designerRepository.existsByName(orderForm.getDesignerName())){
-            return ApiResponseMessage.createError(orderForm.getDesignerName(), DesignerController.NOT_FOUND_DESIGNER);
+            return ApiResponseMessage.error(orderForm.getDesignerName(), DesignerController.NOT_FOUND_DESIGNER);
         }
         OrderTable order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);

@@ -19,18 +19,18 @@ public class DesignerController {
     @PostMapping("/designer")
     public ResponseEntity<Object> addDesigner(@RequestParam String name){
         if(designerRepository.existsByName(name)){
-            return ApiResponseMessage.createError(name,DUPLICATE_DESIGNER);
+            return ApiResponseMessage.error(name,DUPLICATE_DESIGNER);
         }
         Designer designer = Designer.builder().name(name).build();
         designerRepository.save(designer);
-        return ApiResponseMessage.saveSuccess();
+        return ApiResponseMessage.success("성공적으로 저장됨");
     }
 
     @GetMapping("/designer")
     public ResponseEntity<Object> getDesigner(){
         List<Designer> designers = designerRepository.findAll();
         if(designers.size() == 0){
-            return ApiResponseMessage.createError("NULL",NOT_FOUND_DESIGNER);
+            return ApiResponseMessage.error("NULL",NOT_FOUND_DESIGNER);
         }
         return ResponseEntity.ok(designers);
     }

@@ -30,7 +30,7 @@ public class MenuController {
     @PostMapping("/menu")
     public ResponseEntity<Object> addMenu(@RequestBody @Validated Menu menu, Errors errors){
         if(errors.hasErrors()){
-            return ApiResponseMessage.createError(menu.getName(),DUPLICATE_MENU);
+            return ApiResponseMessage.error(menu.getName(),DUPLICATE_MENU);
         }
         menuRepository.save(menu);
         return ResponseEntity.ok(ApiResponseMessage.builder()
@@ -48,7 +48,7 @@ public class MenuController {
     public ResponseEntity<Object> editMenuPrice(@PathVariable String name ,@RequestParam Integer price){
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ApiResponseMessage.createError(name,NOT_FOUND_MENU);
+            return ApiResponseMessage.error(name,NOT_FOUND_MENU);
         }
         menuService.editPriceSave(menu,price);
         return ResponseEntity.ok().build();
@@ -57,11 +57,11 @@ public class MenuController {
     @PutMapping("/menu/name/{name}")
     public ResponseEntity<Object> editMenuName(@PathVariable String name ,@RequestParam String newName){
         if(menuRepository.existsByName(newName)){
-            return ApiResponseMessage.createError(newName,DUPLICATE_MENU);
+            return ApiResponseMessage.error(newName,DUPLICATE_MENU);
         }
         Menu menu = menuRepository.findByName(name);
         if(menu==null){
-            return ApiResponseMessage.createError(name,NOT_FOUND_MENU);
+            return ApiResponseMessage.error(name,NOT_FOUND_MENU);
         }
         menuService.editNameSave(menu,newName);
         return ResponseEntity.ok().build();

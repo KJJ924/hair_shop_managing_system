@@ -2,7 +2,10 @@ package hair_shop.demo.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.designer.DesignerRepository;
-import hair_shop.demo.domain.*;
+import hair_shop.demo.domain.Designer;
+import hair_shop.demo.domain.Member;
+import hair_shop.demo.domain.Menu;
+import hair_shop.demo.domain.OrderTable;
 import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.member.membership.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
@@ -22,9 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

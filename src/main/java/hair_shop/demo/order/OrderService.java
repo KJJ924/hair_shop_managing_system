@@ -62,14 +62,14 @@ public class OrderService {
     public ResponseEntity<Object> payment(Long id, Payment payment) {
         Optional<OrderTable> order = orderRepository.findById(id);
         if(order.isEmpty()){
-            return ApiResponseMessage.createError(id.toString(),OrderController.NOT_FOUND_ORDER);
+            return ApiResponseMessage.error(id.toString(),OrderController.NOT_FOUND_ORDER);
         }
         return paymentProcess(payment, order.get());
     }
 
     private ResponseEntity<Object> paymentProcess(Payment payment,OrderTable order) {
         if(!order.getPayment().equals(Payment.NOT_PAYMENT)){
-            return ApiResponseMessage.createError("payment_Complete","이미 결제가 완료됨");
+            return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
         }
         if(payment.equals(Payment.CASH)){
             return cashPaymentProcess(payment, order);
@@ -77,20 +77,20 @@ public class OrderService {
 
         Member member = order.getMember();
         if(!member.isMemberShip()){
-            return ApiResponseMessage.createError("null", MemberController.NOT_MEMBERSHIP);
+            return ApiResponseMessage.error("null", MemberController.NOT_MEMBERSHIP);
         }
 
         Integer point = member.getMemberShipPoint();
         Integer totalPrice = order.totalPrice();
 
         if(point <totalPrice){
-            return ApiResponseMessage.createError(String.valueOf(point),"잔액이 부족합니다");
+            return ApiResponseMessage.error(String.valueOf(point),"잔액이 부족합니다");
         }
 
         order.setPayment(payment);
         member.getMemberShip().setPoint(point -totalPrice);
         member.registerVisitDate();
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.success("결제가 완료됨");
     }
 
 
