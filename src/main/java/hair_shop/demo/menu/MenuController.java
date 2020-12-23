@@ -33,9 +33,7 @@ public class MenuController {
             return ApiResponseMessage.error(menu.getName(),DUPLICATE_MENU);
         }
         menuRepository.save(menu);
-        return ResponseEntity.ok(ApiResponseMessage.builder()
-                                .status("200")
-                                .message(menu.getName()+"Menu save").build());
+        return ApiResponseMessage.success(menu.getName()+" Menu save");
     }
 
     @GetMapping("/menu")
@@ -51,7 +49,7 @@ public class MenuController {
             return ApiResponseMessage.error(name,NOT_FOUND_MENU);
         }
         menuService.editPriceSave(menu,price);
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.success(name+"의 가격이"+price+"으로 변경됨");
     }
 
     @PutMapping("/menu/name/{name}")
@@ -64,7 +62,7 @@ public class MenuController {
             return ApiResponseMessage.error(name,NOT_FOUND_MENU);
         }
         menuService.editNameSave(menu,newName);
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.success(name+" 가 "+newName+" 으로 변경되었습니다.");
     }
 
 }
