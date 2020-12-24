@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,6 +94,36 @@ class MemberShipControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("회원 맴버쉽 포인트 추가-성공")
+    void memberShip_add_Point() throws Exception{
+        MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
+        memberShipService.getResponseToCreate(form);
+
+        String content = objectMapper.writeValueAsString(form);
+        mockMvc.perform(put("/membership/point")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Member member = memberRepository.findByPhone("010");
+
+        assertThat(member.getMemberShipPoint()).isEqualTo(20000);
+    }
+
+    @Test
+    @DisplayName("회원 맴버쉽 포인트 추가-실패(회원이없음)")
+    void memberShip_add_Point_not_found_member() throws Exception{
+        MemberShipForm form = MemberShipForm.builder().phone("011").point(10000).build();
+        String content = objectMapper.writeValueAsString(form);
+
+        mockMvc.perform(put("/membership/point")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andExpect(status().isBadRequest());
     }
 
