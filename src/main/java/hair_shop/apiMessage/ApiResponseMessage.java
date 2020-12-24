@@ -17,8 +17,10 @@ public class ApiResponseMessage {
     public static ResponseEntity<Object> error(String filed, String s) {
         return ResponseEntity.badRequest().body(
                 ApiResponseMessage.builder()
+                        .status("400")
+                        .message(filed)
                         .errorCode("400")
-                        .errorMessage(filed + s).build());
+                        .errorMessage(filed+" "+s).build());
     }
 
     public static ResponseEntity<Object> success(String message) {

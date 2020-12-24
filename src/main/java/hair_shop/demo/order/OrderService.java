@@ -68,7 +68,7 @@ public class OrderService {
     }
 
     private ResponseEntity<Object> paymentProcess(Payment payment,OrderTable order) {
-        if(!order.getPayment().equals(Payment.NOT_PAYMENT)){
+        if(order.checkPayment()){
             return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
         }
         if(payment.equals(Payment.CASH)){
@@ -77,7 +77,7 @@ public class OrderService {
 
         Member member = order.getMember();
         if(!member.isMemberShip()){
-            return ApiResponseMessage.error("null", MemberController.NOT_MEMBERSHIP);
+            return ApiResponseMessage.error("NO MemberShip", MemberController.NOT_MEMBERSHIP);
         }
 
         Integer point = member.getMemberShipPoint();
@@ -97,6 +97,6 @@ public class OrderService {
     private ResponseEntity<Object> cashPaymentProcess(Payment payment, OrderTable order) {
         order.setPayment(payment);
         order.getMember().registerVisitDate();
-        return ResponseEntity.ok().build();
+        return ApiResponseMessage.success("결제가 완료됨");
     }
 }
