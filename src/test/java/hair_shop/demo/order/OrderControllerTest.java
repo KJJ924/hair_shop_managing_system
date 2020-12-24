@@ -7,7 +7,7 @@ import hair_shop.demo.domain.Member;
 import hair_shop.demo.domain.Menu;
 import hair_shop.demo.domain.OrderTable;
 import hair_shop.demo.member.MemberRepository;
-import hair_shop.demo.member.membership.MemberShipForm;
+import hair_shop.demo.member.membership.form.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.OrderForm;

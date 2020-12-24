@@ -5,6 +5,7 @@ import hair_shop.demo.domain.Member;
 import hair_shop.demo.domain.MemberShip;
 import hair_shop.demo.member.MemberController;
 import hair_shop.demo.member.MemberRepository;
+import hair_shop.demo.member.membership.form.MemberShipForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,27 @@ public class MemberShipService {
 
     public ResponseEntity<Object> getResponseToCreate(MemberShipForm form) {
         Member member = memberRepository.findByPhone(form.getPhone());
-        if(member ==null){
+        if (member == null) {
             return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
-        }else if(member.getMemberShip() !=null){
-            return ApiResponseMessage.error("alreadyMemberShip",MemberController.ALREADY_MEMBERSHIP);
+        } else if (member.getMemberShip() != null) {
+            return ApiResponseMessage.error("alreadyMemberShip", MemberController.ALREADY_MEMBERSHIP);
         }
-        saveMemberShip(member,form.getPoint());
-        return ResponseEntity.ok().build();
+        saveMemberShip(member, form.getPoint());
+        return ApiResponseMessage.success("회원권이 생성되었습니다.");
     }
 
-    private void saveMemberShip(Member member,int point){
+    private void saveMemberShip(Member member, int point) {
         MemberShip save = memberShipRepository.save(new MemberShip(point));
         member.setMemberShip(save);
     }
 
+    public ResponseEntity<Object> addPoint(MemberShipForm form) {
+        Member member = memberRepository.findByPhone(form.getPhone());
+        if (member == null) {
+            return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
+        }
+        member.addPoint(form.getPoint());
+        return ApiResponseMessage.success("포인트가 추가 되었습니다");
+    }
 }
+

@@ -52,4 +52,9 @@ public class Member {
     public void registerVisitDate(){
         this.lastVisitDate = LocalDateTime.now();
     }
+
+    public void addPoint(int point) {
+        memberShip.setPoint(memberShip.getPoint()+point);
+        memberShip.setExpirationDate(LocalDateTime.now().plusYears(1));
+    }
 }

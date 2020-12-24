@@ -2,10 +2,10 @@ package hair_shop.demo.member.membership;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.domain.Member;
-import hair_shop.demo.domain.MemberShip;
 import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.member.MemberService;
 import hair_shop.demo.member.form.MemberForm;
+import hair_shop.demo.member.membership.form.MemberShipForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
