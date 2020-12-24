@@ -25,10 +25,7 @@ public class MonthData {
         for (Integer day : DayKey) {
             List<OrderTable> orderTables = daySeparated.get(day);
             int expectPrice = orderTables.stream().mapToInt(OrderTable::totalPrice).sum();
-            int resultPrice = orderTables.stream().filter(orderTable -> {
-                //todo 여기 고쳐야 될수도 있다.
-                return !orderTable.getPayment().equals(Payment.NOT_PAYMENT);
-            }).mapToInt(OrderTable::totalPrice).sum();
+            int resultPrice = orderTables.stream().filter(OrderTable::checkPayment).mapToInt(OrderTable::totalPrice).sum();
             monthData.add(MonthData.builder()
                     .day(day)
                     .expectSales(expectPrice)

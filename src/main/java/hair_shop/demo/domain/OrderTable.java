@@ -64,6 +64,9 @@ public class OrderTable {
         return tableMap;
     }
 
+    public boolean checkPayment(){
+        return !this.payment.equals(Payment.NOT_PAYMENT);
+    }
 
 
 }
