@@ -127,5 +127,17 @@ class MemberShipControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("회원 맴버쉽 포인트 추가-실패(회원권이없음)")
+    void memberShip_add_Point_not_found_memberShip() throws Exception{
+        MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
+        String content = objectMapper.writeValueAsString(form);
+
+        mockMvc.perform(put("/membership/point")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest());
+    }
+
 
 }

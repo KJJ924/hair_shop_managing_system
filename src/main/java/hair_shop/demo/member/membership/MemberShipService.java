@@ -23,7 +23,7 @@ public class MemberShipService {
         Member member = memberRepository.findByPhone(form.getPhone());
         if (member == null) {
             return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
-        } else if (member.getMemberShip() != null) {
+        } else if (member.isMemberShip()) {
             return ApiResponseMessage.error("alreadyMemberShip", MemberController.ALREADY_MEMBERSHIP);
         }
         saveMemberShip(member, form.getPoint());
@@ -39,6 +39,8 @@ public class MemberShipService {
         Member member = memberRepository.findByPhone(form.getPhone());
         if (member == null) {
             return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
+        } else if (!member.isMemberShip()) {
+            return ApiResponseMessage.error("No MemberShip", MemberController.NOT_MEMBERSHIP);
         }
         member.addPoint(form.getPoint());
         return ApiResponseMessage.success("포인트가 추가 되었습니다");
