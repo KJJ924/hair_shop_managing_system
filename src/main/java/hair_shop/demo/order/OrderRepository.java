@@ -12,5 +12,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<OrderTable,Long> {
 
     @EntityGraph(value = "order.withAll",type = EntityGraph.EntityGraphType.LOAD)
-    List<OrderTable> findByReservationStartBetween(LocalDateTime standardMonth, LocalDateTime plusMont);
+    List<OrderTable> findByReservationStartBetweenOrderByReservationStart(LocalDateTime standardMonth, LocalDateTime plusMont);
 }

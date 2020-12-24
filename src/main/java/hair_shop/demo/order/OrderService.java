@@ -48,14 +48,14 @@ public class OrderService {
     }
 
     public List<MonthData> getMonthData(LocalDateTime standardMonth, LocalDateTime plusMonth) {
-        List<OrderTable> orderList = orderRepository.findByReservationStartBetween(standardMonth,plusMonth);
+        List<OrderTable> orderList = orderRepository.findByReservationStartBetweenOrderByReservationStart(standardMonth,plusMonth);
         Map<Integer, List<OrderTable>> daySeparated = OrderTable.daySeparated(orderList);
         return MonthData.remakeMonthData(daySeparated);
     }
 
 
     public Map<Integer, List<OrderTable>> getWeekData(LocalDateTime standardDay, LocalDateTime plusDay) {
-        List<OrderTable> orderList = orderRepository.findByReservationStartBetween(standardDay, plusDay);
+        List<OrderTable> orderList = orderRepository.findByReservationStartBetweenOrderByReservationStart(standardDay, plusDay);
         return OrderTable.daySeparated(orderList);
     }
 
