@@ -14,4 +14,8 @@ public enum  Payment {
         return value;
     }
 
+    public boolean isPayment(Integer value){
+        return value >= 0;
+    }
+
 }

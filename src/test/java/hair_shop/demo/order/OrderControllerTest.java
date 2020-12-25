@@ -193,6 +193,54 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("포인트+현금 결제")
+    void pointAndCashPayment()throws Exception{
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.CASH_AND_POINT)
+                .cash(500)
+                .order_id(order_id).build();
+
+        String content = objectMapper.writeValueAsString(paymentForm);
+        mockMvc.perform(put("/order/payment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isOk());
+
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+
+        assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
+        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
+        assertThat(orderTable.getMember().getLastVisitDate())
+                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+    }
+
+    @Test
+    @DisplayName("포인트+현금 결제- 실패(포인트가 부족한 경우)")
+    void pointAndCashPayment_fail()throws Exception{
+
+        OrderForm orderForm = new OrderForm();
+        orderForm.setDesignerName("사장님");
+        orderForm.setMenuName("menu2");
+        orderForm.setMemberPhoneNumber("000");
+        //"yyyy-MM-dd'T'HH:mm:ss"
+        orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
+        orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
+        OrderTable orderTable = orderService.saveOrder(orderForm);
+
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.CASH_AND_POINT)
+                .cash(500)
+                .order_id(orderTable.getId()).build();
+
+        String content = objectMapper.writeValueAsString(paymentForm);
+        mockMvc.perform(put("/order/payment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("현금 결제")
     void cashPayment()throws Exception{
         PaymentForm paymentForm = PaymentForm.builder()

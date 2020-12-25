@@ -61,9 +61,6 @@ public class OrderController {
 
     @PutMapping("/order/payment")
     public ResponseEntity<Object> payment(@RequestBody PaymentForm paymentForm){
-        Long id = paymentForm.getOrder_id();
-        Payment payment = paymentForm.getPayment();
-
-        return orderService.payment(id,payment);
+        return orderService.payment(paymentForm);
     }
 }
