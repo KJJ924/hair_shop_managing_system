@@ -12,6 +12,7 @@ import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.Payment;
+import hair_shop.demo.order.form.PaymentForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -172,9 +173,13 @@ class OrderControllerTest {
     @Test
     @DisplayName("포인트 결제")
     void pointPayment()throws Exception{
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.POINT)
+                .order_id(order_id).build();
+        String content = objectMapper.writeValueAsString(paymentForm);
         mockMvc.perform(put("/order/payment")
-                .param("order_id",String.valueOf(order_id))
-                .param("payment","point"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andExpect(status().isOk());
 
         OrderTable orderTable = orderRepository.findById(order_id).get();
@@ -190,9 +195,13 @@ class OrderControllerTest {
     @Test
     @DisplayName("현금 결제")
     void cashPayment()throws Exception{
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.CASH)
+                .order_id(order_id).build();
+        String content = objectMapper.writeValueAsString(paymentForm);
         mockMvc.perform(put("/order/payment")
-                .param("order_id",String.valueOf(order_id))
-                .param("payment","cash"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andExpect(status().isOk());
 
         OrderTable orderTable = orderRepository.findById(order_id).get();
@@ -201,13 +210,12 @@ class OrderControllerTest {
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
         assertThat(orderTable.getMember().getLastVisitDate())
                 .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
-
-
     }
 
     @Test
     @DisplayName("결제실패-포인트부족")
     void payment_fail_point_not_enough()throws Exception{
+
         OrderForm orderForm = new OrderForm();
         orderForm.setDesignerName("사장님");
         orderForm.setMenuName("menu2");
@@ -217,9 +225,15 @@ class OrderControllerTest {
         orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
         OrderTable orderTable = orderService.saveOrder(orderForm);
 
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.POINT)
+                .order_id(orderTable.getId()).build();
+        String content = objectMapper.writeValueAsString(paymentForm);
+
+
         mockMvc.perform(put("/order/payment")
-                .param("order_id",String.valueOf(orderTable.getId()))
-                .param("payment","point"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -231,11 +245,16 @@ class OrderControllerTest {
     @Test
     @DisplayName("결제실패-중복결제")
     void payment_fail_duplicate_payment()throws Exception{
+        PaymentForm paymentForm = PaymentForm.builder()
+                .payment(Payment.POINT)
+                .order_id(order_id).build();
+        String content = objectMapper.writeValueAsString(paymentForm);
+
         OrderTable orderTable = orderRepository.findById(order_id).get();
         orderTable.setPayment(Payment.CASH);
         mockMvc.perform(put("/order/payment")
-                .param("order_id",String.valueOf(order_id))
-                .param("payment","point"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

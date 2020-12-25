@@ -74,6 +74,9 @@ public class OrderService {
         if(payment.equals(Payment.CASH)){
             return cashPaymentProcess(payment, order);
         }
+//        if(payment.equals(Payment.CASH_AND_POINT)){
+//            return cashAndPointProcess(payment,order);
+//        }
 
         Member member = order.getMember();
         if(!member.isMemberShip()){
@@ -92,6 +95,9 @@ public class OrderService {
         member.registerVisitDate();
         return ApiResponseMessage.success("결제가 완료됨");
     }
+
+//    private ResponseEntity<Object> cashAndPointProcess(Payment payment, OrderTable order) {
+//    }
 
 
     private ResponseEntity<Object> cashPaymentProcess(Payment payment, OrderTable order) {

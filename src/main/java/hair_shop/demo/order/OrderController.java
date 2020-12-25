@@ -11,6 +11,7 @@ import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.Payment;
 
+import hair_shop.demo.order.form.PaymentForm;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -59,10 +60,10 @@ public class OrderController {
     }
 
     @PutMapping("/order/payment")
-    public ResponseEntity<Object> payment(@RequestParam("order_id") Long id , @RequestParam Payment payment){
+    public ResponseEntity<Object> payment(@RequestBody PaymentForm paymentForm){
+        Long id = paymentForm.getOrder_id();
+        Payment payment = paymentForm.getPayment();
+
         return orderService.payment(id,payment);
     }
-
-
-
 }
