@@ -64,29 +64,23 @@ public class OrderService {
         Long order_id = paymentForm.getOrder_id();
 
         Optional<OrderTable> order = orderRepository.findById(order_id);
-        if(order.isEmpty()){
-            return ApiResponseMessage.error(order_id.toString(),OrderController.NOT_FOUND_ORDER);
-        }
+        if(order.isEmpty()) return ApiResponseMessage.error(order_id.toString(),OrderController.NOT_FOUND_ORDER);
+
         return paymentFactory(paymentForm, order.get());
     }
 
     private ResponseEntity<Object> paymentFactory(PaymentForm form,OrderTable order) {
-        Payment payment = form.getPayment();
+        if(order.checkPayment()) return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
 
-        if(payment.equals(Payment.CASH)){
-            return cashPaymentProcess(payment, order);
-        }else if(payment.equals(Payment.POINT)){
-            return pointPaymentProcess(payment, order);
-        }else if(payment.equals(Payment.CASH_AND_POINT)){
-            return pointAndCashProcess(order,form);
-        }
+        Payment payment = form.getPayment();
+        if(payment.equals(Payment.CASH)) return cashPaymentProcess(payment, order);
+        if(payment.equals(Payment.POINT)) return pointPaymentProcess(payment, order);
+        if(payment.equals(Payment.CASH_AND_POINT)) return pointAndCashProcess(order,form);
+
         return ApiResponseMessage.error("notSupportPayment","지원하지않는 결제방법입니다");
     }
 
     private ResponseEntity<Object> cashPaymentProcess(Payment payment, OrderTable order) {
-        if(order.checkPayment()){
-            return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
-        }
         order.setPayment(payment);
         order.getMember().registerVisitDate();
         return ApiResponseMessage.success("결제가 완료됨");
@@ -95,14 +89,14 @@ public class OrderService {
     private ResponseEntity<Object> pointPaymentProcess(Payment payment, OrderTable order) {
         Member member = order.getMember();
 
-        ResponseEntity<Object> error = paymentValidation(order, member);
+        ResponseEntity<Object> error = paymentValidation(member);
         if (error != null) return error;
 
         Integer savePoint =member.getMemberShipPoint() -order.totalPrice();
 
-        if(!payment.isPayment(savePoint)){
+        if(!payment.isPayment(savePoint))
             return ApiResponseMessage.error(String.valueOf(savePoint),"잔액이 부족합니다");
-        }
+
         paymentSave(order,payment,savePoint);
 
         return ApiResponseMessage.success("결제가 완료됨");
@@ -114,26 +108,22 @@ public class OrderService {
         Member member = order.getMember();
         Payment payment = form.getPayment();
 
-        ResponseEntity<Object> error = paymentValidation(order, member);
+        ResponseEntity<Object> error = paymentValidation(member);
         if (error != null) return error;
 
         int resultMenuPrice = order.totalPrice()-form.getCash();
 
         Integer savePoint  = member.getMemberShipPoint()-resultMenuPrice;
 
-        if(!payment.isPayment(savePoint)){
+        if(!payment.isPayment(savePoint))
             return ApiResponseMessage.error(String.valueOf(savePoint),"잔액이 부족합니다");
-        }
+
         paymentSave(order,payment,savePoint);
 
         return ApiResponseMessage.success("결제가 완료됨");
     }
 
-    private ResponseEntity<Object> paymentValidation(OrderTable order, Member member) {
-        if(order.checkPayment()){
-            return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
-        }
-
+    private ResponseEntity<Object> paymentValidation(Member member) {
         if(!member.isMemberShip()){
             return ApiResponseMessage.error("NO MemberShip", MemberController.NOT_MEMBERSHIP);
         }
