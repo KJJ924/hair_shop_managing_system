@@ -20,13 +20,13 @@ public class ApiResponseMessage {
     // Error Message to USER
     private String errorMessage;
 
-    public static ResponseEntity<Object> error(String filed, String s) {
+    public static ResponseEntity<Object> error(String rejectedValue, String s) {
         return ResponseEntity.badRequest().body(
                 ApiResponseMessage.builder()
                         .status("400")
-                        .message(filed)
+                        .rejectedValue(rejectedValue)
                         .errorCode("400")
-                        .errorMessage(filed+" "+s).build());
+                        .errorMessage(s).build());
     }
 
     public static ResponseEntity<Object> error(Errors errors) {
