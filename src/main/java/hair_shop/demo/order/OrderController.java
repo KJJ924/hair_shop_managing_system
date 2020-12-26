@@ -1,20 +1,11 @@
 package hair_shop.demo.order;
 
 import hair_shop.apiMessage.ApiResponseMessage;
-import hair_shop.demo.designer.DesignerController;
-import hair_shop.demo.designer.DesignerRepository;
 import hair_shop.demo.domain.OrderTable;
-import hair_shop.demo.member.MemberController;
-import hair_shop.demo.member.MemberRepository;
-import hair_shop.demo.menu.MenuController;
-import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.OrderForm;
-import hair_shop.demo.order.form.Payment;
-
 import hair_shop.demo.order.form.PaymentForm;
 import hair_shop.demo.order.validator.OrderFromValidator;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -22,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
