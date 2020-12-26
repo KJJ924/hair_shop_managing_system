@@ -12,12 +12,17 @@ import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.Payment;
 
 import hair_shop.demo.order.form.PaymentForm;
+import hair_shop.demo.order.validator.OrderFromValidator;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,20 +30,19 @@ public class OrderController {
     public static final String NOT_FOUND_ORDER ="해당하는 예약이 없음";
 
     private final OrderService orderService;
-    private final MemberRepository memberRepository;
-    private final MenuRepository menuRepository;
-    private final DesignerRepository designerRepository;
+
+
+    private final OrderFromValidator orderFromValidator;
+
+    @InitBinder("orderForm")
+    public void orderFormValid(WebDataBinder webDataBinder){
+        webDataBinder.addValidators(orderFromValidator);
+    }
 
     @PostMapping("/order")
-    public ResponseEntity<Object> createOrder(@RequestBody OrderForm orderForm){
-        if(!memberRepository.existsByPhone(orderForm.getMemberPhoneNumber())){
-            return ApiResponseMessage.error(orderForm.getMemberPhoneNumber(), MemberController.NOT_FOUND_MEMBER);
-        }
-        if(!menuRepository.existsByName(orderForm.getMenuName())){
-            return ApiResponseMessage.error(orderForm.getMenuName(), MenuController.NOT_FOUND_MENU);
-        }
-        if(!designerRepository.existsByName(orderForm.getDesignerName())){
-            return ApiResponseMessage.error(orderForm.getDesignerName(), DesignerController.NOT_FOUND_DESIGNER);
+    public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderForm orderForm , Errors error){
+        if(error.hasErrors()){
+            return ApiResponseMessage.error(error);
         }
         OrderTable order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);

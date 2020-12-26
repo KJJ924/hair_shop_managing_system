@@ -16,11 +16,9 @@ public class OrderForm {
     @NotBlank
     private String designerName;
 
-    @NotBlank
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime reservationStart;
 
-    @NotBlank
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime reservationEnd;
 
