@@ -6,10 +6,7 @@ import hair_shop.demo.domain.*;
 import hair_shop.demo.member.MemberController;
 import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.menu.MenuRepository;
-import hair_shop.demo.order.form.MonthData;
-import hair_shop.demo.order.form.OrderForm;
-import hair_shop.demo.order.form.Payment;
-import hair_shop.demo.order.form.PaymentForm;
+import hair_shop.demo.order.form.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -137,4 +134,10 @@ public class OrderService {
         member.registerVisitDate();
     }
 
+    public void editOrder(OrderEditForm orderEditForm) {
+        //앞쪽의 Valid 에서  Null 체크 해서 .get 으로 바로 꺼내도 안전함
+        OrderTable orderTable = orderRepository.findById(orderEditForm.getId()).get();
+        orderTable.setReservationStart(orderEditForm.getReservationStart());
+        orderTable.setReservationEnd(orderEditForm.getReservationEnd());
+    }
 }

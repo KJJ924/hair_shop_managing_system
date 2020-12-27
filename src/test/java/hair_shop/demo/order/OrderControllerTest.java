@@ -10,6 +10,7 @@ import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.member.membership.form.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
+import hair_shop.demo.order.form.OrderEditForm;
 import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.Payment;
 import hair_shop.demo.order.form.PaymentForm;
@@ -304,6 +305,62 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("예약시간 변경 - 성공")
+    void order_edit()throws  Exception{
+        LocalDateTime startTime = LocalDateTime.now();
+        OrderEditForm editForm = OrderEditForm.builder()
+                .id(order_id)
+                .reservationStart(startTime)
+                .reservationEnd(startTime.plusMinutes(30)).build();
+
+        String content = objectMapper.writeValueAsString(editForm);
+
+        mockMvc.perform(put("/order/edit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isOk());
+
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+
+        assertThat(orderTable.getReservationStart()).isEqualTo(startTime);
+        assertThat(orderTable.getReservationEnd()).isEqualTo(startTime.plusMinutes(30));
+    }
+
+    @Test
+    @DisplayName("예약시간 변경 - 실패(예약 시작 시간이 예약 종료시간보다 늦을수 없습니다)")
+    void order_edit_fail_overTime()throws  Exception{
+        LocalDateTime startTime = LocalDateTime.now();
+        OrderEditForm editForm = OrderEditForm.builder()
+                .id(order_id)
+                .reservationStart(startTime.plusMinutes(30))
+                .reservationEnd(startTime).build();
+
+        String content = objectMapper.writeValueAsString(editForm);
+
+        mockMvc.perform(put("/order/edit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("예약시간 변경 - 실패(해당하는 예약이 없음)")
+    void order_edit_fail_not_found_order()throws  Exception{
+        LocalDateTime startTime = LocalDateTime.now();
+        OrderEditForm editForm = OrderEditForm.builder()
+                .id(999L)
+                .reservationStart(startTime)
+                .reservationEnd(startTime.plusMinutes(30)).build();
+
+        String content = objectMapper.writeValueAsString(editForm);
+
+        mockMvc.perform(put("/order/edit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
                 .andExpect(status().isBadRequest());
     }
 

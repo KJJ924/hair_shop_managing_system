@@ -2,8 +2,10 @@ package hair_shop.demo.order;
 
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.domain.OrderTable;
+import hair_shop.demo.order.form.OrderEditForm;
 import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.PaymentForm;
+import hair_shop.demo.order.validator.OrderEditFromValidator;
 import hair_shop.demo.order.validator.OrderFromValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +25,15 @@ public class OrderController {
 
 
     private final OrderFromValidator orderFromValidator;
+    private final OrderEditFromValidator orderEditFromValidator;
 
     @InitBinder("orderForm")
     public void orderFormValid(WebDataBinder webDataBinder){
         webDataBinder.addValidators(orderFromValidator);
+    }
+    @InitBinder("orderEditForm")
+    public void orderEditFormValid(WebDataBinder webDataBinder){
+        webDataBinder.addValidators(orderEditFromValidator);
     }
 
     @PostMapping("/order")
@@ -56,5 +63,14 @@ public class OrderController {
     @PutMapping("/order/payment")
     public ResponseEntity<Object> payment(@RequestBody PaymentForm paymentForm){
         return orderService.payment(paymentForm);
+    }
+
+    @PutMapping("/order/edit")
+    public ResponseEntity<Object> orderEdit(@RequestBody @Valid OrderEditForm orderEditForm, Errors errors){
+        if(errors.hasErrors()){
+            return ApiResponseMessage.error(errors);
+        }
+        orderService.editOrder(orderEditForm);
+        return ApiResponseMessage.success("성공적으로 변경되었습니다");
     }
 }

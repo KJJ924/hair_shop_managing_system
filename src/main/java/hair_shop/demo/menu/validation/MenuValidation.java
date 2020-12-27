@@ -22,7 +22,7 @@ public class MenuValidation  implements Validator {
     public void validate(Object o, Errors errors) {
         Menu menu = (Menu) o;
         if(menuRepository.existsByName(menu.getName())){
-            errors.rejectValue("name","name.duplicate","이미 존재하는 메뉴입니다");
+            errors.rejectValue("name",menu.getName(),"이미 존재하는 메뉴입니다");
         }
     }
 }
