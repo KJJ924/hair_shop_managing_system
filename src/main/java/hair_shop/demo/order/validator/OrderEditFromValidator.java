@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 public class OrderEditFromValidator implements Validator {
@@ -27,9 +29,11 @@ public class OrderEditFromValidator implements Validator {
             errors.rejectValue("reservationStart",orderForm.getReservationStart().toString()
                     ,"예약 시작 시간이 예약 종료시간보다 늦을수 없습니다");
         }
-        if(!orderRepository.existsById(orderForm.getId())){
-            errors.rejectValue("id",orderForm.getId().toString()
-                    , OrderController.NOT_FOUND_ORDER);
+        if(!Objects.isNull(orderForm.getId())){
+            if(!orderRepository.existsById(orderForm.getId())){
+                errors.rejectValue("id",orderForm.getId().toString()
+                        , OrderController.NOT_FOUND_ORDER);
+            }
         }
     }
 
