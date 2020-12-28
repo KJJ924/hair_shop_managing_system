@@ -63,6 +63,12 @@ public class OrderTable {
         });
         return tableMap;
     }
+    public String getMemberPhone(){
+        return this.member.getPhone();
+    }
+    public String getMemberName(){
+        return this.member.getName();
+    }
 
     public boolean checkPayment(){
         return !this.payment.equals(Payment.NOT_PAYMENT);
