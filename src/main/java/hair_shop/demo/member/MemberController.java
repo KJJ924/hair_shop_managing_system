@@ -62,7 +62,7 @@ public class MemberController {
     public ResponseEntity<Object> getMemberRecentNotComingList(){
         List<MemberListInfo>  listInfoList = memberService.recentNotComingListUp();
         if(listInfoList.isEmpty()){
-            return ApiResponseMessage.error("null","미용실 방문 후 한달이 지난 손님이 없습니다");
+            return ApiResponseMessage.success("미용실 방문 후 한달이 지난 손님이 없습니다");
         }
         return ResponseEntity.ok(listInfoList);
     }

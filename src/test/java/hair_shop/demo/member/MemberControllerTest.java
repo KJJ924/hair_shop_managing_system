@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,6 +49,13 @@ class MemberControllerTest {
                 .name("TestMember")
                 .phone("1234")
                 .build();
+        Member testMember2 = Member.builder()
+                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
+                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
+                .name("TestMember")
+                .phone("1235")
+                .build();
+        memberRepository.save(testMember2);
         memberRepository.save(testMember);
     }
     @AfterEach
@@ -113,6 +121,19 @@ class MemberControllerTest {
         String content = objectMapper.writeValueAsString(memberListInfo);
 
         mockMvc.perform(get("/member/list"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(content));
+    }
+
+    @Test
+    @DisplayName("재방문 한달 지난 손님 리스트 받기-성공")
+    void getMemberRecentNotComingList() throws Exception {
+        List<MemberListInfo> memberListInfo = memberService.recentNotComingListUp();
+        String content = objectMapper.writeValueAsString(memberListInfo);
+
+        mockMvc.perform(get("/member/recentNotComingList"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(content));
