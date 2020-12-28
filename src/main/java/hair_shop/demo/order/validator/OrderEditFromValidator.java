@@ -29,14 +29,11 @@ public class OrderEditFromValidator implements Validator {
             errors.rejectValue("reservationStart",orderForm.getReservationStart().toString()
                     ,"예약 시작 시간이 예약 종료시간보다 늦을수 없습니다");
         }
-        if(!Objects.isNull(orderForm.getId())){
-            if(!orderRepository.existsById(orderForm.getId())){
-                errors.rejectValue("id",orderForm.getId().toString()
-                        , OrderController.NOT_FOUND_ORDER);
-            }
+        if(!Objects.isNull(orderForm.getId()) && !orderRepository.existsById(orderForm.getId())){
+            errors.rejectValue("id",orderForm.getId().toString()
+                    , OrderController.NOT_FOUND_ORDER);
         }
     }
-
     private boolean isAfter(OrderEditForm orderForm) {
         return orderForm.getReservationStart().isAfter(orderForm.getReservationEnd());
     }
