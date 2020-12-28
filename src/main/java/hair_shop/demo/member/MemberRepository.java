@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Transactional(readOnly = true)
 public interface MemberRepository  extends JpaRepository<Member, Long> {
     @Query("select a from Member a LEFT join fetch  a.memberShip " +
@@ -17,4 +20,7 @@ public interface MemberRepository  extends JpaRepository<Member, Long> {
 
     Member findWithPhoneByPhone(String memberPhoneNumber);
 
+
+    @Query("select a from Member a where a.lastVisitDate <:recentTime")
+    List<Member> findByLastVisitDateBetween(@Param("recentTime") LocalDateTime now);
 }

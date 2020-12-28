@@ -3,13 +3,19 @@ package hair_shop.demo.member;
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.domain.Member;
 import hair_shop.demo.member.form.MemberForm;
+import hair_shop.demo.member.form.MemberListInfo;
 import hair_shop.demo.member.validation.MemberValidation;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final MemberValidation memberValidation;
     private final MemberService memberService;
+    private final ModelMapper modelMapper;
 
     @InitBinder("memberForm")
     public void initMemberForm(WebDataBinder webDataBinder){
@@ -49,5 +56,14 @@ public class MemberController {
     @GetMapping("/member/list")
     public ResponseEntity<Object> getMemberList(){
         return ResponseEntity.ok(memberService.getMemberListInfo());
+    }
+
+    @GetMapping("/member/recentNotComingList")
+    public ResponseEntity<Object> getMemberRecentNotComingList(){
+        List<MemberListInfo>  listInfoList = memberService.recentNotComingListUp();
+        if(listInfoList.isEmpty()){
+            return ApiResponseMessage.error("null","미용실 방문 후 한달이 지난 손님이 없습니다");
+        }
+        return ResponseEntity.ok(listInfoList);
     }
 }

@@ -33,4 +33,15 @@ public class MemberService {
         }
         return listInfoList;
     }
+
+    public List<MemberListInfo> recentNotComingListUp() {
+        List<Member> memberList= memberRepository.findByLastVisitDateBetween(LocalDateTime.now().minusMonths(1));
+
+        List<MemberListInfo> listInfoList = new ArrayList<>();
+        for (Member member : memberList) {
+            listInfoList.add(modelMapper.map(member,MemberListInfo.class));
+        }
+
+        return listInfoList;
+    }
 }
