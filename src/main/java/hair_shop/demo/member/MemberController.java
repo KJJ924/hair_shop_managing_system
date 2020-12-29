@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/member")
 public class MemberController {
     public static final String NOT_FOUND_MEMBER ="해당하는 회원이 존재하지 않음";
     public static final String DUPLICATE_MEMBER ="회원이 이미 존재함";
@@ -35,7 +36,7 @@ public class MemberController {
         webDataBinder.addValidators(memberValidation);
     }
 
-    @GetMapping("/member/{phoneNumber}")
+    @GetMapping("/{phoneNumber}")
     public ResponseEntity<Object> getMember(@PathVariable String phoneNumber){
         Member member = memberRepository.findByPhone(phoneNumber);
         if(member==null){
@@ -44,7 +45,7 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    @PostMapping("/member")
+    @PostMapping
     public ResponseEntity<Object> saveMember(@RequestBody @Validated MemberForm memberForm , Errors errors){
         if(errors.hasErrors()){
             return ApiResponseMessage.error(memberForm.getPhone(),DUPLICATE_MEMBER);
@@ -53,12 +54,12 @@ public class MemberController {
         return ApiResponseMessage.success("성공적으로 저장됨");
     }
 
-    @GetMapping("/member/list")
+    @GetMapping("/list")
     public ResponseEntity<Object> getMemberList(){
         return ResponseEntity.ok(memberService.getMemberListInfo());
     }
 
-    @GetMapping("/member/recentNotComingList")
+    @GetMapping("/recentNotComingList")
     public ResponseEntity<Object> getMemberRecentNotComingList(){
         List<MemberListInfo>  listInfoList = memberService.recentNotComingListUp();
         if(listInfoList.isEmpty()){

@@ -25,9 +25,7 @@ public class OrderService {
     private final DesignerRepository designerRepository;
 
     public OrderTable saveOrder(OrderForm orderForm) {
-        OrderTable order = makeOrder(orderForm);
-        order.setPayment(Payment.NOT_PAYMENT);
-        return orderRepository.save(order);
+        return orderRepository.save(makeOrder(orderForm));
     }
 
     private OrderTable makeOrder(OrderForm orderForm){
@@ -37,6 +35,7 @@ public class OrderService {
         HashSet<Menu> menus = new HashSet<>();
         menus.add(menu);
         return OrderTable.builder()
+                .payment(Payment.NOT_PAYMENT)
                 .menus(menus)
                 .designers(designer)
                 .member(member)
