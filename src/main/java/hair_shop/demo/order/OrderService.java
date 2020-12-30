@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -39,20 +40,21 @@ public class OrderService {
                 .menus(menus)
                 .designers(designer)
                 .member(member)
+                .reservationDate(LocalDate.from(orderForm.getReservationStart()))
                 .reservationStart(orderForm.getReservationStart())
                 .reservationEnd(orderForm.getReservationEnd())
                 .build();
     }
 
-    public List<MonthData> getMonthData(LocalDateTime standardMonth, LocalDateTime plusMonth) {
-        List<OrderTable> orderList = orderRepository.findByReservationStartBetweenOrderByReservationStart(standardMonth,plusMonth);
+    public List<MonthData> getMonthData(LocalDate from, LocalDate to) {
+        List<OrderTable> orderList = orderRepository.findByMonthDate(from,to);
         Map<Integer, List<OrderTable>> daySeparated = OrderTable.daySeparated(orderList);
         return MonthData.remakeMonthData(daySeparated);
     }
 
 
-    public Map<Integer, List<OrderTable>> getWeekData(LocalDateTime standardDay, LocalDateTime plusDay) {
-        List<OrderTable> orderList = orderRepository.findByReservationStartBetweenOrderByReservationStart(standardDay, plusDay);
+    public Map<Integer, List<OrderTable>> getWeekData(LocalDate from, LocalDate to) {
+        List<OrderTable> orderList = orderRepository.findByReservationDateBetweenOrderByReservationDate(from, to);
         return OrderTable.daySeparated(orderList);
     }
 

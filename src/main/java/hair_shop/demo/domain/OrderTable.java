@@ -6,6 +6,7 @@ import hair_shop.demo.order.form.Payment;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -21,6 +22,8 @@ public class OrderTable {
 
     @Id @GeneratedValue
     private Long id;
+
+    private LocalDate reservationDate;
 
     @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationStart;

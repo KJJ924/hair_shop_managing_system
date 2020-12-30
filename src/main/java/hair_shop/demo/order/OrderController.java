@@ -8,12 +8,14 @@ import hair_shop.demo.order.form.PaymentForm;
 import hair_shop.demo.order.validator.OrderEditFromValidator;
 import hair_shop.demo.order.validator.OrderFromValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -45,19 +47,17 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-    @GetMapping("/month/{year}/{month}")
-    public ResponseEntity<Object> getMonthData(@PathVariable int year, @PathVariable int month){
-        LocalDateTime standardMonth = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime plusMonth = standardMonth.plusMonths(1);
-        return ResponseEntity.ok(orderService.getMonthData(standardMonth,plusMonth));
+    @GetMapping("/month")
+    public ResponseEntity<Object> getMonthData(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from){
+        return ResponseEntity.ok(orderService.getMonthData(from,from.plusMonths(1)));
     }
 
-    @GetMapping("/week/{year}/{month}/{baseDate}/{targetDay}")
-    public ResponseEntity<Object> getWeekData(@PathVariable int year,@PathVariable int month
-            , @PathVariable int baseDate, @PathVariable int targetDay){
-        LocalDateTime standardDay = LocalDateTime.of(year,month,baseDate,0,0);
-        LocalDateTime plusDay = standardDay.plusDays(targetDay-baseDate).plusHours(24);
-        return ResponseEntity.ok(orderService.getWeekData(standardDay, plusDay));
+    @GetMapping("/week")
+    public ResponseEntity<Object> getWeekData(
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            ){
+        return ResponseEntity.ok(orderService.getWeekData(from, to));
     }
 
     @PutMapping("/order/payment")
