@@ -10,10 +10,7 @@ import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.member.membership.form.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
-import hair_shop.demo.order.form.OrderEditForm;
-import hair_shop.demo.order.form.OrderForm;
-import hair_shop.demo.order.form.Payment;
-import hair_shop.demo.order.form.PaymentForm;
+import hair_shop.demo.order.form.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +22,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -362,6 +364,33 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("선택 월 일별 매출 현황")
+    void order_month_data()throws  Exception{
+        LocalDate date = LocalDate.of(2020, 12, 1);
+        List<MonthData> monthData = orderService.getMonthData(date, date.plusMonths(1));
+        String content = objectMapper.writeValueAsString(monthData);
+        mockMvc.perform(get("/month")
+                .param("from","2020-12-01"))
+                .andDo(print())
+                .andExpect(content().string(content))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName(" 선택 일 범위 만큼의 주문 현황 받기")
+    void order_week_data()throws  Exception{
+        LocalDate date = LocalDate.of(2020, 12, 1);
+        Map<Integer, List<OrderTable>> weekData = orderService.getWeekData(date, date.plusDays(2));
+        String content = objectMapper.writeValueAsString(weekData);
+        mockMvc.perform(get("/week")
+                .param("from","2020-12-01")
+                .param("to","2020-12-03"))
+                .andDo(print())
+                .andExpect(content().string(content))
+                .andExpect(status().isOk());
     }
 
 
