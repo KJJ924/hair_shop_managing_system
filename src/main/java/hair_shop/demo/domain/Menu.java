@@ -1,5 +1,6 @@
 package hair_shop.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 @AllArgsConstructor @NoArgsConstructor
 public class Menu {
 
+    @JsonIgnore
     @Id @GeneratedValue
     private Long id;
 
