@@ -72,6 +72,19 @@ class MenuControllerTest {
     }
 
     @Test
+    @DisplayName("메뉴 추가-실패(공백이 존재함)")
+    void addMenu_fail_space_in_name() throws Exception {
+        Menu menu  = new Menu();
+        menu.setPrice(2000);
+        menu.setName("BeforeMenu ");
+        String content = objectMapper.writeValueAsString(menu);
+        mockMvc.perform(post("/menu")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("메뉴 리스트받기")
     void getMenuList() throws Exception {
         List<Menu> menuList = menuRepository.findAll();
