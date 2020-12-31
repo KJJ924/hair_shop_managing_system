@@ -87,7 +87,7 @@ class MemberShipControllerTest {
     void createMemberShip_fail_already_memberShip() throws Exception{
 
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
-        memberShipService.getResponseToCreate(form);
+        memberShipService.createMemberShip(form);
 
         String content = objectMapper.writeValueAsString(form);
         mockMvc.perform(post("/membership")
@@ -101,7 +101,7 @@ class MemberShipControllerTest {
     @DisplayName("회원 맴버쉽 포인트 추가-성공")
     void memberShip_add_Point() throws Exception{
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
-        memberShipService.getResponseToCreate(form);
+        memberShipService.createMemberShip(form);
 
         String content = objectMapper.writeValueAsString(form);
         mockMvc.perform(put("/membership/point")

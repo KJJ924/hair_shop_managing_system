@@ -67,7 +67,7 @@ class OrderControllerTest {
     @BeforeEach
     void initData(){
         memberRepository.save(Member.builder().name("재준").phone("000").build());
-        memberShipService.getResponseToCreate(MemberShipForm.builder()
+        memberShipService.createMemberShip(MemberShipForm.builder()
                 .phone("000")
                 .point(10000)
                 .build());

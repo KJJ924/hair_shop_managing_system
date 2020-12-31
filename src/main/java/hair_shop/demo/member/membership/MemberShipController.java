@@ -12,8 +12,8 @@ public class MemberShipController {
     private final MemberShipService memberShipService;
 
     @PostMapping("/membership")
-    public ResponseEntity<Object> createMember(@RequestBody MemberShipForm memberShipForm){
-        return memberShipService.getResponseToCreate(memberShipForm);
+    public ResponseEntity<Object> createMemberShip(@RequestBody MemberShipForm memberShipForm){
+        return memberShipService.createMemberShip(memberShipForm);
     }
 
     @PutMapping("/membership/point")

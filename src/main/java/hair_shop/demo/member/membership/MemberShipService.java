@@ -19,7 +19,7 @@ public class MemberShipService {
     private final MemberRepository memberRepository;
     private final MemberShipRepository memberShipRepository;
 
-    public ResponseEntity<Object> getResponseToCreate(MemberShipForm form) {
+    public ResponseEntity<Object> createMemberShip(MemberShipForm form) {
         Member member = memberRepository.findByPhone(form.getPhone());
         if (member == null) {
             return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);

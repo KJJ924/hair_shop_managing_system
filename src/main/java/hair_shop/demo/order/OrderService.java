@@ -107,7 +107,7 @@ public class OrderService {
         Payment payment = form.getPayment();
 
         ResponseEntity<Object> error = paymentValidation(member);
-        if (error != null) return error;
+        if (Objects.nonNull(error)) return error;
 
         int resultMenuPrice = order.totalPrice()-form.getCash();
 

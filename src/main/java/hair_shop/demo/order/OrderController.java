@@ -48,15 +48,15 @@ public class OrderController {
     }
 
     @GetMapping("/month")
-    public ResponseEntity<Object> getMonthData(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from){
+    public ResponseEntity<Object> getMonthData(
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from){
         return ResponseEntity.ok(orderService.getMonthData(from,from.plusMonths(1)));
     }
 
     @GetMapping("/week")
     public ResponseEntity<Object> getWeekData(
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
-            ){
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to){
         return ResponseEntity.ok(orderService.getWeekData(from, to));
     }
 
