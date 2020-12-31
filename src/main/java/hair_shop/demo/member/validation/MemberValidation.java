@@ -1,5 +1,6 @@
 package hair_shop.demo.member.validation;
 
+import hair_shop.demo.member.MemberController;
 import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.member.form.MemberForm;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class MemberValidation implements Validator {
         MemberForm memberForm = (MemberForm) o;
         boolean result = memberRepository.existsByPhone(memberForm.getPhone());
         if(result){
-            errors.rejectValue("phone","phone.duplicated","이미존재하는 회원입니다.");
+            errors.rejectValue("phone","phone.duplicated", MemberController.DUPLICATE_MEMBER);
         }
     }
 }
