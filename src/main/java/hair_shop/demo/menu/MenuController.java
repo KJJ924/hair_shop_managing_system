@@ -30,7 +30,7 @@ public class MenuController {
     @PostMapping("/menu")
     public ResponseEntity<Object> addMenu(@RequestBody @Validated Menu menu, Errors errors){
         if(errors.hasErrors()){
-            return ApiResponseMessage.error(menu.getName(),DUPLICATE_MENU);
+            return ApiResponseMessage.error(errors);
         }
         menuRepository.save(menu);
         return ApiResponseMessage.success(menu.getName()+" Menu save");

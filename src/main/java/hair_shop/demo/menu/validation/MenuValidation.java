@@ -1,6 +1,7 @@
 package hair_shop.demo.menu.validation;
 
 import hair_shop.demo.domain.Menu;
+import hair_shop.demo.menu.MenuController;
 import hair_shop.demo.menu.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,10 @@ public class MenuValidation  implements Validator {
     public void validate(Object o, Errors errors) {
         Menu menu = (Menu) o;
         if(menuRepository.existsByName(menu.getName())){
-            errors.rejectValue("name",menu.getName(),"이미 존재하는 메뉴입니다");
+            errors.rejectValue("name",menu.getName(), MenuController.DUPLICATE_MENU);
+        }
+        if(menu.getName().contains(" ")){
+            errors.rejectValue("name",menu.getName(),"문자열안에 공백이 존재합니다.");
         }
     }
 }
