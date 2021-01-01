@@ -321,7 +321,7 @@ class OrderControllerTest {
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/edit")
+        mockMvc.perform(put("/order/time")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
@@ -343,7 +343,7 @@ class OrderControllerTest {
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/edit")
+        mockMvc.perform(put("/order/time")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isBadRequest());
@@ -360,7 +360,7 @@ class OrderControllerTest {
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/edit")
+        mockMvc.perform(put("/order/time")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isBadRequest());

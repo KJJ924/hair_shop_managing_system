@@ -7,7 +7,9 @@ import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.PaymentForm;
 import hair_shop.demo.order.validator.OrderEditFromValidator;
 import hair_shop.demo.order.validator.OrderFromValidator;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,7 +66,7 @@ public class OrderController {
         return orderService.payment(paymentForm);
     }
 
-    @PutMapping("/order/edit")
+    @PutMapping("/order/time")
     public ResponseEntity<Object> orderEdit(@RequestBody @Valid OrderEditForm orderEditForm, Errors errors){
         if(errors.hasErrors()){
             return ApiResponseMessage.error(errors);
