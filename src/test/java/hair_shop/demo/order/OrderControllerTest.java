@@ -11,6 +11,7 @@ import hair_shop.demo.member.membership.form.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.*;
+import hair_shop.demo.order.form.edit.OrderMenuEditForm;
 import hair_shop.demo.order.form.edit.OrderTimeEditForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -392,6 +393,44 @@ class OrderControllerTest {
                 .andDo(print())
                 .andExpect(content().string(content))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("메뉴 변경 - 성공(추가)")
+    void order_edit_menu_add()throws  Exception{
+        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
+                .menuName("menu2")
+                .orderId(order_id).build();
+
+        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+
+        mockMvc.perform(put("/order/menu/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isOk());
+
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+
+        assertThat(orderTable.getMenus().size()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("메뉴 변경 - 성공(삭제)")
+    void order_edit_menu_delete()throws  Exception{
+        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
+                .menuName("menu")
+                .orderId(order_id).build();
+
+        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+
+        mockMvc.perform(put("/order/menu/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isOk());
+
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+
+        assertThat(orderTable.getMenus().size()).isEqualTo(0);
     }
 
 
