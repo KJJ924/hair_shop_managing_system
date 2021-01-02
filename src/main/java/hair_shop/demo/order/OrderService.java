@@ -7,13 +7,14 @@ import hair_shop.demo.member.MemberController;
 import hair_shop.demo.member.MemberRepository;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.*;
+import hair_shop.demo.order.form.edit.OrderMenuEditForm;
+import hair_shop.demo.order.form.edit.OrderTimeEditForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -135,10 +136,26 @@ public class OrderService {
         member.registerVisitDate();
     }
 
-    public void editOrder(OrderEditForm orderEditForm) {
-        //앞쪽의 Valid 에서  Null 체크 해서 .get 으로 바로 꺼내도 안전함
-        OrderTable orderTable = orderRepository.findById(orderEditForm.getId()).get();
-        orderTable.setReservationStart(orderEditForm.getReservationStart());
-        orderTable.setReservationEnd(orderEditForm.getReservationEnd());
+    public void editTime(OrderTimeEditForm orderTimeEditForm) {
+        //앞쪽의 @Valid 에서  Null 체크 해서 .get 으로 바로 꺼내도 안전함
+        OrderTable orderTable = orderRepository.findById(orderTimeEditForm.getId()).get();
+        orderTable.setReservationStart(orderTimeEditForm.getReservationStart());
+        orderTable.setReservationEnd(orderTimeEditForm.getReservationEnd());
+    }
+
+    public void editMenu(OrderMenuEditForm orderMenuEditForm, String action) {
+        if(action.equals("add")) addMenu(orderMenuEditForm);
+        if(action.equals("delete")) deleteMenu(orderMenuEditForm);
+    }
+
+    private void deleteMenu(OrderMenuEditForm orderMenuEditForm) {
+        OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
+        orderTable.menuDelete(menuRepository.findByName(orderMenuEditForm.getMenuName()));
+    }
+
+    private void addMenu(OrderMenuEditForm orderMenuEditForm) {
+        OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
+        //앞에 @Valid 에서 메뉴가 있는지 검증이 끝나서 따로 검증하지 않아도 됨
+        orderTable.menuAdd(menuRepository.findByName(orderMenuEditForm.getMenuName()));
     }
 }

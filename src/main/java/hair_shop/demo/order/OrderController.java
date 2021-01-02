@@ -2,10 +2,12 @@ package hair_shop.demo.order;
 
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.domain.OrderTable;
-import hair_shop.demo.order.form.OrderEditForm;
+import hair_shop.demo.order.form.edit.OrderMenuEditForm;
+import hair_shop.demo.order.form.edit.OrderTimeEditForm;
 import hair_shop.demo.order.form.OrderForm;
 import hair_shop.demo.order.form.PaymentForm;
-import hair_shop.demo.order.validator.OrderEditFromValidator;
+import hair_shop.demo.order.validator.OrderEditMenuFormValidator;
+import hair_shop.demo.order.validator.OrderEditTimeFormValidator;
 import hair_shop.demo.order.validator.OrderFromValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -28,16 +30,22 @@ public class OrderController {
 
 
     private final OrderFromValidator orderFromValidator;
-    private final OrderEditFromValidator orderEditFromValidator;
+    private final OrderEditTimeFormValidator orderEditTimeFormValidator;
+    private final OrderEditMenuFormValidator orderEditMenuFormValidator;
 
     @InitBinder("orderForm")
     public void orderFormValid(WebDataBinder webDataBinder){
         webDataBinder.addValidators(orderFromValidator);
     }
-    @InitBinder("orderEditForm")
-    public void orderEditFormValid(WebDataBinder webDataBinder){
-        webDataBinder.addValidators(orderEditFromValidator);
+    @InitBinder("orderTimeEditForm")
+    public void orderEditTimeValid(WebDataBinder webDataBinder){
+        webDataBinder.addValidators(orderEditTimeFormValidator);
     }
+    @InitBinder("orderMenuEditForm")
+    public void orderEditMenuValid(WebDataBinder webDataBinder){
+        webDataBinder.addValidators(orderEditMenuFormValidator);
+    }
+
 
     @PostMapping("/order")
     public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderForm orderForm , Errors error){
@@ -67,11 +75,25 @@ public class OrderController {
     }
 
     @PutMapping("/order/time")
-    public ResponseEntity<Object> orderEdit(@RequestBody @Valid OrderEditForm orderEditForm, Errors errors){
+    public ResponseEntity<Object> orderTimeEdit(@RequestBody @Valid OrderTimeEditForm orderTimeEditForm, Errors errors){
         if(errors.hasErrors()){
             return ApiResponseMessage.error(errors);
         }
-        orderService.editOrder(orderEditForm);
+        orderService.editTime(orderTimeEditForm);
+        return ApiResponseMessage.success("성공적으로 변경되었습니다");
+    }
+
+    // todo  여기서 action 은  Add or Delete
+    @PutMapping("/order/menu/{action}")
+    public ResponseEntity<Object> orderMenuEdit(@RequestBody @Valid OrderMenuEditForm orderMenuEditForm, Errors errors
+            ,@PathVariable String action){
+        if(!action.equals("add") && !action.equals("delete")){
+            return ApiResponseMessage.error(action,"요청 PathVariable 을 다시 확인해주세요");
+        }
+        if(errors.hasErrors()){
+            return ApiResponseMessage.error(errors);
+        }
+        orderService.editMenu(orderMenuEditForm,action);
         return ApiResponseMessage.success("성공적으로 변경되었습니다");
     }
 }

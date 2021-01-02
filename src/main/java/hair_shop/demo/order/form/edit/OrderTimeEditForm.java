@@ -1,4 +1,4 @@
-package hair_shop.demo.order.form;
+package hair_shop.demo.order.form.edit;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class OrderEditForm {
+public class OrderTimeEditForm {
 
     @NotNull
     private Long id;

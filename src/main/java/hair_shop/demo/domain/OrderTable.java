@@ -77,5 +77,21 @@ public class OrderTable {
         return !this.payment.equals(Payment.NOT_PAYMENT);
     }
 
+    public boolean menuAdd(Menu menu){
+        if(!this.menus.contains(menu)){
+            menus.add(menu);
+            return true;
+        }
+        // 이미 자료구조가 Set 이여서 중복 검사 안해도 되는데 메세지를 전달해야하니 ...
+        return false;
+    }
 
+
+    public boolean menuDelete(Menu menu) {
+        if(this.menus.contains(menu)){
+           menus.remove(menu);
+           return true;
+        }
+        return false;
+    }
 }

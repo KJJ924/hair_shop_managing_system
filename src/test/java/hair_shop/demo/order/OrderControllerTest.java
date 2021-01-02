@@ -11,6 +11,7 @@ import hair_shop.demo.member.membership.form.MemberShipForm;
 import hair_shop.demo.member.membership.MemberShipService;
 import hair_shop.demo.menu.MenuRepository;
 import hair_shop.demo.order.form.*;
+import hair_shop.demo.order.form.edit.OrderTimeEditForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -314,7 +315,7 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 성공")
     void order_edit()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderEditForm editForm = OrderEditForm.builder()
+        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
                 .id(order_id)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();
@@ -336,7 +337,7 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(예약 시작 시간이 예약 종료시간보다 늦을수 없습니다)")
     void order_edit_fail_overTime()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderEditForm editForm = OrderEditForm.builder()
+        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
                 .id(order_id)
                 .reservationStart(startTime.plusMinutes(30))
                 .reservationEnd(startTime).build();
@@ -353,7 +354,7 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(해당하는 예약이 없음)")
     void order_edit_fail_not_found_order()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderEditForm editForm = OrderEditForm.builder()
+        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
                 .id(999L)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();

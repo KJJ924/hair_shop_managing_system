@@ -2,7 +2,7 @@ package hair_shop.demo.order.validator;
 
 import hair_shop.demo.order.OrderController;
 import hair_shop.demo.order.OrderRepository;
-import hair_shop.demo.order.form.OrderEditForm;
+import hair_shop.demo.order.form.edit.OrderTimeEditForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,18 +12,18 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class OrderEditFromValidator implements Validator {
+public class OrderEditTimeFormValidator implements Validator {
 
     private final OrderRepository orderRepository;
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return aClass.isAssignableFrom(OrderEditForm.class);
+        return aClass.isAssignableFrom(OrderTimeEditForm.class);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        OrderEditForm orderForm = (OrderEditForm)o;
+        OrderTimeEditForm orderForm = (OrderTimeEditForm)o;
 
         if(isAfter(orderForm)){
             errors.rejectValue("reservationStart",orderForm.getReservationStart().toString()
@@ -34,7 +34,7 @@ public class OrderEditFromValidator implements Validator {
                     , OrderController.NOT_FOUND_ORDER);
         }
     }
-    private boolean isAfter(OrderEditForm orderForm) {
+    private boolean isAfter(OrderTimeEditForm orderForm) {
         return orderForm.getReservationStart().isAfter(orderForm.getReservationEnd());
     }
 }
