@@ -37,6 +37,9 @@ public class Member {
     @JoinColumn(name = "memberShip_id")
     private MemberShip memberShip;
 
+    @Lob
+    private String Description;
+
     public boolean isMemberShip(){
         return this.memberShip != null;
     }

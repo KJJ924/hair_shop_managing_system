@@ -2,18 +2,18 @@ package hair_shop.demo.member;
 
 import hair_shop.apiMessage.ApiResponseMessage;
 import hair_shop.demo.domain.Member;
+import hair_shop.demo.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.member.form.MemberForm;
 import hair_shop.demo.member.form.MemberListInfo;
 import hair_shop.demo.member.validation.MemberValidation;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -64,5 +64,13 @@ public class MemberController {
             return ApiResponseMessage.success("미용실 방문 후 한달이 지난 손님이 없습니다");
         }
         return ResponseEntity.ok(listInfoList);
+    }
+
+    @PutMapping("/description")
+    public ResponseEntity<Object> addDescription(@RequestBody @Valid MemberAddDescriptionForm form,Errors errors){
+        if(errors.hasErrors()){
+            return ApiResponseMessage.error(errors);
+        }
+        return memberService.addDescription(form);
     }
 }
