@@ -2,6 +2,7 @@ package hair_shop.demo.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.domain.Member;
+import hair_shop.demo.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.member.form.MemberForm;
 import hair_shop.demo.member.form.MemberListInfo;
 import org.junit.jupiter.api.AfterEach;
@@ -19,8 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,8 +55,15 @@ class MemberControllerTest {
                 .name("TestMember")
                 .phone("1235")
                 .build();
-        memberRepository.save(testMember2);
+        Member testMember3 = Member.builder()
+                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
+                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
+                .name("TestMember")
+                .phone("01000000000")
+                .build();
         memberRepository.save(testMember);
+        memberRepository.save(testMember2);
+        memberRepository.save(testMember3);
     }
     @AfterEach
     void deleteAll(){
@@ -139,4 +146,32 @@ class MemberControllerTest {
                 .andExpect(content().string(content));
     }
 
+    @Test
+    @DisplayName("회원 특이사항 추가 -성공")
+    void add_memberDescription() throws Exception{
+        MemberAddDescriptionForm memberAddDescriptionForm = new MemberAddDescriptionForm();
+        memberAddDescriptionForm.setDescription("description");
+        memberAddDescriptionForm.setPhone("01000000000");
+
+        mockMvc.perform(put("/member/description")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
+                .andExpect(status().isOk());
+
+        Member member = memberRepository.findByPhone(memberAddDescriptionForm.getPhone());
+        assertThat(member.getDescription()).isEqualTo(memberAddDescriptionForm.getDescription());
+    }
+
+    @Test
+    @DisplayName("회원 특이사항 추가 -실패(해당하는 회원이 없음)")
+    void add_memberDescription_fail() throws Exception{
+        MemberAddDescriptionForm memberAddDescriptionForm = new MemberAddDescriptionForm();
+        memberAddDescriptionForm.setDescription("description");
+        memberAddDescriptionForm.setPhone("01000000001");
+
+        mockMvc.perform(put("/member/description")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
+                .andExpect(status().isBadRequest());
+    }
 }
