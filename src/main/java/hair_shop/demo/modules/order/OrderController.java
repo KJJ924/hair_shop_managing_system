@@ -2,16 +2,14 @@ package hair_shop.demo.modules.order;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.order.domain.OrderTable;
-import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
-import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
 import hair_shop.demo.modules.order.form.OrderForm;
 import hair_shop.demo.modules.order.form.PaymentForm;
+import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
+import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
 import hair_shop.demo.modules.order.validator.OrderEditMenuFormValidator;
 import hair_shop.demo.modules.order.validator.OrderEditTimeFormValidator;
 import hair_shop.demo.modules.order.validator.OrderFromValidator;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +31,7 @@ public class OrderController {
     private final OrderFromValidator orderFromValidator;
     private final OrderEditTimeFormValidator orderEditTimeFormValidator;
     private final OrderEditMenuFormValidator orderEditMenuFormValidator;
+    private final OrderRepository orderRepository;
 
     @InitBinder("orderForm")
     public void orderFormValid(WebDataBinder webDataBinder){
@@ -96,4 +96,15 @@ public class OrderController {
         orderService.editMenu(orderMenuEditForm,action);
         return ApiResponseMessage.success("성공적으로 변경되었습니다");
     }
+
+    @DeleteMapping("/order/{id}")
+    public ResponseEntity<Object> testDelete(@PathVariable("id") Optional<OrderTable> orderTable
+            ,@PathVariable Long id){
+        if(orderTable.isEmpty()){
+            return ApiResponseMessage.error(id.toString(),NOT_FOUND_ORDER);
+        }
+        orderRepository.delete(orderTable.get());
+        return ApiResponseMessage.success("성공적으로 삭제되었습니다.");
+    }
+
 }
