@@ -103,6 +103,9 @@ public class OrderController {
         if(orderTable.isEmpty()){
             return ApiResponseMessage.error(id.toString(),NOT_FOUND_ORDER);
         }
+        if(orderTable.get().checkPayment()){
+            return ApiResponseMessage.error(id.toString(),"이미 결제한 예약은 삭제가 불가능합니다");
+        }
         orderRepository.delete(orderTable.get());
         return ApiResponseMessage.success("성공적으로 삭제되었습니다.");
     }
