@@ -447,6 +447,16 @@ class OrderControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("예약 취소 -실패(이미 결제가 완료됨)")
+    void order_cancel_already_payment_fail() throws Exception{
+        OrderTable orderTable = orderRepository.findById(order_id).get();
+        orderTable.setPayment(Payment.CASH);
+        mockMvc.perform(delete("/order/"+order_id))
+                .andExpect(status().isBadRequest());
+
+    }
+
 
 
 
