@@ -1,7 +1,8 @@
 package hair_shop.demo.designer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hair_shop.demo.domain.Designer;
+import hair_shop.demo.modules.designer.domain.Designer;
+import hair_shop.demo.modules.designer.DesignerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
