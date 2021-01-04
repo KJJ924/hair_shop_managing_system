@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -416,7 +414,7 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("메뉴 변경 - 성공(삭제)")
-    void order_edit_menu_delete()throws  Exception{
+    void order_edit_menu_delete()throws Exception{
         OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
                 .menuName("menu")
                 .orderId(order_id).build();
@@ -430,6 +428,23 @@ class OrderControllerTest {
         OrderTable orderTable = orderRepository.findById(order_id).get();
 
         assertThat(orderTable.getMenus().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("예약 취소 -성공")
+    void order_cancel() throws Exception{
+        mockMvc.perform(delete("/order/"+order_id))
+                .andExpect(status().isOk());
+
+        boolean result = orderRepository.existsById(order_id);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("예약 취소 -실패(해당하는 주문이없음)")
+    void order_cancel_fail() throws Exception{
+        mockMvc.perform(delete("/order/4888"))
+                .andExpect(status().isBadRequest());
     }
 
 
