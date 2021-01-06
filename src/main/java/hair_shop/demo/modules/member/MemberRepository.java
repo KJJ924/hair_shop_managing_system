@@ -23,4 +23,6 @@ public interface MemberRepository  extends JpaRepository<Member, Long> {
 
     @Query("select a from Member a where a.lastVisitDate <:recentTime")
     List<Member> findByLastVisitDateBetween(@Param("recentTime") LocalDateTime now);
+
+    List<Member> findByName(String name);
 }

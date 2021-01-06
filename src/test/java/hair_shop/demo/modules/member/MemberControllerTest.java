@@ -123,7 +123,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 리스트 받기")
     void getMemberList() throws Exception {
-        List<MemberListInfo> memberListInfo = memberService.getMemberListInfo();
+        List<MemberListInfo> memberListInfo = memberService.getAllMemberList();
         String content = objectMapper.writeValueAsString(memberListInfo);
 
         mockMvc.perform(get("/member/list"))

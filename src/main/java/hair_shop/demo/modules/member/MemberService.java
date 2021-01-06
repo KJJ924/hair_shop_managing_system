@@ -29,8 +29,16 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public List<MemberListInfo> getMemberListInfo() {
+    public List<MemberListInfo> getAllMemberList() {
         List<Member> members = memberRepository.findAll();
+        return getMemberListInfo(members);
+    }
+    public List<MemberListInfo> getMemberSearchNameList(String name) {
+        List<Member> memberList = memberRepository.findByName(name);
+        return getMemberListInfo(memberList);
+    }
+
+    private List<MemberListInfo> getMemberListInfo(List<Member> members) {
         List<MemberListInfo> listInfoList = new ArrayList<>();
         for (Member member : members) {
             MemberListInfo memberListInfo = modelMapper.map(member, MemberListInfo.class);
@@ -59,4 +67,7 @@ public class MemberService {
         member.setDescription(form.getDescription());
         return ApiResponseMessage.success("성공적으로 저장되었습니다");
     }
+
+
+
 }

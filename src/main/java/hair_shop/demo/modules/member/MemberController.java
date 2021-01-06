@@ -53,8 +53,11 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> getMemberList(){
-        return ResponseEntity.ok(memberService.getMemberListInfo());
+    public ResponseEntity<Object> getMemberList(@RequestParam(required = false) String name){
+        if(name !=null){
+           return ResponseEntity.ok(memberService.getMemberSearchNameList(name));
+        }
+        return ResponseEntity.ok(memberService.getAllMemberList());
     }
 
     @GetMapping("/recentNotComingList")
