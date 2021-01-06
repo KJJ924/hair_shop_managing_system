@@ -133,6 +133,19 @@ class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("회원 리스트 받기 - 이름으로검색")
+    void getMemberSearchNameList() throws Exception {
+        List<MemberListInfo> memberListInfo = memberService.getMemberSearchNameList("TestMember");
+        String content = objectMapper.writeValueAsString(memberListInfo);
+
+        mockMvc.perform(get("/member/list")
+                .param("name","TestMember"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(content));
+    }
+
+    @Test
     @DisplayName("재방문 한달 지난 손님 리스트 받기-성공")
     void getMemberRecentNotComingList() throws Exception {
         List<MemberListInfo> memberListInfo = memberService.recentNotComingListUp();
