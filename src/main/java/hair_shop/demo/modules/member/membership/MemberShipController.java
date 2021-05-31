@@ -7,16 +7,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/membership")
 public class MemberShipController {
 
     private final MemberShipService memberShipService;
 
-    @PostMapping("/membership")
-    public ResponseEntity<Object> createMemberShip(@RequestBody MemberShipForm memberShipForm){
+    @PostMapping
+    public ResponseEntity<Object> createMemberShip(@RequestBody MemberShipForm memberShipForm) {
         return memberShipService.createMemberShip(memberShipForm);
     }
 
-    @PutMapping("/membership/point")
+    @PutMapping("/point")
     public ResponseEntity<Object> addPoint(@RequestBody MemberShipForm form) {
         return memberShipService.addPoint(form);
     }
