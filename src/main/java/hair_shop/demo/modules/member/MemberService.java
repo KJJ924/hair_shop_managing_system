@@ -2,18 +2,18 @@ package hair_shop.demo.modules.member;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class MemberService {
         List<Member> members = memberRepository.findAll();
         return getMemberListInfo(members);
     }
+
     public List<MemberListInfo> getMemberSearchNameList(String name) {
         List<Member> memberList = memberRepository.findByName(name);
         return getMemberListInfo(memberList);
@@ -48,26 +49,30 @@ public class MemberService {
     }
 
     public List<MemberListInfo> recentNotComingListUp() {
-        List<Member> memberList= memberRepository.findByLastVisitDateBetween(LocalDateTime.now().minusMonths(1));
+        List<Member> memberList = memberRepository
+            .findByLastVisitDateBetween(LocalDateTime.now().minusMonths(1));
 
         List<MemberListInfo> listInfoList = new ArrayList<>();
         for (Member member : memberList) {
-            listInfoList.add(modelMapper.map(member,MemberListInfo.class));
+            listInfoList.add(modelMapper.map(member, MemberListInfo.class));
         }
 
         return listInfoList;
     }
 
 
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone).orElseThrow(NotFoundMemberException::new);
+    }
+
     public ResponseEntity<Object> addDescription(MemberAddDescriptionForm form) {
-        Member member = memberRepository.findByPhone(form.getPhone());
-        if(member == null){
-            return ApiResponseMessage.error(form.getPhone(),MemberController.NOT_FOUND_MEMBER);
+        Member member = findByPhone(form.getPhone());
+        if (member == null) {
+            return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
         }
         member.setDescription(form.getDescription());
         return ApiResponseMessage.success("성공적으로 저장되었습니다");
     }
-
 
 
 }
