@@ -1,26 +1,29 @@
 package hair_shop.demo.modules.member.membership.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @EqualsAndHashCode(of = "id")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberShip {
 
-    @Id @JsonIgnore
-    @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer point;
+    private int point;
 
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime creationDate;
@@ -28,9 +31,13 @@ public class MemberShip {
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime expirationDate;
 
-    public MemberShip(Integer point) {
+    private MemberShip(Integer point) {
         this.point = point;
         this.creationDate = LocalDateTime.now();
         this.expirationDate = this.creationDate.plusYears(1);
+    }
+
+    public static MemberShip create(int point){
+        return new MemberShip(point);
     }
 }
