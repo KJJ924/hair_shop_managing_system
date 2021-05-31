@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.member.membership;
+package hair_shop.demo.modules.member.membership.repository;
 
 
 import hair_shop.demo.modules.member.membership.domain.MemberShip;

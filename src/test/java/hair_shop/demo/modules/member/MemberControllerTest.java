@@ -1,10 +1,20 @@
 package hair_shop.demo.modules.member;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,15 +24,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -81,7 +82,7 @@ class MemberControllerTest {
                 .content(objectMapper.writeValueAsString(memberForm)))
                 .andExpect(status().isOk());
 
-        Member member = memberRepository.findByPhone(memberForm.getPhone());
+        Member member = memberRepository.findByPhone(memberForm.getPhone()).get();
         assertThat(member).isNotNull();
     }
 
@@ -102,7 +103,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("선택 회원 받기")
     void getMember() throws Exception{
-        Member member = memberRepository.findByPhone("1234");
+        Member member = memberService.findByPhone("1234");
         String content = objectMapper.writeValueAsString(member);
         mockMvc.perform(get("/member/1234"))
                 .andDo(print())
@@ -117,7 +118,7 @@ class MemberControllerTest {
         mockMvc.perform(get("/member/89898989"))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -170,7 +171,7 @@ class MemberControllerTest {
                 .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
                 .andExpect(status().isOk());
 
-        Member member = memberRepository.findByPhone(memberAddDescriptionForm.getPhone());
+        Member member = memberService.findByPhone(memberAddDescriptionForm.getPhone());
         assertThat(member.getDescription()).isEqualTo(memberAddDescriptionForm.getDescription());
     }
 
@@ -184,6 +185,6 @@ class MemberControllerTest {
         mockMvc.perform(put("/member/description")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }

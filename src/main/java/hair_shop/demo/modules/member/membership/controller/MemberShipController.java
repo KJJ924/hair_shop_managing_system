@@ -1,6 +1,8 @@
-package hair_shop.demo.modules.member.membership;
+package hair_shop.demo.modules.member.membership.controller;
 
-import hair_shop.demo.modules.member.membership.form.MemberShipForm;
+import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
+import hair_shop.demo.modules.member.membership.dto.response.ResponseMemberShip;
+import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +15,8 @@ public class MemberShipController {
     private final MemberShipService memberShipService;
 
     @PostMapping
-    public ResponseEntity<Object> createMemberShip(@RequestBody MemberShipForm memberShipForm) {
-        return memberShipService.createMemberShip(memberShipForm);
+    public ResponseEntity<ResponseMemberShip> createMemberShip(@RequestBody MemberShipForm form) {
+        return ResponseEntity.ok(memberShipService.createMemberShip(form));
     }
 
     @PutMapping("/point")

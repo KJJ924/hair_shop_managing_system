@@ -2,6 +2,7 @@ package hair_shop.demo.modules.member;
 
 
 import hair_shop.demo.modules.member.domain.Member;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface MemberRepository  extends JpaRepository<Member, Long> {
     @Query("select a from Member a LEFT join fetch  a.memberShip " +
             "LEFT join fetch a.orderList s LEFT join fetch s.menus where a.phone = :phoneNumber")
-    Member findByPhone(@Param("phoneNumber") String phoneNumber);
+    Optional<Member> findByPhone(@Param("phoneNumber") String phoneNumber);
 
     boolean existsByPhone(String phone);
 

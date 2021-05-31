@@ -25,7 +25,7 @@ public class MemberController {
     public static final String ALREADY_MEMBERSHIP ="이미 회원권이 존재함";
     public static final String NOT_MEMBERSHIP ="회원권이 없음";
 
-    private final MemberRepository memberRepository;
+
     private final MemberValidation memberValidation;
     private final MemberService memberService;
 
@@ -36,10 +36,7 @@ public class MemberController {
 
     @GetMapping("/{phoneNumber}")
     public ResponseEntity<Object> getMember(@PathVariable String phoneNumber){
-        Member member = memberRepository.findByPhone(phoneNumber);
-        if(member==null){
-            return ApiResponseMessage.error(phoneNumber,NOT_FOUND_MEMBER);
-        }
+        Member member = memberService.findByPhone(phoneNumber);
         return ResponseEntity.ok(member);
     }
 
