@@ -5,6 +5,7 @@ import hair_shop.demo.modules.member.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
+import hair_shop.demo.modules.member.membership.dto.response.ResponseMemberShip;
 import hair_shop.demo.modules.member.membership.error.MemberNotAlreadyException;
 import hair_shop.demo.modules.member.membership.error.MemberShipAlreadyException;
 import hair_shop.demo.modules.member.membership.repository.MemberShipRepository;
@@ -21,14 +22,14 @@ public class MemberShipService {
     private final MemberShipRepository memberShipRepository;
     private final MemberService memberService;
 
-    public ResponseEntity<Object> createMemberShip(MemberShipForm form) {
+    public ResponseMemberShip createMemberShip(MemberShipForm form) {
         Member member = memberService.findByPhone(form.getPhone());
 
         if (member.isMemberShip()) {
             throw new MemberShipAlreadyException();
         }
         MemberShip memberShip = saveMemberShip(member, form.getPoint());
-        return ApiResponseMessage.success("회원권이 생성되었습니다.");
+        return ResponseMemberShip.of(memberShip);
     }
 
 
