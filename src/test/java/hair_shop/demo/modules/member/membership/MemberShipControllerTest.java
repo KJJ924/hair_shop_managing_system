@@ -44,7 +44,7 @@ class MemberShipControllerTest {
     MemberShipService memberShipService;
 
     @BeforeEach
-    void initData(){
+    void initData() {
         MemberForm memberForm = new MemberForm();
         memberForm.setName("test");
         memberForm.setPhone("010");
@@ -52,20 +52,21 @@ class MemberShipControllerTest {
     }
 
     @AfterEach
-    void clearData(){
+    void clearData() {
         memberRepository.deleteAll();
     }
 
     @Test
     @DisplayName("회원권 생성- 성공")
-    void createMemberShip() throws Exception{
+    void createMemberShip() throws Exception {
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
         String content = objectMapper.writeValueAsString(form);
 
         mockMvc.perform(post("/membership")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andDo(print())
+            .andExpect(status().isOk());
 
         Member member = memberService.findByPhone(form.getPhone());
         assertThat(member.getMemberShip()).isNotNull();
@@ -75,43 +76,42 @@ class MemberShipControllerTest {
 
     @Test
     @DisplayName("회원권 생성-실패(해당 맴버가없음)")
-    void createMemberShip_fail_not_found_member() throws Exception{
+    void createMemberShip_fail_not_found_member() throws Exception {
         MemberShipForm form = MemberShipForm.builder().phone("011").point(10000).build();
         String content = objectMapper.writeValueAsString(form);
 
         mockMvc.perform(post("/membership")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isNotFound());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("회원권 생성-실패(회원권이 이미존재함)")
-    void createMemberShip_fail_already_memberShip() throws Exception{
+    void createMemberShip_fail_already_memberShip() throws Exception {
 
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
         memberShipService.createMemberShip(form);
 
         String content = objectMapper.writeValueAsString(form);
         mockMvc.perform(post("/membership")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("회원 맴버쉽 포인트 추가-성공")
-    void memberShip_add_Point() throws Exception{
+    void memberShip_add_Point() throws Exception {
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
         memberShipService.createMemberShip(form);
 
         String content = objectMapper.writeValueAsString(form);
         mockMvc.perform(put("/membership/point")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andDo(print())
-                .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andDo(print())
+            .andExpect(status().isOk());
 
         Member member = memberService.findByPhone("010");
 
@@ -120,26 +120,26 @@ class MemberShipControllerTest {
 
     @Test
     @DisplayName("회원 맴버쉽 포인트 추가-실패(회원이없음)")
-    void memberShip_add_Point_not_found_member() throws Exception{
+    void memberShip_add_Point_not_found_member() throws Exception {
         MemberShipForm form = MemberShipForm.builder().phone("011").point(10000).build();
         String content = objectMapper.writeValueAsString(form);
 
         mockMvc.perform(put("/membership/point")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isNotFound());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("회원 맴버쉽 포인트 추가-실패(회원권이없음)")
-    void memberShip_add_Point_not_found_memberShip() throws Exception{
+    void memberShip_add_Point_not_found_memberShip() throws Exception {
         MemberShipForm form = MemberShipForm.builder().phone("010").point(10000).build();
         String content = objectMapper.writeValueAsString(form);
 
         mockMvc.perform(put("/membership/point")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().is4xxClientError());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().is4xxClientError());
     }
 
 
