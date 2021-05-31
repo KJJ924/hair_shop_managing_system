@@ -41,7 +41,7 @@ public class MemberShipService {
         Member member = memberService.findByPhone(form.getPhone());
 
         if (!member.isMemberShip()) {
-            return ApiResponseMessage.error("No MemberShip", MemberController.NOT_MEMBERSHIP);
+            throw new MemberNotAlreadyException();
         }
         member.addPoint(form.getPoint());
         return ApiResponseMessage.success("포인트가 추가 되었습니다");

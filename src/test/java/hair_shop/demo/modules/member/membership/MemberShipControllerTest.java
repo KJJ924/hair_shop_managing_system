@@ -138,7 +138,7 @@ class MemberShipControllerTest {
         mockMvc.perform(put("/membership/point")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
 
