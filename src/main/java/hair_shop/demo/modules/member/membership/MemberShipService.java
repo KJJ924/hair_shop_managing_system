@@ -21,12 +21,21 @@ public class MemberShipService {
 
     public ResponseEntity<Object> createMemberShip(MemberShipForm form) {
         Member member = memberRepository.findByPhone(form.getPhone());
+
+        //TODO [refactor]  1. 회원이 존재하는지 ? 2.  존재하는데 이미 회원권이 존재하는 회원인지 ?
+        // 문제점 1. 모든 메세지 처리가 ApiResponseMessage 통해 처리되고 있음
+        // 문제점 2. 반환 모델이 존재하지않음(DTO)
+        // 해결방안
+        // 반환 DTO 생성 및 GlobalExceptionController 통한 에러관리
         if (member == null) {
             return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
         } else if (member.isMemberShip()) {
             return ApiResponseMessage.error("alreadyMemberShip", MemberController.ALREADY_MEMBERSHIP);
         }
+
+        //TODO [refactor] 위에 존재하고 있는 예외가 다 통과한다면 회원권이 생성되어 등록된다.
         saveMemberShip(member, form.getPoint());
+
         return ApiResponseMessage.success("회원권이 생성되었습니다.");
     }
 
