@@ -70,6 +70,7 @@ class MemberShipControllerTest {
         Member member = memberService.findByPhone(form.getPhone());
         assertThat(member.getMemberShip()).isNotNull();
         assertThat(member.getMemberShip().getPoint()).isEqualTo(10000);
+        assertThat(member.getMemberShip().getMemberPhone()).isEqualTo("010");
     }
 
     @Test

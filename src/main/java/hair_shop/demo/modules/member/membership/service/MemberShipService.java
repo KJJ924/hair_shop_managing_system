@@ -27,14 +27,15 @@ public class MemberShipService {
         if (member.isMemberShip()) {
             throw new MemberShipAlreadyException();
         }
-        saveMemberShip(member, form.getPoint());
+        MemberShip memberShip = saveMemberShip(member, form.getPoint());
         return ApiResponseMessage.success("회원권이 생성되었습니다.");
     }
 
 
-    private void saveMemberShip(Member member, int point) {
-        MemberShip save = memberShipRepository.save(MemberShip.create(point));
-        member.setMemberShip(save);
+    private MemberShip saveMemberShip(Member member, int point) {
+        MemberShip memberShip = memberShipRepository.save(MemberShip.create(member.getPhone(),point));
+        member.setMemberShip(memberShip);
+        return memberShip;
     }
 
     public ResponseEntity<Object> addPoint(MemberShipForm form) {
