@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseMemberShip {
 
-    private Long id;
+    private Long memberShipId;
 
     private String memberPhone;
 
@@ -25,7 +25,7 @@ public class ResponseMemberShip {
     private LocalDateTime expirationDate;
 
     private ResponseMemberShip(MemberShip memberShip) {
-        this.id = memberShip.getId();
+        this.memberShipId = memberShip.getId();
         this.memberPhone = memberShip.getMemberPhone();
         this.point = memberShip.getPoint();
         this.creationDate = memberShip.getCreationDate();
