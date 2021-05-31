@@ -1,9 +1,15 @@
 package hair_shop.demo.modules.member.membership;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.MemberRepository;
 import hair_shop.demo.modules.member.MemberService;
+import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
@@ -17,11 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,7 +67,7 @@ class MemberShipControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        Member member = memberRepository.findByPhone(form.getPhone());
+        Member member = memberService.findByPhone(form.getPhone());
         assertThat(member.getMemberShip()).isNotNull();
         assertThat(member.getMemberShip().getPoint()).isEqualTo(10000);
     }
@@ -80,7 +81,7 @@ class MemberShipControllerTest {
         mockMvc.perform(post("/membership")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -111,7 +112,7 @@ class MemberShipControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        Member member = memberRepository.findByPhone("010");
+        Member member = memberService.findByPhone("010");
 
         assertThat(member.getMemberShipPoint()).isEqualTo(20000);
     }
@@ -125,7 +126,7 @@ class MemberShipControllerTest {
         mockMvc.perform(put("/membership/point")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
