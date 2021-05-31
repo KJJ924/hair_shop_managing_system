@@ -15,12 +15,13 @@ public class MemberShipController {
     private final MemberShipService memberShipService;
 
     @PostMapping
-    public ResponseEntity<ResponseMemberShip> createMemberShip(@RequestBody MemberShipForm form) {
-        return ResponseEntity.ok(memberShipService.createMemberShip(form));
+    public ResponseEntity<ResponseMemberShip> createMemberShip(
+        @RequestBody MemberShipForm memberShipForm) {
+        return ResponseEntity.ok(memberShipService.createMemberShip(memberShipForm));
     }
 
     @PutMapping("/point")
-    public ResponseEntity<Object> addPoint(@RequestBody MemberShipForm form) {
-        return memberShipService.addPoint(form);
+    public ResponseEntity<ResponseMemberShip> addPoint(@RequestBody MemberShipForm memberShipForm) {
+        return ResponseEntity.ok(memberShipService.addPoint(memberShipForm));
     }
 }
