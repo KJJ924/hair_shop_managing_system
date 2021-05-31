@@ -1,11 +1,12 @@
-package hair_shop.demo.modules.member.membership;
+package hair_shop.demo.modules.member.membership.service;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.membership.repository.MemberShipRepository;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.MemberController;
 import hair_shop.demo.modules.member.MemberRepository;
-import hair_shop.demo.modules.member.membership.form.MemberShipForm;
+import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

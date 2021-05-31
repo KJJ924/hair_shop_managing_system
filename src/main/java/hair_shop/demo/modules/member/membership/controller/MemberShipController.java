@@ -1,6 +1,7 @@
-package hair_shop.demo.modules.member.membership;
+package hair_shop.demo.modules.member.membership.controller;
 
-import hair_shop.demo.modules.member.membership.form.MemberShipForm;
+import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
+import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

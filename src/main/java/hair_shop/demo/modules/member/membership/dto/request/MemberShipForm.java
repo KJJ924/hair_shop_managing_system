@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.member.membership.form;
+package hair_shop.demo.modules.member.membership.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
