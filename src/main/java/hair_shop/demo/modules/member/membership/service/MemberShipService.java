@@ -1,11 +1,12 @@
 package hair_shop.demo.modules.member.membership.service;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.member.MemberController;
 import hair_shop.demo.modules.member.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
+import hair_shop.demo.modules.member.membership.error.MemberNotAlreadyException;
+import hair_shop.demo.modules.member.membership.error.MemberShipAlreadyException;
 import hair_shop.demo.modules.member.membership.repository.MemberShipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,20 +22,11 @@ public class MemberShipService {
     private final MemberService memberService;
 
     public ResponseEntity<Object> createMemberShip(MemberShipForm form) {
-
         Member member = memberService.findByPhone(form.getPhone());
 
-        //TODO [refactor]  1. 회원이 존재하는지 ? 2.  존재하는데 이미 회원권이 존재하는 회원인지 ?
-        // 문제점 1. 모든 메세지 처리가 ApiResponseMessage 통해 처리되고 있음
-        // 문제점 2. 반환 모델이 존재하지않음(DTO)
-        // 해결방안
-        // 반환 DTO 생성 및 GlobalExceptionController 통한 에러관리
         if (member.isMemberShip()) {
-            return ApiResponseMessage
-                .error("alreadyMemberShip", MemberController.ALREADY_MEMBERSHIP);
+            throw new MemberShipAlreadyException();
         }
-
-        //TODO [refactor] 위에 존재하고 있는 예외가 다 통과한다면 회원권이 생성되어 등록된다.
         saveMemberShip(member, form.getPoint());
         return ApiResponseMessage.success("회원권이 생성되었습니다.");
     }
