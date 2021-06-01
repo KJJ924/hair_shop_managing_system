@@ -32,7 +32,7 @@ public class DesignerController {
         if(designerRepository.existsByName(name)){
             return ApiResponseMessage.error(name,DUPLICATE_DESIGNER);
         }
-        Designer designer = Designer.builder().name(name).build();
+        Designer designer = Designer.name(name);
         designerRepository.save(designer);
         return ApiResponseMessage.success("성공적으로 저장됨");
     }

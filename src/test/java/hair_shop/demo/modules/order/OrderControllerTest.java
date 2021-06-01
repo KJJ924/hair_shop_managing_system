@@ -1,18 +1,35 @@
 package hair_shop.demo.modules.order;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import hair_shop.demo.modules.designer.domain.Designer;
-import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.menu.domain.Menu;
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import hair_shop.demo.modules.member.MemberRepository;
+import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import hair_shop.demo.modules.menu.MenuRepository;
-import hair_shop.demo.modules.order.form.*;
+import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.form.MonthData;
+import hair_shop.demo.modules.order.form.OrderForm;
+import hair_shop.demo.modules.order.form.Payment;
+import hair_shop.demo.modules.order.form.PaymentForm;
 import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
 import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,18 +39,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,7 +76,7 @@ class OrderControllerTest {
                 .phone("000")
                 .point(10000)
                 .build());
-        designerRepository.save(Designer.builder().name("사장님").build());
+        designerRepository.save(Designer.name("사장님"));
         menuRepository.save(Menu.builder().name("menu").price(1000).build());
         menuRepository.save(Menu.builder().name("menu2").price(100000).build());
 
