@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
+import hair_shop.demo.modules.designer.dto.request.RequestDesigner;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,21 +35,25 @@ class DesignerControllerTest {
     ObjectMapper objectMapper;
 
     @BeforeEach
-    void initData(){
+    void initData() {
         designerRepository.save(Designer.name("test"));
     }
 
     @AfterEach
-    void clearData(){
+    void clearData() {
         designerRepository.deleteAll();
     }
 
     @Test
     @DisplayName("디자이너 추가-성공")
     void addDesigner() throws Exception {
+        RequestDesigner requestDesigner = new RequestDesigner();
+        requestDesigner.setName("designerTest");
+        String content = objectMapper.writeValueAsString(requestDesigner);
         mockMvc.perform(post("/designer")
-                .param("name","designerTest"))
-                .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().isOk());
 
         Designer designerTest = designerRepository.findByName("designerTest");
         assertThat(designerTest).isNotNull();
@@ -57,30 +62,21 @@ class DesignerControllerTest {
     @Test
     @DisplayName("디자이너 추가-실패(중복)")
     void addDesigner_fail_duplicate() throws Exception {
+        RequestDesigner requestDesigner = new RequestDesigner();
+        requestDesigner.setName("test");
+        String content = objectMapper.writeValueAsString(requestDesigner);
         mockMvc.perform(post("/designer")
-                .param("name","test"))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andExpect(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("디자이너 목록 가져오기-성공")
     void getDesigner_list() throws Exception {
         mockMvc.perform(get("/designer"))
-                .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("디자이너 목록 가져오기-실패(디자이너가 없음)")
-    void getDesigner_list_fail() throws Exception {
-
-        designerRepository.deleteAll();
-
-        mockMvc.perform(get("/designer"))
-                .andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+            .andDo(print())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 }
