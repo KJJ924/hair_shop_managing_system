@@ -20,8 +20,8 @@ public class DesignerController {
     /*
     * TODO 1. Controller 가 가지고있는 ERROR MESSAGE 분리
     * TODO 2. save , get 로직 서비스 레이어로 이동
-    * TODO 3. Response 응답 DTO 생성
-    * TODO 4. Domain 객체 gen key 전략 변경
+    * TODO 3. Response 응답 DTO 생성 [ x ]
+    * TODO 4. Domain 객체 gen key 전략 변경 [ x ]
     * */
     public static final String NOT_FOUND_DESIGNER = "디자이너를 찾을수 없음";
     public static final String DUPLICATE_DESIGNER = "디자이너가 이미존재함";
