@@ -1,6 +1,7 @@
-package hair_shop.demo.modules.designer;
+package hair_shop.demo.modules.designer.controller;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
+import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import hair_shop.demo.modules.designer.domain.Designer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

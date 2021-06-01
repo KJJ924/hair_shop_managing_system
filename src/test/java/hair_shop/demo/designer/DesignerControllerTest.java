@@ -2,7 +2,7 @@ package hair_shop.demo.designer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
-import hair_shop.demo.modules.designer.DesignerRepository;
+import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package hair_shop.demo.modules.order;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.designer.DesignerRepository;
+import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.MemberController;
 import hair_shop.demo.modules.member.MemberRepository;
