@@ -1,6 +1,7 @@
 package hair_shop.demo.modules.designer.service;
 
 import hair_shop.demo.modules.designer.domain.Designer;
+import hair_shop.demo.modules.designer.dto.request.RequestDesigner;
 import hair_shop.demo.modules.designer.dto.response.ResponseDesigner;
 import hair_shop.demo.modules.designer.exception.DuplicateDesignerException;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
@@ -21,11 +22,12 @@ public class DesignerService {
 
     private final DesignerRepository designerRepository;
 
-    public ResponseDesigner save(String name) {
-        if (designerRepository.existsByName(name)) {
+    public ResponseDesigner save(RequestDesigner requestDesigner) {
+        if (designerRepository.existsByName(requestDesigner.getName())) {
             throw new DuplicateDesignerException();
         }
-        return ResponseDesigner.toMapper(designerRepository.save(Designer.name(name)));
+        return ResponseDesigner
+            .toMapper(designerRepository.save(Designer.name(requestDesigner.getName())));
     }
 
     public List<ResponseDesigner> getDesigners() {
