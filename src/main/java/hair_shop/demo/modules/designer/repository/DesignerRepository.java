@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.designer;
+package hair_shop.demo.modules.designer.repository;
 
 import hair_shop.demo.modules.designer.domain.Designer;
 import org.springframework.data.jpa.repository.JpaRepository;

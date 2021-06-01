@@ -19,7 +19,10 @@ public enum ErrorCode {
 
     //MemberShip
     ALREADY_MEMBERSHIP(HttpStatus.CONFLICT,"이미 회원권이 존재함") ,
-    NOT_MEMBERSHIP (HttpStatus.NOT_FOUND,"회원권이 없음");
+    NOT_MEMBERSHIP (HttpStatus.NOT_FOUND,"회원권이 없음"),
+
+    //designer
+    DUPLICATE_DESIGNER  (HttpStatus.CONFLICT,"디자이너가 이미존재함");
 
     private final HttpStatus status;
     private final String message;
