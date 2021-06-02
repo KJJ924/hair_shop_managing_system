@@ -1,6 +1,8 @@
-package hair_shop.demo.modules.menu;
+package hair_shop.demo.modules.menu.controller;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
+import hair_shop.demo.modules.menu.service.MenuService;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.menu.validation.MenuValidation;
 import lombok.RequiredArgsConstructor;

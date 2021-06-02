@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.menu;
+package hair_shop.demo.modules.menu.service;
 
 import hair_shop.demo.modules.menu.domain.Menu;
 import lombok.RequiredArgsConstructor;

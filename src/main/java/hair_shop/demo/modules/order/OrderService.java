@@ -6,7 +6,7 @@ import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.MemberController;
 import hair_shop.demo.modules.member.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.menu.MenuRepository;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.form.*;
