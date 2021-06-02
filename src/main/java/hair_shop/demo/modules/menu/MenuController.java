@@ -22,6 +22,10 @@ public class MenuController {
     private final MenuValidation menuValidation;
     private final MenuService menuService;
 
+    //TODO 1. Layer 경계 확실하게 나눌것.
+    //TODO 2. 반환 DTO 요청 DTO 생성
+    //TODO 3. Error 분리
+
     @InitBinder("menu")
     public void menuInitBinder(WebDataBinder webDataBinder){
         webDataBinder.addValidators(menuValidation);
