@@ -17,7 +17,7 @@
     <properties>
         <java.version>11</java.version>
         <sonar.projectKey>KJJ924_hair_shop_managing_system</sonar.projectKey>
-        <sonar.organization>kjj924</sonar.organization>
+        <sonar.organization>kjj3-fsdjfoqkad</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
