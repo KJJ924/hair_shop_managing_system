@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,12 @@ public class Menu {
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @Builder
+    public Menu(String name, int price) {
+        this.name = name;
+        this.price = price;
+    }
 
     private int price;
 
