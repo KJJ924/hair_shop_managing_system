@@ -1,7 +1,6 @@
 package hair_shop.demo.modules.menu.dto.request;
 
 import hair_shop.demo.modules.menu.domain.Menu;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +18,8 @@ public class RequestMenu {
     @NotNull
     private String name;
 
-    @Min(0)
-    private int price;
+    @NotNull
+    private Integer price;
 
     public Menu toEntity() {
         return Menu.builder()

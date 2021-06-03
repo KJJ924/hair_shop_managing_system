@@ -2,6 +2,7 @@ package hair_shop.demo.modules.menu.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author dkansk924@naver.com
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class RequestEditMenuName {
 
