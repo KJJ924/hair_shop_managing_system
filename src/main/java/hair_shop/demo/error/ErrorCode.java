@@ -22,7 +22,12 @@ public enum ErrorCode {
     NOT_MEMBERSHIP (HttpStatus.NOT_FOUND,"회원권이 없음"),
 
     //designer
-    DUPLICATE_DESIGNER  (HttpStatus.CONFLICT,"디자이너가 이미존재함");
+    DUPLICATE_DESIGNER  (HttpStatus.CONFLICT,"디자이너가 이미존재함"),
+
+    //menu
+    NOT_FOUND_MENU (HttpStatus.NOT_FOUND,"해당하는 Menu 가 존재하지않음"),
+    DUPLICATE_MENU (HttpStatus.CONFLICT,"이미 해당하는 메뉴가 있음");
+
 
     private final HttpStatus status;
     private final String message;

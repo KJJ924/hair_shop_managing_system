@@ -1,8 +1,8 @@
 package hair_shop.demo.modules.menu.validation;
 
 import hair_shop.demo.modules.menu.domain.Menu;
-import hair_shop.demo.modules.menu.MenuController;
-import hair_shop.demo.modules.menu.MenuRepository;
+import hair_shop.demo.modules.menu.controller.MenuController;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

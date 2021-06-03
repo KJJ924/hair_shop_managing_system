@@ -1,7 +1,7 @@
 package hair_shop.demo.modules.order.validator;
 
-import hair_shop.demo.modules.menu.MenuController;
-import hair_shop.demo.modules.menu.MenuRepository;
+import hair_shop.demo.modules.menu.controller.MenuController;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.order.OrderController;
 import hair_shop.demo.modules.order.OrderRepository;
 import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;

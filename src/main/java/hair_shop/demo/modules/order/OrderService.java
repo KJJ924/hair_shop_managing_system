@@ -6,7 +6,7 @@ import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.MemberController;
 import hair_shop.demo.modules.member.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.menu.MenuRepository;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.form.*;
@@ -36,7 +36,8 @@ public class OrderService {
     private OrderTable makeOrder(OrderForm orderForm){
         Designer designer =designerRepository.findByName(orderForm.getDesignerName());
         Member member = memberRepository.findWithPhoneByPhone(orderForm.getMemberPhoneNumber());
-        Menu menu= menuRepository.findByName(orderForm.getMenuName());
+        //FIXME .get()
+        Menu menu= menuRepository.findByName(orderForm.getMenuName()).get();
         HashSet<Menu> menus = new HashSet<>();
         menus.add(menu);
         return OrderTable.builder()
@@ -153,12 +154,14 @@ public class OrderService {
 
     private void deleteMenu(OrderMenuEditForm orderMenuEditForm) {
         OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
-        orderTable.menuDelete(menuRepository.findByName(orderMenuEditForm.getMenuName()));
+        //FIXME .get()
+        orderTable.menuDelete(menuRepository.findByName(orderMenuEditForm.getMenuName()).get());
     }
 
     private void addMenu(OrderMenuEditForm orderMenuEditForm) {
         OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
         //앞에 @Valid 에서 메뉴가 있는지 검증이 끝나서 따로 검증하지 않아도 됨
-        orderTable.menuAdd(menuRepository.findByName(orderMenuEditForm.getMenuName()));
+        //FIXME .get()
+        orderTable.menuAdd(menuRepository.findByName(orderMenuEditForm.getMenuName()).get());
     }
 }
