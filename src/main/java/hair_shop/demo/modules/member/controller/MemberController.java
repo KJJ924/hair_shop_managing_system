@@ -3,9 +3,9 @@ package hair_shop.demo.modules.member.controller;
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
-import hair_shop.demo.modules.member.form.MemberForm;
-import hair_shop.demo.modules.member.form.MemberListInfo;
+import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
+import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
+import hair_shop.demo.modules.member.dto.response.ResponseMemberCommon;
 import hair_shop.demo.modules.member.validation.MemberValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,11 +42,11 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveMember(@RequestBody @Validated MemberForm memberForm , Errors errors){
+    public ResponseEntity<Object> saveMember(@RequestBody @Validated RequestMemberForm requestMemberForm, Errors errors){
         if(errors.hasErrors()){
             return ApiResponseMessage.error(errors);
         }
-        memberService.saveMember(memberForm);
+        memberService.saveMember(requestMemberForm);
         return ApiResponseMessage.success("성공적으로 저장됨");
     }
 
@@ -60,7 +60,7 @@ public class MemberController {
 
     @GetMapping("/recentNotComingList")
     public ResponseEntity<Object> getMemberRecentNotComingList(){
-        List<MemberListInfo>  listInfoList = memberService.recentNotComingListUp();
+        List<ResponseMemberCommon>  listInfoList = memberService.recentNotComingListUp();
         if(listInfoList.isEmpty()){
             return ApiResponseMessage.success("미용실 방문 후 한달이 지난 손님이 없습니다");
         }
@@ -68,7 +68,7 @@ public class MemberController {
     }
 
     @PutMapping("/description")
-    public ResponseEntity<Object> addDescription(@RequestBody @Valid MemberAddDescriptionForm form,Errors errors){
+    public ResponseEntity<Object> addDescription(@RequestBody @Valid RequestMemberAddDescriptionForm form,Errors errors){
         if(errors.hasErrors()){
             return ApiResponseMessage.error(errors);
         }
