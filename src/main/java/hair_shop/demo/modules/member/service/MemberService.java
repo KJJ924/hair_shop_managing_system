@@ -8,7 +8,7 @@ import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
 import hair_shop.demo.modules.member.repository.MemberRepository;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -27,7 +27,6 @@ public class MemberService {
 
     public void saveMember(MemberForm memberForm) {
         Member member = modelMapper.map(memberForm, Member.class);
-        member.setJoinedAt(LocalDateTime.now());
         memberRepository.save(member);
     }
 
@@ -52,7 +51,7 @@ public class MemberService {
 
     public List<MemberListInfo> recentNotComingListUp() {
         List<Member> memberList = memberRepository
-            .findByLastVisitDateBetween(LocalDateTime.now().minusMonths(1));
+            .findByLastVisitDateBetween(LocalDate.now().minusMonths(1));
 
         List<MemberListInfo> listInfoList = new ArrayList<>();
         for (Member member : memberList) {

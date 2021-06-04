@@ -207,7 +207,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
 
 
     }
@@ -231,7 +231,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
     }
 
     @Test
@@ -277,7 +277,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
     }
 
     @Test

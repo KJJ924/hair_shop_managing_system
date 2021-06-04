@@ -15,7 +15,7 @@ import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
 import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.service.MemberService;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,22 +47,20 @@ class MemberControllerTest {
     @BeforeEach
     void initMember(){
         Member testMember = Member.builder()
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
                 .name("TestMember")
                 .phone("1234")
                 .build();
+        testMember.setLastVisitDate(LocalDate.now().minusMonths(2));
+
         Member testMember2 = Member.builder()
-                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
                 .name("TestMember")
                 .phone("1235")
                 .build();
         Member testMember3 = Member.builder()
-                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
                 .name("TestMember")
                 .phone("01000000000")
                 .build();
+
         memberRepository.save(testMember);
         memberRepository.save(testMember2);
         memberRepository.save(testMember3);
