@@ -1,7 +1,5 @@
 package hair_shop.demo.modules.member.service;
 
-import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
 import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
@@ -14,12 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -49,20 +45,16 @@ public class MemberService {
         return changeResponseMemberCommonList(memberList);
     }
 
+    @Transactional
+    public ResponseMemberCommon addDescription(RequestMemberAddDescriptionForm form) {
+        Member member = findByPhone(form.getPhone());
+        member.addDescription(form.getDescription());
+        return ResponseMemberCommon.toMapper(member);
+    }
 
     public Member findByPhone(String phone) {
         return memberRepository.findByPhone(phone).orElseThrow(NotFoundMemberException::new);
     }
-
-    public ResponseEntity<Object> addDescription(RequestMemberAddDescriptionForm form) {
-        Member member = findByPhone(form.getPhone());
-        if (member == null) {
-            return ApiResponseMessage.error(form.getPhone(), MemberController.NOT_FOUND_MEMBER);
-        }
-        member.setDescription(form.getDescription());
-        return ApiResponseMessage.success("성공적으로 저장되었습니다");
-    }
-
     private List<ResponseMemberCommon> changeResponseMemberCommonList(List<Member> memberList) {
         return memberList.stream()
             .map(ResponseMemberCommon::toMapper)

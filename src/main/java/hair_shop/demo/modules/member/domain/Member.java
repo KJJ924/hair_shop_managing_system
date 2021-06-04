@@ -73,6 +73,9 @@ public class Member {
         return 0;
     }
 
+    public void addDescription(String description){
+        this.description = description;
+    }
     public void registerVisitDate(){
         this.lastVisitDate = LocalDate.now();
     }

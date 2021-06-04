@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ResponseMemberCommon {
 
+
     private Long memberId;
 
     private String phone;
@@ -21,11 +22,14 @@ public class ResponseMemberCommon {
 
     private LocalDate joinedAt;
 
+    private String description;
+
     private ResponseMemberCommon(Member member) {
         this.memberId = member.getId();
         this.phone = member.getPhone();
         this.name = member.getName();
         this.joinedAt = member.getJoinedAt();
+        this.description = member.getDescription();
     }
 
     public static ResponseMemberCommon toMapper(Member member) {

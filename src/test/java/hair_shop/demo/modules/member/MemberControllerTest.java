@@ -80,7 +80,7 @@ class MemberControllerTest {
         mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestMemberForm)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Member member = memberRepository.findByPhone(requestMemberForm.getPhone()).get();
         assertThat(member).isNotNull();
