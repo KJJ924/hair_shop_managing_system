@@ -91,13 +91,13 @@ class MemberControllerTest {
     void memberJoinWrong() throws Exception{
         RequestMemberForm requestMemberForm =new RequestMemberForm();
         requestMemberForm.setName("TestMember");
-        requestMemberForm.setPhone("1234");
+        requestMemberForm.setPhone("01000000000");
 
         mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestMemberForm)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

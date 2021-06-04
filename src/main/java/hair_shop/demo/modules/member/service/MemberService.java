@@ -3,6 +3,7 @@ package hair_shop.demo.modules.member.service;
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.exception.DuplicationMemberException;
 import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
 import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
@@ -25,9 +26,12 @@ public class MemberService {
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
 
-    public void saveMember(RequestMemberForm requestMemberForm) {
-        Member member = modelMapper.map(requestMemberForm, Member.class);
-        memberRepository.save(member);
+    public ResponseMemberCommon saveMember(RequestMemberForm requestMemberForm) {
+        if(memberRepository.existsByPhone(requestMemberForm.getPhone())){
+            throw new DuplicationMemberException();
+        }
+        Member member = memberRepository.save(requestMemberForm.toEntity());
+        return ResponseMemberCommon.toMapper(member);
     }
 
     public List<ResponseMemberCommon> getAllMemberList() {
