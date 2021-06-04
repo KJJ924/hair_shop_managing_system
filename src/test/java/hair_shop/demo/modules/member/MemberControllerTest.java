@@ -10,10 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
-import hair_shop.demo.modules.member.form.MemberForm;
-import hair_shop.demo.modules.member.form.MemberListInfo;
-import java.time.LocalDateTime;
+import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
+import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
+import hair_shop.demo.modules.member.dto.response.ResponseMemberCommon;
+import hair_shop.demo.modules.member.repository.MemberRepository;
+import hair_shop.demo.modules.member.service.MemberService;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,22 +47,20 @@ class MemberControllerTest {
     @BeforeEach
     void initMember(){
         Member testMember = Member.builder()
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
                 .name("TestMember")
                 .phone("1234")
                 .build();
+        testMember.setLastVisitDate(LocalDate.now().minusMonths(2));
+
         Member testMember2 = Member.builder()
-                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
-                .name("TestMember")
+                .name("TestMember1")
                 .phone("1235")
                 .build();
         Member testMember3 = Member.builder()
-                .lastVisitDate(LocalDateTime.of(2010, 12, 10, 0, 0))
-                .joinedAt(LocalDateTime.of(2020, 12, 10, 0, 0))
-                .name("TestMember")
+                .name("TestMember2")
                 .phone("01000000000")
                 .build();
+
         memberRepository.save(testMember);
         memberRepository.save(testMember2);
         memberRepository.save(testMember3);
@@ -73,31 +73,31 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 추가")
     void memberInsert() throws Exception{
-        MemberForm memberForm =new MemberForm();
-        memberForm.setName("재준");
-        memberForm.setPhone("01030686687");
+        RequestMemberForm requestMemberForm =new RequestMemberForm();
+        requestMemberForm.setName("재준");
+        requestMemberForm.setPhone("01030686687");
 
         mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberForm)))
-                .andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(requestMemberForm)))
+                .andExpect(status().isCreated());
 
-        Member member = memberRepository.findByPhone(memberForm.getPhone()).get();
+        Member member = memberRepository.findByPhone(requestMemberForm.getPhone()).get();
         assertThat(member).isNotNull();
     }
 
     @Test
     @DisplayName("회원 추가 실패(중복 회원)")
     void memberJoinWrong() throws Exception{
-        MemberForm memberForm =new MemberForm();
-        memberForm.setName("TestMember");
-        memberForm.setPhone("1234");
+        RequestMemberForm requestMemberForm =new RequestMemberForm();
+        requestMemberForm.setName("TestMember");
+        requestMemberForm.setPhone("01000000000");
 
         mockMvc.perform(post("/member")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberForm)))
+                .content(objectMapper.writeValueAsString(requestMemberForm)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -124,8 +124,8 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 리스트 받기")
     void getMemberList() throws Exception {
-        List<MemberListInfo> memberListInfo = memberService.getAllMemberList();
-        String content = objectMapper.writeValueAsString(memberListInfo);
+        List<ResponseMemberCommon> responseMemberCommon = memberService.getAllMemberList();
+        String content = objectMapper.writeValueAsString(responseMemberCommon);
 
         mockMvc.perform(get("/member/list"))
                 .andExpect(status().isOk())
@@ -136,10 +136,10 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 리스트 받기 - 이름으로검색")
     void getMemberSearchNameList() throws Exception {
-        List<MemberListInfo> memberListInfo = memberService.getMemberSearchNameList("TestMember");
-        String content = objectMapper.writeValueAsString(memberListInfo);
+        List<ResponseMemberCommon> responseMemberCommon = memberService.getMemberSearchNameList("TestMember");
+        String content = objectMapper.writeValueAsString(responseMemberCommon);
 
-        mockMvc.perform(get("/member/list")
+        mockMvc.perform(get("/member/search")
                 .param("name","TestMember"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -149,10 +149,10 @@ class MemberControllerTest {
     @Test
     @DisplayName("재방문 한달 지난 손님 리스트 받기-성공")
     void getMemberRecentNotComingList() throws Exception {
-        List<MemberListInfo> memberListInfo = memberService.recentNotComingListUp();
-        String content = objectMapper.writeValueAsString(memberListInfo);
+        List<ResponseMemberCommon> responseMemberCommon = memberService.recentNotComingListUp();
+        String content = objectMapper.writeValueAsString(responseMemberCommon);
 
-        mockMvc.perform(get("/member/recentNotComingList"))
+        mockMvc.perform(get("/member/unvisited"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -162,29 +162,29 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 특이사항 추가 -성공")
     void add_memberDescription() throws Exception{
-        MemberAddDescriptionForm memberAddDescriptionForm = new MemberAddDescriptionForm();
-        memberAddDescriptionForm.setDescription("description");
-        memberAddDescriptionForm.setPhone("01000000000");
+        RequestMemberAddDescriptionForm requestMemberAddDescriptionForm = new RequestMemberAddDescriptionForm();
+        requestMemberAddDescriptionForm.setDescription("description");
+        requestMemberAddDescriptionForm.setPhone("01000000000");
 
         mockMvc.perform(put("/member/description")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
+                .content(objectMapper.writeValueAsString(requestMemberAddDescriptionForm)))
                 .andExpect(status().isOk());
 
-        Member member = memberService.findByPhone(memberAddDescriptionForm.getPhone());
-        assertThat(member.getDescription()).isEqualTo(memberAddDescriptionForm.getDescription());
+        Member member = memberService.findByPhone(requestMemberAddDescriptionForm.getPhone());
+        assertThat(member.getDescription()).isEqualTo(requestMemberAddDescriptionForm.getDescription());
     }
 
     @Test
     @DisplayName("회원 특이사항 추가 -실패(해당하는 회원이 없음)")
     void add_memberDescription_fail() throws Exception{
-        MemberAddDescriptionForm memberAddDescriptionForm = new MemberAddDescriptionForm();
-        memberAddDescriptionForm.setDescription("description");
-        memberAddDescriptionForm.setPhone("01000000001");
+        RequestMemberAddDescriptionForm requestMemberAddDescriptionForm = new RequestMemberAddDescriptionForm();
+        requestMemberAddDescriptionForm.setDescription("description");
+        requestMemberAddDescriptionForm.setPhone("01000000001");
 
         mockMvc.perform(put("/member/description")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberAddDescriptionForm)))
+                .content(objectMapper.writeValueAsString(requestMemberAddDescriptionForm)))
                 .andExpect(status().isNotFound());
     }
 }

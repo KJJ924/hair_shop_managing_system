@@ -2,8 +2,8 @@ package hair_shop.demo.modules.order.validator;
 
 import hair_shop.demo.modules.designer.controller.DesignerController;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
-import hair_shop.demo.modules.member.MemberController;
-import hair_shop.demo.modules.member.MemberRepository;
+import hair_shop.demo.modules.member.controller.MemberController;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.menu.controller.MenuController;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.order.form.OrderForm;

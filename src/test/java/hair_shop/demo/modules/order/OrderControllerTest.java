@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
-import hair_shop.demo.modules.member.MemberRepository;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
@@ -207,7 +207,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
 
 
     }
@@ -231,7 +231,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
     }
 
     @Test
@@ -277,7 +277,7 @@ class OrderControllerTest {
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
         assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDateTime.now().minusMinutes(1),LocalDateTime.now());
+                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
     }
 
     @Test

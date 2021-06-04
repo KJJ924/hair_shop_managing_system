@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hair_shop.demo.modules.member.MemberRepository;
-import hair_shop.demo.modules.member.MemberService;
+import hair_shop.demo.modules.member.repository.MemberRepository;
+import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.member.form.MemberForm;
+import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import org.junit.jupiter.api.AfterEach;
@@ -45,10 +45,10 @@ class MemberShipControllerTest {
 
     @BeforeEach
     void initData() {
-        MemberForm memberForm = new MemberForm();
-        memberForm.setName("test");
-        memberForm.setPhone("010");
-        memberService.saveMember(memberForm);
+        RequestMemberForm requestMemberForm = new RequestMemberForm();
+        requestMemberForm.setName("test");
+        requestMemberForm.setPhone("010");
+        memberService.saveMember(requestMemberForm);
     }
 
     @AfterEach
