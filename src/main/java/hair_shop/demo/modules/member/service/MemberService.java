@@ -1,11 +1,13 @@
-package hair_shop.demo.modules.member;
+package hair_shop.demo.modules.member.service;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
+import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

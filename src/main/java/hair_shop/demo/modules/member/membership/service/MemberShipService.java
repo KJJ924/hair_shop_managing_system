@@ -1,6 +1,6 @@
 package hair_shop.demo.modules.member.membership.service;
 
-import hair_shop.demo.modules.member.MemberService;
+import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;

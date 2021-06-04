@@ -13,6 +13,8 @@ import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.form.MemberListInfo;
+import hair_shop.demo.modules.member.repository.MemberRepository;
+import hair_shop.demo.modules.member.service.MemberService;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;

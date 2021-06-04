@@ -1,6 +1,7 @@
-package hair_shop.demo.modules.member;
+package hair_shop.demo.modules.member.controller;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
+import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.form.MemberAddDescriptionForm;
 import hair_shop.demo.modules.member.form.MemberForm;

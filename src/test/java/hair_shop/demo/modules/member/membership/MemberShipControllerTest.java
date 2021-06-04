@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hair_shop.demo.modules.member.MemberRepository;
-import hair_shop.demo.modules.member.MemberService;
+import hair_shop.demo.modules.member.repository.MemberRepository;
+import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.form.MemberForm;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;

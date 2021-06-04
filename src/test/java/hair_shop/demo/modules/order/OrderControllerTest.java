@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
-import hair_shop.demo.modules.member.MemberRepository;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;

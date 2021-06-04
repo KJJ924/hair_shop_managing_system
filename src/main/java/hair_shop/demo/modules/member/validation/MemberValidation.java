@@ -1,7 +1,7 @@
 package hair_shop.demo.modules.member.validation;
 
-import hair_shop.demo.modules.member.MemberController;
-import hair_shop.demo.modules.member.MemberRepository;
+import hair_shop.demo.modules.member.controller.MemberController;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.form.MemberForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
