@@ -53,11 +53,11 @@ class MemberControllerTest {
         testMember.setLastVisitDate(LocalDate.now().minusMonths(2));
 
         Member testMember2 = Member.builder()
-                .name("TestMember")
+                .name("TestMember1")
                 .phone("1235")
                 .build();
         Member testMember3 = Member.builder()
-                .name("TestMember")
+                .name("TestMember2")
                 .phone("01000000000")
                 .build();
 
@@ -139,7 +139,7 @@ class MemberControllerTest {
         List<ResponseMemberCommon> responseMemberCommon = memberService.getMemberSearchNameList("TestMember");
         String content = objectMapper.writeValueAsString(responseMemberCommon);
 
-        mockMvc.perform(get("/member/list")
+        mockMvc.perform(get("/member/search")
                 .param("name","TestMember"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -152,7 +152,7 @@ class MemberControllerTest {
         List<ResponseMemberCommon> responseMemberCommon = memberService.recentNotComingListUp();
         String content = objectMapper.writeValueAsString(responseMemberCommon);
 
-        mockMvc.perform(get("/member/recentNotComingList"))
+        mockMvc.perform(get("/member/unvisited"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

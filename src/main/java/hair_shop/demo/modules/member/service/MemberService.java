@@ -3,18 +3,17 @@ package hair_shop.demo.modules.member.service;
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.member.exception.DuplicationMemberException;
-import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
 import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
 import hair_shop.demo.modules.member.dto.response.ResponseMemberCommon;
+import hair_shop.demo.modules.member.exception.DuplicationMemberException;
+import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +22,10 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class MemberService {
 
-    private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
 
     public ResponseMemberCommon saveMember(RequestMemberForm requestMemberForm) {
-        if(memberRepository.existsByPhone(requestMemberForm.getPhone())){
+        if (memberRepository.existsByPhone(requestMemberForm.getPhone())) {
             throw new DuplicationMemberException();
         }
         Member member = memberRepository.save(requestMemberForm.toEntity());
@@ -36,33 +34,19 @@ public class MemberService {
 
     public List<ResponseMemberCommon> getAllMemberList() {
         List<Member> members = memberRepository.findAll();
-        return getMemberListInfo(members);
+        return changeResponseMemberCommonList(members);
     }
 
     public List<ResponseMemberCommon> getMemberSearchNameList(String name) {
         List<Member> memberList = memberRepository.findByName(name);
-        return getMemberListInfo(memberList);
+        return changeResponseMemberCommonList(memberList);
     }
 
-    private List<ResponseMemberCommon> getMemberListInfo(List<Member> members) {
-        List<ResponseMemberCommon> listInfoList = new ArrayList<>();
-        for (Member member : members) {
-            ResponseMemberCommon responseMemberCommon = modelMapper.map(member, ResponseMemberCommon.class);
-            listInfoList.add(responseMemberCommon);
-        }
-        return listInfoList;
-    }
 
     public List<ResponseMemberCommon> recentNotComingListUp() {
         List<Member> memberList = memberRepository
             .findByLastVisitDateBetween(LocalDate.now().minusMonths(1));
-
-        List<ResponseMemberCommon> listInfoList = new ArrayList<>();
-        for (Member member : memberList) {
-            listInfoList.add(modelMapper.map(member, ResponseMemberCommon.class));
-        }
-
-        return listInfoList;
+        return changeResponseMemberCommonList(memberList);
     }
 
 
@@ -77,6 +61,12 @@ public class MemberService {
         }
         member.setDescription(form.getDescription());
         return ApiResponseMessage.success("성공적으로 저장되었습니다");
+    }
+
+    private List<ResponseMemberCommon> changeResponseMemberCommonList(List<Member> memberList) {
+        return memberList.stream()
+            .map(ResponseMemberCommon::toMapper)
+            .collect(Collectors.toList());
     }
 
 

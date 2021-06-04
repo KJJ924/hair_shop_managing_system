@@ -41,20 +41,18 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> getMemberList(@RequestParam(required = false) String name){
-        if(name !=null){
-           return ResponseEntity.ok(memberService.getMemberSearchNameList(name));
-        }
+    public ResponseEntity<List<ResponseMemberCommon>> getMemberList(){
         return ResponseEntity.ok(memberService.getAllMemberList());
     }
 
-    @GetMapping("/recentNotComingList")
-    public ResponseEntity<Object> getMemberRecentNotComingList(){
-        List<ResponseMemberCommon>  listInfoList = memberService.recentNotComingListUp();
-        if(listInfoList.isEmpty()){
-            return ApiResponseMessage.success("미용실 방문 후 한달이 지난 손님이 없습니다");
-        }
-        return ResponseEntity.ok(listInfoList);
+    @GetMapping("/search")
+    public ResponseEntity<List<ResponseMemberCommon>> searchName(@RequestParam String name){
+        return ResponseEntity.ok(memberService.getMemberSearchNameList(name));
+    }
+
+    @GetMapping("/unvisited")
+    public ResponseEntity<List<ResponseMemberCommon>> getMemberRecentNotComingList(){
+        return ResponseEntity.ok(memberService.recentNotComingListUp());
     }
 
     @PutMapping("/description")
