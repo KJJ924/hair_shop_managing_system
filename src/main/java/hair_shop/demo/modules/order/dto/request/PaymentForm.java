@@ -1,5 +1,6 @@
-package hair_shop.demo.modules.order.form;
+package hair_shop.demo.modules.order.dto.request;
 
+import hair_shop.demo.modules.order.domain.Payment;
 import lombok.Builder;
 import lombok.Data;
 

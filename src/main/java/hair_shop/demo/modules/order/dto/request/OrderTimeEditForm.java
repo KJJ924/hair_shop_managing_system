@@ -1,25 +1,22 @@
-package hair_shop.demo.modules.order.form;
+package hair_shop.demo.modules.order.dto.request;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-public class OrderForm {
+@Builder
+public class OrderTimeEditForm {
 
-    @NotBlank
-    private String menuName;
-    @NotBlank
-    private String memberPhoneNumber;
-    @NotBlank
-    private String designerName;
+    @NotNull
+    private Long id;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime reservationStart;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime reservationEnd;
-
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.order.form.Payment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,15 +14,18 @@ import java.util.*;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@Getter @Setter
-@Builder @AllArgsConstructor
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-@NamedEntityGraph(name = "order.withAll",attributeNodes = {
-        @NamedAttributeNode("menus"),
+@NamedEntityGraph(name = "order.withAll", attributeNodes = {
+    @NamedAttributeNode("menus"),
 })
 public class OrderTable {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     private LocalDate reservationDate;
@@ -47,8 +49,8 @@ public class OrderTable {
     private Designer designers;
 
 
-    public Integer totalPrice(){
-        int totalPrice =0;
+    public Integer totalPrice() {
+        int totalPrice = 0;
         for (Menu menu : menus) {
             totalPrice += menu.getPrice();
         }
@@ -61,27 +63,29 @@ public class OrderTable {
         data.forEach(orderTable -> {
             int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
             List<OrderTable> orderList = tableMap.get(dayOfMonth);
-            if(orderList ==null){
-                tableMap.put(dayOfMonth,new ArrayList<>(Collections.singletonList(orderTable)));
-            }else {
+            if (orderList == null) {
+                tableMap.put(dayOfMonth, new ArrayList<>(Collections.singletonList(orderTable)));
+            } else {
                 orderList.add(orderTable);
             }
         });
         return tableMap;
     }
-    public String getMemberPhone(){
+
+    public String getMemberPhone() {
         return this.member.getPhone();
     }
-    public String getMemberName(){
+
+    public String getMemberName() {
         return this.member.getName();
     }
 
-    public boolean checkPayment(){
+    public boolean checkPayment() {
         return !this.payment.equals(Payment.NOT_PAYMENT);
     }
 
-    public boolean menuAdd(Menu menu){
-        if(!this.menus.contains(menu)){
+    public boolean menuAdd(Menu menu) {
+        if (!this.menus.contains(menu)) {
             menus.add(menu);
             return true;
         }
@@ -91,9 +95,9 @@ public class OrderTable {
 
 
     public boolean menuDelete(Menu menu) {
-        if(this.menus.contains(menu)){
-           menus.remove(menu);
-           return true;
+        if (this.menus.contains(menu)) {
+            menus.remove(menu);
+            return true;
         }
         return false;
     }

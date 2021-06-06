@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order;
+package hair_shop.demo.modules.order.repository;
 
 import hair_shop.demo.modules.order.domain.OrderTable;
 import org.springframework.data.jpa.repository.EntityGraph;

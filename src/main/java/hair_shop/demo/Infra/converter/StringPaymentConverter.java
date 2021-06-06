@@ -1,6 +1,6 @@
 package hair_shop.demo.Infra.converter;
 
-import hair_shop.demo.modules.order.form.Payment;
+import hair_shop.demo.modules.order.domain.Payment;
 import org.springframework.core.convert.converter.Converter;
 
 public class StringPaymentConverter implements Converter<String, Payment> {

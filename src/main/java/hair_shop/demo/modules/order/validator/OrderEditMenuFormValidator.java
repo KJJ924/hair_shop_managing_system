@@ -2,9 +2,9 @@ package hair_shop.demo.modules.order.validator;
 
 import hair_shop.demo.modules.menu.controller.MenuController;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
-import hair_shop.demo.modules.order.OrderController;
-import hair_shop.demo.modules.order.OrderRepository;
-import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
+import hair_shop.demo.modules.order.controller.OrderController;
+import hair_shop.demo.modules.order.repository.OrderRepository;
+import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

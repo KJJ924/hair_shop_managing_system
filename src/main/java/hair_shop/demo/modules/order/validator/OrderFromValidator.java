@@ -6,7 +6,7 @@ import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.menu.controller.MenuController;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
-import hair_shop.demo.modules.order.form.OrderForm;
+import hair_shop.demo.modules.order.dto.request.OrderForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

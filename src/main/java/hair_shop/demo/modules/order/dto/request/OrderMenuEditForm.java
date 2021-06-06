@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order.form.edit;
+package hair_shop.demo.modules.order.dto.request;
 
 import lombok.Builder;
 import lombok.Data;

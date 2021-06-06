@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order.form;
+package hair_shop.demo.modules.order.domain;
 
 public enum  Payment {
     CASH("현금"),POINT("포인트"),NOT_PAYMENT("미결제"),

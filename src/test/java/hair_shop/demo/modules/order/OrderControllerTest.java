@@ -19,12 +19,14 @@ import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.order.domain.OrderTable;
-import hair_shop.demo.modules.order.form.MonthData;
-import hair_shop.demo.modules.order.form.OrderForm;
-import hair_shop.demo.modules.order.form.Payment;
-import hair_shop.demo.modules.order.form.PaymentForm;
-import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
-import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
+import hair_shop.demo.modules.order.dto.MonthData;
+import hair_shop.demo.modules.order.dto.request.OrderForm;
+import hair_shop.demo.modules.order.domain.Payment;
+import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
+import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
+import hair_shop.demo.modules.order.repository.OrderRepository;
+import hair_shop.demo.modules.order.service.OrderService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +49,8 @@ class OrderControllerTest {
 
     @Autowired MockMvc mockMvc;
 
-    @Autowired OrderRepository orderRepository;
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     MemberRepository memberRepository;

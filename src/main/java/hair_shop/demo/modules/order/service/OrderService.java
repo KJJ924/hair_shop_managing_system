@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order;
+package hair_shop.demo.modules.order.service;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
@@ -8,10 +8,15 @@ import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.order.controller.OrderController;
 import hair_shop.demo.modules.order.domain.OrderTable;
-import hair_shop.demo.modules.order.form.*;
-import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
-import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
+import hair_shop.demo.modules.order.domain.Payment;
+import hair_shop.demo.modules.order.dto.*;
+import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
+import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
+import hair_shop.demo.modules.order.dto.request.OrderForm;
+import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -67,7 +72,7 @@ public class OrderService {
         Long order_id = paymentForm.getOrder_id();
 
         Optional<OrderTable> order = orderRepository.findById(order_id);
-        if(order.isEmpty()) return ApiResponseMessage.error(order_id.toString(),OrderController.NOT_FOUND_ORDER);
+        if(order.isEmpty()) return ApiResponseMessage.error(order_id.toString(), OrderController.NOT_FOUND_ORDER);
 
         return paymentFactory(paymentForm, order.get());
     }
