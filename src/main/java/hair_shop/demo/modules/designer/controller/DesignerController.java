@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/designer")
 public class DesignerController {
 
-    public static final String NOT_FOUND_DESIGNER = "디자이너를 찾을수 없음";
-
     private final DesignerService designerService;
 
     @PostMapping
