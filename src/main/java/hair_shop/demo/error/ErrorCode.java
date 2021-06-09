@@ -23,10 +23,12 @@ public enum ErrorCode {
 
     //designer
     DUPLICATE_DESIGNER  (HttpStatus.CONFLICT,"디자이너가 이미존재함"),
+    NOT_FOUND_DESIGNER (HttpStatus.NOT_FOUND, "디자이너를 찾을수 없음"),
 
     //menu
     NOT_FOUND_MENU (HttpStatus.NOT_FOUND,"해당하는 Menu 가 존재하지않음"),
-    DUPLICATE_MENU (HttpStatus.CONFLICT,"이미 해당하는 메뉴가 있음");
+    DUPLICATE_MENU (HttpStatus.CONFLICT,"이미 해당하는 메뉴가 있음"),
+    TIME_OVER_RESERVATION_START(HttpStatus.BAD_REQUEST ,"예약 시작 시간이 예약 종료시간보다 늦을수 없습니다");
 
 
     private final HttpStatus status;
