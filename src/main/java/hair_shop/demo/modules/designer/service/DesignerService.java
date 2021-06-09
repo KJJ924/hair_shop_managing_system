@@ -4,6 +4,7 @@ import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.designer.dto.request.RequestDesigner;
 import hair_shop.demo.modules.designer.dto.response.ResponseDesigner;
 import hair_shop.demo.modules.designer.exception.DuplicateDesignerException;
+import hair_shop.demo.modules.designer.exception.NotFoundDesignerException;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +36,10 @@ public class DesignerService {
         return designers.stream()
             .map(ResponseDesigner::toMapper)
             .collect(Collectors.toList());
+    }
+
+    public Designer findByName(String designerName) {
+        return designerRepository.findByName(designerName)
+            .orElseThrow(NotFoundDesignerException::new);
     }
 }

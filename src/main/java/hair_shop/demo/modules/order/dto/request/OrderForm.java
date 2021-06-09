@@ -22,4 +22,8 @@ public class OrderForm {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime reservationEnd;
 
+
+    public boolean isAfter() {
+        return reservationStart.isAfter(this.reservationEnd);
+    }
 }

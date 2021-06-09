@@ -1,26 +1,31 @@
 package hair_shop.demo.modules.order.controller;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.order.service.OrderService;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
-import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
+import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.repository.OrderRepository;
+import hair_shop.demo.modules.order.service.OrderService;
 import hair_shop.demo.modules.order.validator.OrderEditMenuFormValidator;
 import hair_shop.demo.modules.order.validator.OrderEditTimeFormValidator;
-import hair_shop.demo.modules.order.validator.OrderFromValidator;
+import java.time.LocalDate;
+import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,17 +33,10 @@ public class OrderController {
     public static final String NOT_FOUND_ORDER ="해당하는 예약이 없음";
 
     private final OrderService orderService;
-
-
-    private final OrderFromValidator orderFromValidator;
     private final OrderEditTimeFormValidator orderEditTimeFormValidator;
     private final OrderEditMenuFormValidator orderEditMenuFormValidator;
     private final OrderRepository orderRepository;
 
-    @InitBinder("orderForm")
-    public void orderFormValid(WebDataBinder webDataBinder){
-        webDataBinder.addValidators(orderFromValidator);
-    }
     @InitBinder("orderTimeEditForm")
     public void orderEditTimeValid(WebDataBinder webDataBinder){
         webDataBinder.addValidators(orderEditTimeFormValidator);
@@ -50,10 +48,7 @@ public class OrderController {
 
 
     @PostMapping("/order")
-    public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderForm orderForm , Errors error){
-        if(error.hasErrors()){
-            return ApiResponseMessage.error(error);
-        }
+    public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderForm orderForm){
         OrderTable order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);
     }

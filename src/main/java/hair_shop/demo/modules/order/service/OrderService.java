@@ -1,70 +1,79 @@
 package hair_shop.demo.modules.order.service;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.designer.repository.DesignerRepository;
 import hair_shop.demo.modules.designer.domain.Designer;
+import hair_shop.demo.modules.designer.service.DesignerService;
 import hair_shop.demo.modules.member.controller.MemberController;
-import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
-import hair_shop.demo.modules.menu.repository.MenuRepository;
+import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
+import hair_shop.demo.modules.menu.service.MenuService;
 import hair_shop.demo.modules.order.controller.OrderController;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
-import hair_shop.demo.modules.order.dto.*;
+import hair_shop.demo.modules.order.dto.MonthData;
+import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
-import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.repository.OrderRepository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class OrderService {
+
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepository;
     private final MenuRepository menuRepository;
-    private final DesignerRepository designerRepository;
+    private final MenuService menuService;
+    private final DesignerService designerService;
+    private final MemberService memberService;
 
     public OrderTable saveOrder(OrderForm orderForm) {
         return orderRepository.save(makeOrder(orderForm));
     }
 
-    private OrderTable makeOrder(OrderForm orderForm){
-        Designer designer =designerRepository.findByName(orderForm.getDesignerName());
-        Member member = memberRepository.findWithPhoneByPhone(orderForm.getMemberPhoneNumber());
-        //FIXME .get()
-        Menu menu= menuRepository.findByName(orderForm.getMenuName()).get();
-        HashSet<Menu> menus = new HashSet<>();
-        menus.add(menu);
-        return OrderTable.builder()
-                .payment(Payment.NOT_PAYMENT)
-                .menus(menus)
-                .designers(designer)
-                .member(member)
-                .reservationDate(LocalDate.from(orderForm.getReservationStart()))
-                .reservationStart(orderForm.getReservationStart())
-                .reservationEnd(orderForm.getReservationEnd())
-                .build();
+    private OrderTable makeOrder(OrderForm orderForm) {
+        Designer designer = designerService.findByName(orderForm.getDesignerName());
+        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
+        Menu menu = menuService.getMenu(orderForm.getMenuName());
+
+        if(orderForm.isAfter()){
+            throw new TimeOverReservationStartException();
+        }
+
+        OrderTable order = OrderTable.builder()
+            .designers(designer)
+            .member(member)
+            .reservationStart(orderForm.getReservationStart())
+            .reservationEnd(orderForm.getReservationEnd())
+            .build();
+
+        order.menuAdd(menu);
+        return order;
     }
 
     public List<MonthData> getMonthData(LocalDate from, LocalDate to) {
-        List<OrderTable> orderList = orderRepository.findByMonthDate(from,to);
+        List<OrderTable> orderList = orderRepository.findByMonthDate(from, to);
         Map<Integer, List<OrderTable>> daySeparated = OrderTable.daySeparated(orderList);
         return MonthData.remakeMonthData(daySeparated);
     }
 
 
     public Map<Integer, List<OrderTable>> getWeekData(LocalDate from, LocalDate to) {
-        List<OrderTable> orderList = orderRepository.findByReservationDateBetweenOrderByReservationDate(from, to);
+        List<OrderTable> orderList = orderRepository
+            .findByReservationDateBetweenOrderByReservationDate(from, to);
         return OrderTable.daySeparated(orderList);
     }
 
@@ -72,20 +81,30 @@ public class OrderService {
         Long order_id = paymentForm.getOrder_id();
 
         Optional<OrderTable> order = orderRepository.findById(order_id);
-        if(order.isEmpty()) return ApiResponseMessage.error(order_id.toString(), OrderController.NOT_FOUND_ORDER);
+        if (order.isEmpty()) {
+            return ApiResponseMessage.error(order_id.toString(), OrderController.NOT_FOUND_ORDER);
+        }
 
         return paymentFactory(paymentForm, order.get());
     }
 
-    private ResponseEntity<Object> paymentFactory(PaymentForm form,OrderTable order) {
-        if(order.checkPayment()) return ApiResponseMessage.error("payment_Complete","이미 결제가 완료됨");
+    private ResponseEntity<Object> paymentFactory(PaymentForm form, OrderTable order) {
+        if (order.checkPayment()) {
+            return ApiResponseMessage.error("payment_Complete", "이미 결제가 완료됨");
+        }
 
         Payment payment = form.getPayment();
-        if(payment.equals(Payment.CASH)) return cashPaymentProcess(payment, order);
-        if(payment.equals(Payment.POINT)) return pointPaymentProcess(payment, order);
-        if(payment.equals(Payment.CASH_AND_POINT)) return pointAndCashProcess(order,form);
+        if (payment.equals(Payment.CASH)) {
+            return cashPaymentProcess(payment, order);
+        }
+        if (payment.equals(Payment.POINT)) {
+            return pointPaymentProcess(payment, order);
+        }
+        if (payment.equals(Payment.CASH_AND_POINT)) {
+            return pointAndCashProcess(order, form);
+        }
 
-        return ApiResponseMessage.error("notSupportPayment","지원하지않는 결제방법입니다");
+        return ApiResponseMessage.error("notSupportPayment", "지원하지않는 결제방법입니다");
     }
 
     private ResponseEntity<Object> cashPaymentProcess(Payment payment, OrderTable order) {
@@ -98,18 +117,20 @@ public class OrderService {
         Member member = order.getMember();
 
         ResponseEntity<Object> error = paymentValidation(member);
-        if (error != null) return error;
+        if (error != null) {
+            return error;
+        }
 
-        Integer savePoint =member.getMemberShipPoint() -order.totalPrice();
+        Integer savePoint = member.getMemberShipPoint() - order.totalPrice();
 
-        if(!payment.isPayment(savePoint))
-            return ApiResponseMessage.error(String.valueOf(savePoint),"잔액이 부족합니다");
+        if (!payment.isPayment(savePoint)) {
+            return ApiResponseMessage.error(String.valueOf(savePoint), "잔액이 부족합니다");
+        }
 
-        paymentSave(order,payment,savePoint);
+        paymentSave(order, payment, savePoint);
 
         return ApiResponseMessage.success("결제가 완료됨");
     }
-
 
 
     private ResponseEntity<Object> pointAndCashProcess(OrderTable order, PaymentForm form) {
@@ -117,28 +138,31 @@ public class OrderService {
         Payment payment = form.getPayment();
 
         ResponseEntity<Object> error = paymentValidation(member);
-        if (Objects.nonNull(error)) return error;
+        if (Objects.nonNull(error)) {
+            return error;
+        }
 
-        int resultMenuPrice = order.totalPrice()-form.getCash();
+        int resultMenuPrice = order.totalPrice() - form.getCash();
 
-        Integer savePoint  = member.getMemberShipPoint()-resultMenuPrice;
+        Integer savePoint = member.getMemberShipPoint() - resultMenuPrice;
 
-        if(!payment.isPayment(savePoint))
-            return ApiResponseMessage.error(String.valueOf(savePoint),"잔액이 부족합니다");
+        if (!payment.isPayment(savePoint)) {
+            return ApiResponseMessage.error(String.valueOf(savePoint), "잔액이 부족합니다");
+        }
 
-        paymentSave(order,payment,savePoint);
+        paymentSave(order, payment, savePoint);
 
         return ApiResponseMessage.success("결제가 완료됨");
     }
 
     private ResponseEntity<Object> paymentValidation(Member member) {
-        if(!member.isMemberShip()){
+        if (!member.isMemberShip()) {
             return ApiResponseMessage.error("NO MemberShip", MemberController.NOT_MEMBERSHIP);
         }
         return null;
     }
 
-    private void paymentSave(OrderTable order ,Payment payment,Integer savePoint){
+    private void paymentSave(OrderTable order, Payment payment, Integer savePoint) {
         Member member = order.getMember();
         order.setPayment(payment);
         member.getMemberShip().setPoint(savePoint);
@@ -153,8 +177,12 @@ public class OrderService {
     }
 
     public void editMenu(OrderMenuEditForm orderMenuEditForm, String action) {
-        if(action.equals("add")) addMenu(orderMenuEditForm);
-        if(action.equals("delete")) deleteMenu(orderMenuEditForm);
+        if (action.equals("add")) {
+            addMenu(orderMenuEditForm);
+        }
+        if (action.equals("delete")) {
+            deleteMenu(orderMenuEditForm);
+        }
     }
 
     private void deleteMenu(OrderMenuEditForm orderMenuEditForm) {
