@@ -2,15 +2,36 @@ package hair_shop.demo.modules.order.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
-import lombok.*;
-
-import javax.persistence.*;
+import hair_shop.demo.modules.menu.domain.Menu;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @EqualsAndHashCode(of = "id")
@@ -18,36 +39,39 @@ import java.util.*;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @NamedEntityGraph(name = "order.withAll", attributeNodes = {
     @NamedAttributeNode("menus"),
 })
 public class OrderTable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private LocalDate reservationDate;
 
     @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationStart;
+
     @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationEnd;
 
+    @CreationTimestamp
+    private LocalDate reservationDate;
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Payment payment;
+    private Payment payment = Payment.NOT_PAYMENT;
 
     @ManyToOne
     @JsonBackReference
     private Member member;
 
+    @Builder.Default
     @ManyToMany
-    private Set<Menu> menus;
+    private Set<Menu> menus = new HashSet<>();
 
     @ManyToOne
     private Designer designers;
-
 
     public Integer totalPrice() {
         int totalPrice = 0;
