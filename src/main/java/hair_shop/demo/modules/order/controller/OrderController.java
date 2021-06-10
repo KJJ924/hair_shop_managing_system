@@ -1,20 +1,18 @@
 package hair_shop.demo.modules.order.controller;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
-import hair_shop.demo.modules.order.repository.OrderRepository;
 import hair_shop.demo.modules.order.service.OrderService;
 import hair_shop.demo.modules.order.validator.OrderEditMenuFormValidator;
 import java.time.LocalDate;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -35,8 +33,6 @@ public class OrderController {
 
     private final OrderService orderService;
     private final OrderEditMenuFormValidator orderEditMenuFormValidator;
-    private final OrderRepository orderRepository;
-
 
     @InitBinder("orderMenuEditForm")
     public void orderEditMenuValid(WebDataBinder webDataBinder) {
@@ -55,7 +51,8 @@ public class OrderController {
     }
 
     @PutMapping("/order/reservation")
-    public ResponseEntity<ResponseOrder> orderTimeEdit(@RequestBody @Valid RequestOrderTimeEdit form) {
+    public ResponseEntity<ResponseOrder> orderTimeEdit(
+        @RequestBody @Valid RequestOrderTimeEdit form) {
         return ResponseEntity.ok(orderService.editTime(form));
     }
 
@@ -93,16 +90,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/order/{id}")
-    public ResponseEntity<Object> testDelete(@PathVariable("id") Optional<OrderTable> orderTable
-        , @PathVariable Long id) {
-        if (orderTable.isEmpty()) {
-            return ApiResponseMessage.error(id.toString(), NOT_FOUND_ORDER);
-        }
-        if (orderTable.get().checkPayment()) {
-            return ApiResponseMessage.error(id.toString(), "이미 결제한 예약은 삭제가 불가능합니다");
-        }
-        orderRepository.delete(orderTable.get());
-        return ApiResponseMessage.success("성공적으로 삭제되었습니다.");
+    public ResponseEntity<Object> testDelete(@PathVariable("id") Long orderId) {
+        orderService.deleteOrder(orderId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

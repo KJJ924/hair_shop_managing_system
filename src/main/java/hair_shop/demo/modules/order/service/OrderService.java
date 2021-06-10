@@ -18,6 +18,7 @@ import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
+import hair_shop.demo.modules.order.exception.PaidReservationException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import java.time.LocalDate;
@@ -91,26 +92,6 @@ public class OrderService {
         if (action.equals("delete")) {
             deleteMenu(orderMenuEditForm);
         }
-    }
-
-    private OrderTable makeOrder(OrderForm orderForm) {
-        Designer designer = designerService.findByName(orderForm.getDesignerName());
-        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
-        Menu menu = menuService.getMenu(orderForm.getMenuName());
-
-        if (orderForm.isAfter()) {
-            throw new TimeOverReservationStartException();
-        }
-
-        OrderTable order = OrderTable.builder()
-            .designers(designer)
-            .member(member)
-            .reservationStart(orderForm.getReservationStart())
-            .reservationEnd(orderForm.getReservationEnd())
-            .build();
-
-        order.menuAdd(menu);
-        return order;
     }
 
     private ResponseEntity<Object> paymentFactory(PaymentForm form, OrderTable order) {
@@ -210,5 +191,13 @@ public class OrderService {
         //앞에 @Valid 에서 메뉴가 있는지 검증이 끝나서 따로 검증하지 않아도 됨
         //FIXME .get()
         orderTable.menuAdd(menuRepository.findByName(orderMenuEditForm.getMenuName()).get());
+    }
+
+    public void deleteOrder(Long orderId) {
+        OrderTable order = findByOrderId(orderId);
+        if(order.checkPayment()){
+            throw new PaidReservationException();
+        }
+        orderRepository.delete(order);
     }
 }
