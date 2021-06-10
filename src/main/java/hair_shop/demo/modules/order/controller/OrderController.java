@@ -55,11 +55,8 @@ public class OrderController {
     }
 
     @GetMapping("/order/{id}")
-    public ResponseEntity<Object> getOrder(@PathVariable("id") Optional<OrderTable> orderTable , @PathVariable String id){
-        if(orderTable.isEmpty()){
-            return ApiResponseMessage.error(id,NOT_FOUND_ORDER);
-        }
-        return ResponseEntity.ok(orderTable.get());
+    public ResponseEntity<ResponseOrder> getOrder(@PathVariable("id") Long orderId){
+        return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
     @GetMapping("/month")

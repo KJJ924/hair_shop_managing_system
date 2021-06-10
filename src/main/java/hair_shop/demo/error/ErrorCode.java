@@ -28,6 +28,9 @@ public enum ErrorCode {
     //menu
     NOT_FOUND_MENU (HttpStatus.NOT_FOUND,"해당하는 Menu 가 존재하지않음"),
     DUPLICATE_MENU (HttpStatus.CONFLICT,"이미 해당하는 메뉴가 있음"),
+
+    //order
+    NOT_FOUND_ORDER(HttpStatus.NOT_FOUND,"해당하는 예약이 없음"),
     TIME_OVER_RESERVATION_START(HttpStatus.BAD_REQUEST ,"예약 시작 시간이 예약 종료시간보다 늦을수 없습니다");
 
 

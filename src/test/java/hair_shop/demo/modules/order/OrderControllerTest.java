@@ -111,7 +111,7 @@ class OrderControllerTest {
     @DisplayName("예약표 받기-실패(해당하는 주문번호가 없을때)")
     void getOrder_fail() throws Exception{
         mockMvc.perform(get("/order/99999"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test

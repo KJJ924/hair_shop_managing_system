@@ -9,7 +9,6 @@ import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.service.MenuService;
-import hair_shop.demo.modules.order.controller.OrderController;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
@@ -18,13 +17,13 @@ import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
+import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,24 +45,9 @@ public class OrderService {
         return ResponseOrder.toMapper(order);
     }
 
-    private OrderTable makeOrder(OrderForm orderForm) {
-        Designer designer = designerService.findByName(orderForm.getDesignerName());
-        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
-        Menu menu = menuService.getMenu(orderForm.getMenuName());
-
-        if(orderForm.isAfter()){
-            throw new TimeOverReservationStartException();
-        }
-
-        OrderTable order = OrderTable.builder()
-            .designers(designer)
-            .member(member)
-            .reservationStart(orderForm.getReservationStart())
-            .reservationEnd(orderForm.getReservationEnd())
-            .build();
-
-        order.menuAdd(menu);
-        return order;
+    public ResponseOrder getOrder(Long orderId) {
+        OrderTable order = findByOrderId(orderId);
+        return ResponseOrder.toMapper(order);
     }
 
     public List<MonthData> getMonthData(LocalDate from, LocalDate to) {
@@ -81,13 +65,28 @@ public class OrderService {
 
     public ResponseEntity<Object> payment(PaymentForm paymentForm) {
         Long order_id = paymentForm.getOrder_id();
+        OrderTable order = findByOrderId(order_id);
+        return paymentFactory(paymentForm, order);
+    }
 
-        Optional<OrderTable> order = orderRepository.findById(order_id);
-        if (order.isEmpty()) {
-            return ApiResponseMessage.error(order_id.toString(), OrderController.NOT_FOUND_ORDER);
+    private OrderTable makeOrder(OrderForm orderForm) {
+        Designer designer = designerService.findByName(orderForm.getDesignerName());
+        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
+        Menu menu = menuService.getMenu(orderForm.getMenuName());
+
+        if (orderForm.isAfter()) {
+            throw new TimeOverReservationStartException();
         }
 
-        return paymentFactory(paymentForm, order.get());
+        OrderTable order = OrderTable.builder()
+            .designers(designer)
+            .member(member)
+            .reservationStart(orderForm.getReservationStart())
+            .reservationEnd(orderForm.getReservationEnd())
+            .build();
+
+        order.menuAdd(menu);
+        return order;
     }
 
     private ResponseEntity<Object> paymentFactory(PaymentForm form, OrderTable order) {
@@ -185,6 +184,11 @@ public class OrderService {
         if (action.equals("delete")) {
             deleteMenu(orderMenuEditForm);
         }
+    }
+
+    private OrderTable findByOrderId(Long orderId) {
+        return orderRepository.findById(orderId)
+            .orElseThrow(NotFoundOrderException::new);
     }
 
     private void deleteMenu(OrderMenuEditForm orderMenuEditForm) {
