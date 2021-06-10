@@ -131,4 +131,9 @@ public class OrderTable {
         }
         return false;
     }
+
+    public void changeReservationTime(LocalDateTime start, LocalDateTime end) {
+        this.reservationStart =start;
+        this.reservationEnd= end;
+    }
 }

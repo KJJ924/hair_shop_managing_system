@@ -23,8 +23,8 @@ import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
-import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import hair_shop.demo.modules.order.service.OrderService;
@@ -335,14 +335,14 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 성공")
     void order_edit()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+        RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(order_id)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
@@ -357,14 +357,14 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(예약 시작 시간이 예약 종료시간보다 늦을수 없습니다)")
     void order_edit_fail_overTime()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+         RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(order_id)
                 .reservationStart(startTime.plusMinutes(30))
                 .reservationEnd(startTime).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isBadRequest());
@@ -374,17 +374,17 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(해당하는 예약이 없음)")
     void order_edit_fail_not_found_order()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+        RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(999L)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test

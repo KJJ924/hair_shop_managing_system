@@ -14,13 +14,14 @@ import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
-import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +57,6 @@ public class OrderService {
         return MonthData.remakeMonthData(daySeparated);
     }
 
-
     public Map<Integer, List<OrderTable>> getWeekData(LocalDate from, LocalDate to) {
         List<OrderTable> orderList = orderRepository
             .findByCreateAtBetweenOrderByCreateAt(from, to);
@@ -67,6 +67,30 @@ public class OrderService {
         Long order_id = paymentForm.getOrder_id();
         OrderTable order = findByOrderId(order_id);
         return paymentFactory(paymentForm, order);
+    }
+
+    public ResponseOrder editTime(RequestOrderTimeEdit form) {
+        if (form.isAfter()) {
+            throw new TimeOverReservationStartException();
+        }
+
+        OrderTable order = findByOrderId(form.getId());
+
+        LocalDateTime start = form.getReservationStart();
+        LocalDateTime end = form.getReservationEnd();
+
+        order.changeReservationTime(start, end);
+
+        return ResponseOrder.toMapper(order);
+    }
+
+    public void editMenu(OrderMenuEditForm orderMenuEditForm, String action) {
+        if (action.equals("add")) {
+            addMenu(orderMenuEditForm);
+        }
+        if (action.equals("delete")) {
+            deleteMenu(orderMenuEditForm);
+        }
     }
 
     private OrderTable makeOrder(OrderForm orderForm) {
@@ -168,22 +192,6 @@ public class OrderService {
         order.setPayment(payment);
         member.getMemberShip().setPoint(savePoint);
         member.registerVisitDate();
-    }
-
-    public void editTime(OrderTimeEditForm orderTimeEditForm) {
-        //앞쪽의 @Valid 에서  Null 체크 해서 .get 으로 바로 꺼내도 안전함
-        OrderTable orderTable = orderRepository.findById(orderTimeEditForm.getId()).get();
-        orderTable.setReservationStart(orderTimeEditForm.getReservationStart());
-        orderTable.setReservationEnd(orderTimeEditForm.getReservationEnd());
-    }
-
-    public void editMenu(OrderMenuEditForm orderMenuEditForm, String action) {
-        if (action.equals("add")) {
-            addMenu(orderMenuEditForm);
-        }
-        if (action.equals("delete")) {
-            deleteMenu(orderMenuEditForm);
-        }
     }
 
     private OrderTable findByOrderId(Long orderId) {

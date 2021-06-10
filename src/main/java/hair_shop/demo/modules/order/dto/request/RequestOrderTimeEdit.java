@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class OrderTimeEditForm {
+public class RequestOrderTimeEdit {
 
     @NotNull
     private Long id;
@@ -19,4 +19,8 @@ public class OrderTimeEditForm {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime reservationEnd;
+
+    public boolean isAfter() {
+        return reservationStart.isAfter(this.reservationEnd);
+    }
 }
