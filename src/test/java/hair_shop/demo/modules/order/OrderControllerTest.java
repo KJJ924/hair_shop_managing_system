@@ -12,19 +12,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
-import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
-import hair_shop.demo.modules.menu.repository.MenuRepository;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
-import hair_shop.demo.modules.order.domain.Payment;
-import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
+import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import hair_shop.demo.modules.order.service.OrderService;
 import java.time.LocalDate;
@@ -90,8 +91,8 @@ class OrderControllerTest {
         //"yyyy-MM-dd'T'HH:mm:ss"
         orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
         orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
-        order_id = orderTable.getId();
+        ResponseOrder orderTable = orderService.saveOrder(orderForm);
+        order_id = orderTable.getOrderId();
     }
 
     @AfterEach
@@ -248,12 +249,12 @@ class OrderControllerTest {
         //"yyyy-MM-dd'T'HH:mm:ss"
         orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
         orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
+        ResponseOrder orderTable = orderService.saveOrder(orderForm);
 
         PaymentForm paymentForm = PaymentForm.builder()
                 .payment(Payment.CASH_AND_POINT)
                 .cash(500)
-                .order_id(orderTable.getId()).build();
+                .order_id(orderTable.getOrderId()).build();
 
         String content = objectMapper.writeValueAsString(paymentForm);
         mockMvc.perform(put("/order/payment")
@@ -294,11 +295,11 @@ class OrderControllerTest {
         //"yyyy-MM-dd'T'HH:mm:ss"
         orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
         orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
+        ResponseOrder orderTable = orderService.saveOrder(orderForm);
 
         PaymentForm paymentForm = PaymentForm.builder()
                 .payment(Payment.POINT)
-                .order_id(orderTable.getId()).build();
+                .order_id(orderTable.getOrderId()).build();
         String content = objectMapper.writeValueAsString(paymentForm);
 
 
@@ -308,9 +309,9 @@ class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
-
+        Member member = memberRepository.findByPhone(orderTable.getMemberPhoneNumber()).orElseThrow();
         assertThat(orderTable.getPayment()).isEqualTo(Payment.NOT_PAYMENT);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
+        assertThat(member.getMemberShipPoint()).isEqualTo(10000);
     }
 
     @Test

@@ -14,9 +14,9 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<OrderTable,Long> {
 
     @EntityGraph(value = "order.withAll",type = EntityGraph.EntityGraphType.LOAD)
-    List<OrderTable> findByReservationDateBetweenOrderByReservationDate(LocalDate standardMonth, LocalDate plusMont);
+    List<OrderTable> findByCreateAtBetweenOrderByCreateAt(LocalDate standardMonth, LocalDate plusMont);
 
     @Query("select a from OrderTable a " + "join fetch a.menus "+
-            "where :fromDate <=a.reservationDate and a.reservationDate <:toDate ")
+            "where :fromDate <=a.createAt and a.createAt <:toDate ")
     List<OrderTable> findByMonthDate(@Param("fromDate") LocalDate date ,@Param("toDate") LocalDate to);
 }

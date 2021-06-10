@@ -6,6 +6,7 @@ import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import hair_shop.demo.modules.order.service.OrderService;
 import hair_shop.demo.modules.order.validator.OrderEditMenuFormValidator;
@@ -48,8 +49,8 @@ public class OrderController {
 
 
     @PostMapping("/order")
-    public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderForm orderForm){
-        OrderTable order = orderService.saveOrder(orderForm);
+    public ResponseEntity<ResponseOrder> createOrder(@RequestBody @Valid OrderForm orderForm){
+        ResponseOrder order = orderService.saveOrder(orderForm);
         return ResponseEntity.ok(order);
     }
 

@@ -17,6 +17,7 @@ import hair_shop.demo.modules.order.dto.request.OrderForm;
 import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
 import hair_shop.demo.modules.order.dto.request.OrderTimeEditForm;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import java.time.LocalDate;
@@ -40,8 +41,9 @@ public class OrderService {
     private final DesignerService designerService;
     private final MemberService memberService;
 
-    public OrderTable saveOrder(OrderForm orderForm) {
-        return orderRepository.save(makeOrder(orderForm));
+    public ResponseOrder saveOrder(OrderForm orderForm) {
+        OrderTable order = orderRepository.save(makeOrder(orderForm));
+        return ResponseOrder.toMapper(order);
     }
 
     private OrderTable makeOrder(OrderForm orderForm) {
@@ -73,7 +75,7 @@ public class OrderService {
 
     public Map<Integer, List<OrderTable>> getWeekData(LocalDate from, LocalDate to) {
         List<OrderTable> orderList = orderRepository
-            .findByReservationDateBetweenOrderByReservationDate(from, to);
+            .findByCreateAtBetweenOrderByCreateAt(from, to);
         return OrderTable.daySeparated(orderList);
     }
 

@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -56,7 +57,7 @@ public class OrderTable {
     private LocalDateTime reservationEnd;
 
     @CreationTimestamp
-    private LocalDate reservationDate;
+    private LocalDate createAt;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -83,7 +84,6 @@ public class OrderTable {
 
     public static Map<Integer, List<OrderTable>> daySeparated(List<OrderTable> data) {
         Map<Integer, List<OrderTable>> tableMap = new LinkedHashMap<>();
-
         data.forEach(orderTable -> {
             int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
             List<OrderTable> orderList = tableMap.get(dayOfMonth);
@@ -96,10 +96,16 @@ public class OrderTable {
         return tableMap;
     }
 
+    public List<String> menuList(){
+        return menus.stream().map(Menu::getName).collect(Collectors.toList());
+    }
     public String getMemberPhone() {
         return this.member.getPhone();
     }
 
+    public String getDesignerName(){
+        return this.designers.getName();
+    }
     public String getMemberName() {
         return this.member.getName();
     }
