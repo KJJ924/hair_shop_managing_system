@@ -43,7 +43,24 @@ public class OrderService {
     private final MemberService memberService;
 
     public ResponseOrder saveOrder(OrderForm orderForm) {
-        OrderTable order = orderRepository.save(makeOrder(orderForm));
+        Designer designer = designerService.findByName(orderForm.getDesignerName());
+        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
+        Menu menu = menuService.getMenu(orderForm.getMenuName());
+
+        if (orderForm.isAfter()) {
+            throw new TimeOverReservationStartException();
+        }
+
+        OrderTable order = OrderTable.builder()
+            .designers(designer)
+            .member(member)
+            .reservationStart(orderForm.getReservationStart())
+            .reservationEnd(orderForm.getReservationEnd())
+            .build();
+        order.menuAdd(menu);
+
+        member.addOrder(orderRepository.save(order));
+
         return ResponseOrder.toMapper(order);
     }
 
@@ -175,7 +192,7 @@ public class OrderService {
         member.registerVisitDate();
     }
 
-    private OrderTable findByOrderId(Long orderId) {
+    public OrderTable findByOrderId(Long orderId) {
         return orderRepository.findById(orderId)
             .orElseThrow(NotFoundOrderException::new);
     }

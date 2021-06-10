@@ -206,7 +206,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
@@ -230,7 +230,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
@@ -276,7 +276,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
@@ -322,7 +322,7 @@ class OrderControllerTest {
                 .order_id(order_id).build();
         String content = objectMapper.writeValueAsString(paymentForm);
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
         orderTable.setPayment(Payment.CASH);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -347,7 +347,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getReservationStart()).isEqualTo(startTime);
         assertThat(orderTable.getReservationEnd()).isEqualTo(startTime.plusMinutes(30));
@@ -428,7 +428,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getMenus().size()).isEqualTo(2);
     }
@@ -446,7 +446,7 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getMenus().size()).isEqualTo(0);
     }
@@ -455,7 +455,7 @@ class OrderControllerTest {
     @DisplayName("예약 취소 -성공")
     void order_cancel() throws Exception{
         mockMvc.perform(delete("/order/"+order_id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         boolean result = orderRepository.existsById(order_id);
         assertThat(result).isFalse();
@@ -465,16 +465,16 @@ class OrderControllerTest {
     @DisplayName("예약 취소 -실패(해당하는 주문이없음)")
     void order_cancel_fail() throws Exception{
         mockMvc.perform(delete("/order/4888"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("예약 취소 -실패(이미 결제가 완료됨)")
     void order_cancel_already_payment_fail() throws Exception{
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
         orderTable.setPayment(Payment.CASH);
         mockMvc.perform(delete("/order/"+order_id))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
 
     }
 

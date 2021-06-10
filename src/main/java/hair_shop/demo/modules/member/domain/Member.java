@@ -73,6 +73,9 @@ public class Member {
         return 0;
     }
 
+    public void addOrder(OrderTable orderTable){
+        orderList.add(orderTable);
+    }
     public void addDescription(String description){
         this.description = description;
     }
