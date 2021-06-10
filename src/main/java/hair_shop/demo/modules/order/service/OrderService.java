@@ -7,13 +7,12 @@ import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.menu.domain.Menu;
-import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.menu.service.MenuService;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
-import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MenuRepository menuRepository;
     private final MenuService menuService;
     private final DesignerService designerService;
     private final MemberService memberService;
@@ -100,15 +98,6 @@ public class OrderService {
         order.changeReservationTime(start, end);
 
         return ResponseOrder.toMapper(order);
-    }
-
-    public void editMenu(OrderMenuEditForm orderMenuEditForm, String action) {
-        if (action.equals("add")) {
-            addMenu(orderMenuEditForm);
-        }
-        if (action.equals("delete")) {
-            deleteMenu(orderMenuEditForm);
-        }
     }
 
     private ResponseEntity<Object> paymentFactory(PaymentForm form, OrderTable order) {
@@ -197,17 +186,16 @@ public class OrderService {
             .orElseThrow(NotFoundOrderException::new);
     }
 
-    private void deleteMenu(OrderMenuEditForm orderMenuEditForm) {
-        OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
-        //FIXME .get()
-        orderTable.menuDelete(menuRepository.findByName(orderMenuEditForm.getMenuName()).get());
+    public ResponseOrder deleteMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
+        OrderTable order = findByOrderId(requestOrderMenuEdit.getOrderId());
+        order.menuDelete(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
+        return ResponseOrder.toMapper(order);
     }
 
-    private void addMenu(OrderMenuEditForm orderMenuEditForm) {
-        OrderTable orderTable = orderRepository.findById(orderMenuEditForm.getOrderId()).get();
-        //앞에 @Valid 에서 메뉴가 있는지 검증이 끝나서 따로 검증하지 않아도 됨
-        //FIXME .get()
-        orderTable.menuAdd(menuRepository.findByName(orderMenuEditForm.getMenuName()).get());
+    public ResponseOrder addMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
+        OrderTable order = findByOrderId(requestOrderMenuEdit.getOrderId());
+        order.menuAdd(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
+        return ResponseOrder.toMapper(order);
     }
 
     public void deleteOrder(Long orderId) {

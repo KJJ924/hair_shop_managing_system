@@ -22,7 +22,7 @@ import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.OrderForm;
-import hair_shop.demo.modules.order.dto.request.OrderMenuEditForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
 import hair_shop.demo.modules.order.dto.request.PaymentForm;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
@@ -417,13 +417,13 @@ class OrderControllerTest {
     @Test
     @DisplayName("메뉴 변경 - 성공(추가)")
     void order_edit_menu_add()throws  Exception{
-        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
-                .menuName("menu2")
-                .orderId(order_id).build();
+        RequestOrderMenuEdit requestOrderMenuEdit = new RequestOrderMenuEdit();
+        requestOrderMenuEdit.setMenuName("menu2");
+        requestOrderMenuEdit.setOrderId(order_id);
 
-        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+        String content = objectMapper.writeValueAsString(requestOrderMenuEdit);
 
-        mockMvc.perform(put("/order/menu/add")
+        mockMvc.perform(put("/order/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
@@ -436,12 +436,12 @@ class OrderControllerTest {
     @Test
     @DisplayName("메뉴 변경 - 성공(삭제)")
     void order_edit_menu_delete()throws Exception{
-        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
-                .menuName("menu")
-                .orderId(order_id).build();
-        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+        RequestOrderMenuEdit requestOrderMenuEdit = new RequestOrderMenuEdit();
+        requestOrderMenuEdit.setMenuName("menu");
+        requestOrderMenuEdit.setOrderId(order_id);
+        String content = objectMapper.writeValueAsString(requestOrderMenuEdit);
 
-        mockMvc.perform(put("/order/menu/delete")
+        mockMvc.perform(delete("/order/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
