@@ -1,8 +1,8 @@
 package hair_shop.demo.modules.order.controller;
 
-import hair_shop.demo.modules.order.dto.request.OrderForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrder;
 import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
-import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.service.OrderService;
@@ -27,8 +27,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/order")
-    public ResponseEntity<ResponseOrder> createOrder(@RequestBody @Valid OrderForm orderForm) {
-        ResponseOrder order = orderService.saveOrder(orderForm);
+    public ResponseEntity<ResponseOrder> createOrder(@RequestBody @Valid RequestOrder requestOrder) {
+        ResponseOrder order = orderService.saveOrder(requestOrder);
         return ResponseEntity.ok(order);
     }
 
@@ -57,8 +57,8 @@ public class OrderController {
     }
 
     @PutMapping("/order/payment")
-    public ResponseEntity<Object> payment(@RequestBody PaymentForm paymentForm) {
-        return orderService.payment(paymentForm);
+    public ResponseEntity<Object> payment(@RequestBody RequestPayment requestPayment) {
+        return orderService.payment(requestPayment);
     }
 
     @PutMapping("/order/menu")

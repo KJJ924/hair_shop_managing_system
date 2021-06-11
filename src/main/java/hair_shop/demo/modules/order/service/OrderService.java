@@ -11,9 +11,9 @@ import hair_shop.demo.modules.menu.service.MenuService;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
-import hair_shop.demo.modules.order.dto.request.OrderForm;
+import hair_shop.demo.modules.order.dto.request.RequestOrder;
 import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
-import hair_shop.demo.modules.order.dto.request.PaymentForm;
+import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
@@ -40,20 +40,20 @@ public class OrderService {
     private final DesignerService designerService;
     private final MemberService memberService;
 
-    public ResponseOrder saveOrder(OrderForm orderForm) {
-        Designer designer = designerService.findByName(orderForm.getDesignerName());
-        Member member = memberService.findByPhone(orderForm.getMemberPhoneNumber());
-        Menu menu = menuService.getMenu(orderForm.getMenuName());
+    public ResponseOrder saveOrder(RequestOrder requestOrder) {
+        Designer designer = designerService.findByName(requestOrder.getDesignerName());
+        Member member = memberService.findByPhone(requestOrder.getMemberPhoneNumber());
+        Menu menu = menuService.getMenu(requestOrder.getMenuName());
 
-        if (orderForm.isAfter()) {
+        if (requestOrder.isAfter()) {
             throw new TimeOverReservationStartException();
         }
 
         OrderTable order = OrderTable.builder()
             .designers(designer)
             .member(member)
-            .reservationStart(orderForm.getReservationStart())
-            .reservationEnd(orderForm.getReservationEnd())
+            .reservationStart(requestOrder.getReservationStart())
+            .reservationEnd(requestOrder.getReservationEnd())
             .build();
         order.menuAdd(menu);
 
@@ -79,10 +79,10 @@ public class OrderService {
         return OrderTable.daySeparated(orderList);
     }
 
-    public ResponseEntity<Object> payment(PaymentForm paymentForm) {
-        Long order_id = paymentForm.getOrder_id();
+    public ResponseEntity<Object> payment(RequestPayment requestPayment) {
+        Long order_id = requestPayment.getOrder_id();
         OrderTable order = findByOrderId(order_id);
-        return paymentFactory(paymentForm, order);
+        return paymentFactory(requestPayment, order);
     }
 
     public ResponseOrder editTime(RequestOrderTimeEdit form) {
@@ -100,7 +100,7 @@ public class OrderService {
         return ResponseOrder.toMapper(order);
     }
 
-    private ResponseEntity<Object> paymentFactory(PaymentForm form, OrderTable order) {
+    private ResponseEntity<Object> paymentFactory(RequestPayment form, OrderTable order) {
         if (order.checkPayment()) {
             return ApiResponseMessage.error("payment_Complete", "이미 결제가 완료됨");
         }
@@ -145,7 +145,7 @@ public class OrderService {
     }
 
 
-    private ResponseEntity<Object> pointAndCashProcess(OrderTable order, PaymentForm form) {
+    private ResponseEntity<Object> pointAndCashProcess(OrderTable order, RequestPayment form) {
         Member member = order.getMember();
         Payment payment = form.getPayment();
 
