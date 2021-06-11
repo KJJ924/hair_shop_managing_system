@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MenuController {
 
-    public final static String NOT_FOUND_MENU = "해당하는 Menu 가 존재하지않음";
-    public final static String DUPLICATE_MENU = "이미 해당하는 메뉴가 있음";
-
     private final MenuService menuService;
 
     @PostMapping("/menu")
