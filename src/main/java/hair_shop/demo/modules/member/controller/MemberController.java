@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/member")
 public class MemberController {
 
-    public static final String NOT_MEMBERSHIP = "회원권이 없음";
-
     private final MemberService memberService;
 
     @GetMapping("/{phoneNumber}")

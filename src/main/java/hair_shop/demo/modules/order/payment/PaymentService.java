@@ -1,12 +1,11 @@
 package hair_shop.demo.modules.order.payment;
 
 import hair_shop.demo.Infra.apiMessage.ApiResponseMessage;
-import hair_shop.demo.modules.member.controller.MemberController;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.request.RequestPayment;
-import java.util.Objects;
 import javax.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,10 +47,7 @@ public class PaymentService {
     private ResponseEntity<Object> pointPaymentProcess(Payment payment, OrderTable order) {
         Member member = order.getMember();
 
-        ResponseEntity<Object> error = paymentValidation(member);
-        if (error != null) {
-            return error;
-        }
+        paymentValidation(member);
 
         Integer savePoint = member.getMemberShipPoint() - order.totalPrice();
 
@@ -69,10 +65,7 @@ public class PaymentService {
         Member member = order.getMember();
         Payment payment = form.getPayment();
 
-        ResponseEntity<Object> error = paymentValidation(member);
-        if (Objects.nonNull(error)) {
-            return error;
-        }
+        paymentValidation(member);
 
         int resultMenuPrice = order.totalPrice() - form.getCash();
 
@@ -87,11 +80,10 @@ public class PaymentService {
         return ApiResponseMessage.success("결제가 완료됨");
     }
 
-    private ResponseEntity<Object> paymentValidation(Member member) {
+    private void paymentValidation(Member member) {
         if (!member.isMemberShip()) {
-            return ApiResponseMessage.error("NO MemberShip", MemberController.NOT_MEMBERSHIP);
+            throw new NotMemberShipException();
         }
-        return null;
     }
 
     private void paymentSave(OrderTable order, Payment payment, Integer savePoint) {
