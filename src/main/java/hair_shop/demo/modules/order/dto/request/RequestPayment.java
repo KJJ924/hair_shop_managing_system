@@ -12,13 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RequestPayment {
     private Payment payment;
-    private Long order_id;
+    private Long orderId;
     private Integer cash;
 
     @Builder
-    private RequestPayment(Payment payment, Long order_id, Integer cash) {
+    private RequestPayment(Payment payment, Long orderId, Integer cash) {
         this.payment = payment;
-        this.order_id = order_id;
+        this.orderId = orderId;
         this.cash = cash;
     }
 }

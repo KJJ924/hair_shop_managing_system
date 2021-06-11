@@ -80,8 +80,8 @@ public class OrderService {
     }
 
     public ResponseEntity<Object> payment(RequestPayment requestPayment) {
-        Long order_id = requestPayment.getOrder_id();
-        OrderTable order = findByOrderId(order_id);
+        Long orderId = requestPayment.getOrderId();
+        OrderTable order = findByOrderId(orderId);
         return paymentFactory(requestPayment, order);
     }
 

@@ -199,7 +199,7 @@ class OrderControllerTest {
     void pointPayment()throws Exception{
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(order_id).build();
+                .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -222,7 +222,7 @@ class OrderControllerTest {
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.CASH_AND_POINT)
                 .cash(500)
-                .order_id(order_id).build();
+                .orderId(order_id).build();
 
         String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
@@ -254,7 +254,7 @@ class OrderControllerTest {
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.CASH_AND_POINT)
                 .cash(500)
-                .order_id(orderTable.getOrderId()).build();
+                .orderId(orderTable.getOrderId()).build();
 
         String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
@@ -269,7 +269,7 @@ class OrderControllerTest {
     void cashPayment()throws Exception{
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.CASH)
-                .order_id(order_id).build();
+                .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -299,7 +299,7 @@ class OrderControllerTest {
 
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(orderTable.getOrderId()).build();
+                .orderId(orderTable.getOrderId()).build();
         String content = objectMapper.writeValueAsString(requestPayment);
 
 
@@ -319,7 +319,7 @@ class OrderControllerTest {
     void payment_fail_duplicate_payment()throws Exception{
         RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(order_id).build();
+                .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
 
         OrderTable orderTable = orderService.findByOrderId(order_id);
