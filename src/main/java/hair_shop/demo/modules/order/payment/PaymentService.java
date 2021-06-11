@@ -6,6 +6,8 @@ import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.request.RequestPayment;
+import hair_shop.demo.modules.order.payment.exception.InsufficientPointException;
+import hair_shop.demo.modules.order.payment.exception.PaymentCompleteException;
 import javax.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class PaymentService {
 
     public ResponseEntity<Object> paymentFactory(RequestPayment form, OrderTable order) {
         if (order.checkPayment()) {
-            return ApiResponseMessage.error("payment_Complete", "이미 결제가 완료됨");
+            throw new PaymentCompleteException();
         }
 
         Payment payment = form.getPayment();
@@ -52,7 +54,7 @@ public class PaymentService {
         Integer savePoint = member.getMemberShipPoint() - order.totalPrice();
 
         if (!payment.isPayment(savePoint)) {
-            return ApiResponseMessage.error(String.valueOf(savePoint), "잔액이 부족합니다");
+            throw new InsufficientPointException();
         }
 
         paymentSave(order, payment, savePoint);
@@ -72,7 +74,7 @@ public class PaymentService {
         Integer savePoint = member.getMemberShipPoint() - resultMenuPrice;
 
         if (!payment.isPayment(savePoint)) {
-            return ApiResponseMessage.error(String.valueOf(savePoint), "잔액이 부족합니다");
+            throw new InsufficientPointException();
         }
 
         paymentSave(order, payment, savePoint);

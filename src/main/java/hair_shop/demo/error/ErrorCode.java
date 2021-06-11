@@ -32,8 +32,11 @@ public enum ErrorCode {
     //order
     PAID_RESERVATION(HttpStatus.CONFLICT, "이미 결제한 예약은 삭제가 불가능합니다"),
     NOT_FOUND_ORDER(HttpStatus.NOT_FOUND, "해당하는 예약이 없음"),
-    TIME_OVER_RESERVATION_START(HttpStatus.BAD_REQUEST, "예약 시작 시간이 예약 종료시간보다 늦을수 없습니다");
+    TIME_OVER_RESERVATION_START(HttpStatus.BAD_REQUEST, "예약 시작 시간이 예약 종료시간보다 늦을수 없습니다"),
 
+    //payment
+    PAYMENT_COMPLETE(HttpStatus.CONFLICT,"이미 결제가 완료됨"),
+    INSUFFICIENT_POINT(HttpStatus.CONFLICT,"잔액이 부족합니다");
     private final HttpStatus status;
     private final String message;
 
