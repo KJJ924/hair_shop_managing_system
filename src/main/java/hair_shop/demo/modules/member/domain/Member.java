@@ -3,6 +3,7 @@ package hair_shop.demo.modules.member.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.payment.exception.InsufficientPointException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -26,7 +27,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
@@ -35,7 +37,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     private String phone;
 
     @Column(nullable = false)
@@ -63,29 +65,40 @@ public class Member {
         this.name = name;
     }
 
-    public boolean isMemberShip(){
+    public boolean isMemberShip() {
         return this.memberShip != null;
     }
 
-    public int getMemberShipPoint(){
-        if(isMemberShip()) {
+    public int getMemberShipPoint() {
+        if (isMemberShip()) {
             return this.memberShip.getPoint();
         }
         return 0;
     }
 
-    public void addOrder(OrderTable orderTable){
+    public void addOrder(OrderTable orderTable) {
         orderList.add(orderTable);
     }
-    public void addDescription(String description){
+
+    public void addDescription(String description) {
         this.description = description;
     }
-    public void registerVisitDate(){
+
+    public void registerVisitDate() {
         this.lastVisitDate = LocalDate.now();
     }
 
     public void addPoint(int point) {
-        memberShip.setPoint(memberShip.getPoint()+point);
+        memberShip.setPoint(memberShip.getPoint() + point);
         memberShip.setExpirationDate(LocalDateTime.now().plusYears(1));
+    }
+
+    public int changePoint(int point) {
+        if (point > getMemberShipPoint()) {
+            throw new InsufficientPointException();
+        }
+        int result = getMemberShipPoint() - point;
+        memberShip.setPoint(result);
+        return result;
     }
 }

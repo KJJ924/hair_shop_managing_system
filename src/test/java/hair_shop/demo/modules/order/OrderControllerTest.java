@@ -203,7 +203,7 @@ class OrderControllerTest {
         String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
+                .content(content)).andDo(print())
                 .andExpect(status().isOk());
 
         OrderTable orderTable = orderService.findByOrderId(order_id);
@@ -214,54 +214,6 @@ class OrderControllerTest {
                 .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
 
 
-    }
-
-    @Test
-    @DisplayName("포인트+현금 결제")
-    void pointAndCashPayment()throws Exception{
-        RequestPayment requestPayment = RequestPayment.builder()
-                .payment(Payment.CASH_AND_POINT)
-                .cash(500)
-                .orderId(order_id).build();
-
-        String content = objectMapper.writeValueAsString(requestPayment);
-        mockMvc.perform(put("/order/payment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isOk());
-
-        OrderTable orderTable = orderService.findByOrderId(order_id);
-
-        assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
-        assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
-    }
-
-    @Test
-    @DisplayName("포인트+현금 결제- 실패(포인트가 부족한 경우)")
-    void pointAndCashPayment_fail()throws Exception{
-
-        RequestOrder requestOrder = new RequestOrder();
-        requestOrder.setDesignerName("사장님");
-        requestOrder.setMenuName("menu2");
-        requestOrder.setMemberPhoneNumber("000");
-        //"yyyy-MM-dd'T'HH:mm:ss"
-        requestOrder.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
-        requestOrder.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        ResponseOrder orderTable = orderService.saveOrder(requestOrder);
-
-        RequestPayment requestPayment = RequestPayment.builder()
-                .payment(Payment.CASH_AND_POINT)
-                .cash(500)
-                .orderId(orderTable.getOrderId()).build();
-
-        String content = objectMapper.writeValueAsString(requestPayment);
-        mockMvc.perform(put("/order/payment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
     }
 
     @Test

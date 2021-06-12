@@ -16,7 +16,8 @@ import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.PaidReservationException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
-import hair_shop.demo.modules.order.payment.PaymentService;
+import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
+import hair_shop.demo.modules.order.payment.service.PaymentService;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -78,7 +78,7 @@ public class OrderService {
         return OrderTable.daySeparated(orderList);
     }
 
-    public ResponseEntity<Object> payment(RequestPayment requestPayment) {
+    public ResponsePayment payment(RequestPayment requestPayment) {
         OrderTable order = findByOrderId(requestPayment.getOrderId());
         return paymentService.paymentFactory(requestPayment, order);
     }

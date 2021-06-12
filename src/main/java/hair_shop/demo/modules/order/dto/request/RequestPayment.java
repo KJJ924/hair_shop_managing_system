@@ -13,12 +13,10 @@ import lombok.Setter;
 public class RequestPayment {
     private Payment payment;
     private Long orderId;
-    private Integer cash;
 
     @Builder
-    private RequestPayment(Payment payment, Long orderId, Integer cash) {
+    private RequestPayment(Payment payment, Long orderId) {
         this.payment = payment;
         this.orderId = orderId;
-        this.cash = cash;
     }
 }

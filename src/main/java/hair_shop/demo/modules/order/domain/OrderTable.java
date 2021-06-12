@@ -101,16 +101,30 @@ public class OrderTable {
         return tableMap;
     }
 
-    public List<String> menuList(){
+    public void cashPayment(){
+        this.payment = Payment.CASH;
+        member.registerVisitDate();
+    }
+
+    public int pointPayment(){
+        int remainingPoint = member.changePoint(totalPrice());
+        this.payment = Payment.POINT;
+        member.registerVisitDate();
+        return remainingPoint;
+    }
+
+    public List<String> menuList() {
         return menus.stream().map(Menu::getName).collect(Collectors.toList());
     }
+
     public String getMemberPhone() {
         return this.member.getPhone();
     }
 
-    public String getDesignerName(){
+    public String getDesignerName() {
         return this.designers.getName();
     }
+
     public String getMemberName() {
         return this.member.getName();
     }
@@ -138,7 +152,8 @@ public class OrderTable {
     }
 
     public void changeReservationTime(LocalDateTime start, LocalDateTime end) {
-        this.reservationStart =start;
-        this.reservationEnd= end;
+        this.reservationStart = start;
+        this.reservationEnd = end;
     }
+
 }

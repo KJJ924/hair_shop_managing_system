@@ -5,6 +5,7 @@ import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
 import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
+import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
 import hair_shop.demo.modules.order.service.OrderService;
 import java.time.LocalDate;
 import javax.validation.Valid;
@@ -57,8 +58,8 @@ public class OrderController {
     }
 
     @PutMapping("/order/payment")
-    public ResponseEntity<Object> payment(@RequestBody RequestPayment requestPayment) {
-        return orderService.payment(requestPayment);
+    public ResponseEntity<ResponsePayment> payment(@RequestBody RequestPayment requestPayment) {
+        return ResponseEntity.ok(orderService.payment(requestPayment));
     }
 
     @PutMapping("/order/menu")
