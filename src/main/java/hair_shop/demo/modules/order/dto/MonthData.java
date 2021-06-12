@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order.form;
+package hair_shop.demo.modules.order.dto;
 
 import hair_shop.demo.modules.order.domain.OrderTable;
 import lombok.Builder;

@@ -24,9 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/member")
 public class MemberController {
 
-    public static final String NOT_FOUND_MEMBER = "해당하는 회원이 존재하지 않음";
-    public static final String NOT_MEMBERSHIP = "회원권이 없음";
-
     private final MemberService memberService;
 
     @GetMapping("/{phoneNumber}")

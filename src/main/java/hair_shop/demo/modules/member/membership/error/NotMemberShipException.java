@@ -7,9 +7,9 @@ import hair_shop.demo.error.exception.BusinessException;
  * @author dkansk924@naver.com
  * @since 2021/05/31
  */
-public class MemberNotAlreadyException extends BusinessException {
+public class NotMemberShipException extends BusinessException {
 
-    public MemberNotAlreadyException() {
+    public NotMemberShipException() {
         super(ErrorCode.NOT_MEMBERSHIP);
     }
 }

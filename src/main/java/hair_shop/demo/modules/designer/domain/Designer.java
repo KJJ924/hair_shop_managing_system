@@ -18,6 +18,7 @@ import lombok.Setter;
 public class Designer {
 
     @Id
+    @Column(name = "designer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -51,7 +51,7 @@ public class MenuService {
         return ResponseMenu.toMapper(menu);
     }
 
-    private Menu getMenu(String name) {
+    public Menu getMenu(String name) {
         return menuRepository.findByName(name)
             .orElseThrow(NotFoundMenuException::new);
     }

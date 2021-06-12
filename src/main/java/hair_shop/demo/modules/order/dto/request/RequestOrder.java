@@ -1,4 +1,4 @@
-package hair_shop.demo.modules.order.form;
+package hair_shop.demo.modules.order.dto.request;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
-public class OrderForm {
+public class RequestOrder {
 
     @NotBlank
     private String menuName;
@@ -22,4 +22,8 @@ public class OrderForm {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime reservationEnd;
 
+
+    public boolean isAfter() {
+        return reservationStart.isAfter(this.reservationEnd);
+    }
 }

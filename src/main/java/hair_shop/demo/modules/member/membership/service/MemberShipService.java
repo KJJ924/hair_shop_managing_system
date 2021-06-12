@@ -5,7 +5,7 @@ import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.dto.response.ResponseMemberShip;
-import hair_shop.demo.modules.member.membership.error.MemberNotAlreadyException;
+import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.member.membership.error.MemberShipAlreadyException;
 import hair_shop.demo.modules.member.membership.repository.MemberShipRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class MemberShipService {
         Member member = memberService.findByPhone(memberShipForm.getPhone());
 
         if (!member.isMemberShip()) {
-            throw new MemberNotAlreadyException();
+            throw new NotMemberShipException();
         }
         member.addPoint(memberShipForm.getPoint());
         return ResponseMemberShip.of(member.getMemberShip());

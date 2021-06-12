@@ -55,7 +55,7 @@ class DesignerControllerTest {
             .content(content))
             .andExpect(status().isOk());
 
-        Designer designerTest = designerRepository.findByName("designerTest");
+        Designer designerTest = designerRepository.findByName("designerTest").get();
         assertThat(designerTest).isNotNull();
     }
 

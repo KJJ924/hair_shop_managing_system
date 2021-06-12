@@ -12,19 +12,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.designer.repository.DesignerRepository;
-import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.service.MemberShipService;
-import hair_shop.demo.modules.menu.repository.MenuRepository;
+import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.menu.repository.MenuRepository;
 import hair_shop.demo.modules.order.domain.OrderTable;
-import hair_shop.demo.modules.order.form.MonthData;
-import hair_shop.demo.modules.order.form.OrderForm;
-import hair_shop.demo.modules.order.form.Payment;
-import hair_shop.demo.modules.order.form.PaymentForm;
-import hair_shop.demo.modules.order.form.edit.OrderMenuEditForm;
-import hair_shop.demo.modules.order.form.edit.OrderTimeEditForm;
+import hair_shop.demo.modules.order.domain.Payment;
+import hair_shop.demo.modules.order.dto.MonthData;
+import hair_shop.demo.modules.order.dto.request.RequestOrder;
+import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
+import hair_shop.demo.modules.order.dto.request.RequestPayment;
+import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
+import hair_shop.demo.modules.order.dto.response.ResponseOrder;
+import hair_shop.demo.modules.order.repository.OrderRepository;
+import hair_shop.demo.modules.order.service.OrderService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +50,8 @@ class OrderControllerTest {
 
     @Autowired MockMvc mockMvc;
 
-    @Autowired OrderRepository orderRepository;
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     MemberRepository memberRepository;
@@ -80,15 +84,15 @@ class OrderControllerTest {
         menuRepository.save(Menu.builder().name("menu").price(1000).build());
         menuRepository.save(Menu.builder().name("menu2").price(100000).build());
 
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("menu");
-        orderForm.setMemberPhoneNumber("000");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("사장님");
+        requestOrder.setMenuName("menu");
+        requestOrder.setMemberPhoneNumber("000");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
-        order_id = orderTable.getId();
+        requestOrder.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
+        ResponseOrder orderTable = orderService.saveOrder(requestOrder);
+        order_id = orderTable.getOrderId();
     }
 
     @AfterEach
@@ -107,21 +111,21 @@ class OrderControllerTest {
     @DisplayName("예약표 받기-실패(해당하는 주문번호가 없을때)")
     void getOrder_fail() throws Exception{
         mockMvc.perform(get("/order/99999"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("예약 생성-성공")
     void createOrder() throws Exception {
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("menu");
-        orderForm.setMemberPhoneNumber("000");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("사장님");
+        requestOrder.setMenuName("menu");
+        requestOrder.setMemberPhoneNumber("000");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
+        requestOrder.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
 
-        String content = objectMapper.writeValueAsString(orderForm);
+        String content = objectMapper.writeValueAsString(requestOrder);
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -133,76 +137,76 @@ class OrderControllerTest {
     @Test
     @DisplayName("예약 생성-실패(회원이없음)")
     void createOrder_fail_noMember() throws Exception {
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("menu");
-        orderForm.setMemberPhoneNumber("111");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("사장님");
+        requestOrder.setMenuName("menu");
+        requestOrder.setMemberPhoneNumber("111");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
+        requestOrder.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
 
-        String content = objectMapper.writeValueAsString(orderForm);
+        String content = objectMapper.writeValueAsString(requestOrder);
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("예약 생성-실패(디자이너가 없음)")
     void createOrder_fail_noDesigner() throws Exception {
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("알바생");
-        orderForm.setMenuName("menu");
-        orderForm.setMemberPhoneNumber("000");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("알바생");
+        requestOrder.setMenuName("menu");
+        requestOrder.setMemberPhoneNumber("000");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
+        requestOrder.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
 
-        String content = objectMapper.writeValueAsString(orderForm);
+        String content = objectMapper.writeValueAsString(requestOrder);
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("예약 생성-실패(메뉴가 없음)")
     void createOrder_fail_noMenu() throws Exception {
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("noMenu");
-        orderForm.setMemberPhoneNumber("000");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("사장님");
+        requestOrder.setMenuName("noMenu");
+        requestOrder.setMemberPhoneNumber("000");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
+        requestOrder.setReservationStart(LocalDateTime.of(2020,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(2020,12,1,12,30));
 
-        String content = objectMapper.writeValueAsString(orderForm);
+        String content = objectMapper.writeValueAsString(requestOrder);
 
         mockMvc.perform(post("/order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("포인트 결제")
     void pointPayment()throws Exception{
-        PaymentForm paymentForm = PaymentForm.builder()
+        RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(order_id).build();
-        String content = objectMapper.writeValueAsString(paymentForm);
+                .orderId(order_id).build();
+        String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
+                .content(content)).andDo(print())
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
@@ -213,66 +217,18 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("포인트+현금 결제")
-    void pointAndCashPayment()throws Exception{
-        PaymentForm paymentForm = PaymentForm.builder()
-                .payment(Payment.CASH_AND_POINT)
-                .cash(500)
-                .order_id(order_id).build();
-
-        String content = objectMapper.writeValueAsString(paymentForm);
-        mockMvc.perform(put("/order/payment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isOk());
-
-        OrderTable orderTable = orderRepository.findById(order_id).get();
-
-        assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH_AND_POINT);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9500);
-        assertThat(orderTable.getMember().getLastVisitDate())
-                .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
-    }
-
-    @Test
-    @DisplayName("포인트+현금 결제- 실패(포인트가 부족한 경우)")
-    void pointAndCashPayment_fail()throws Exception{
-
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("menu2");
-        orderForm.setMemberPhoneNumber("000");
-        //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
-
-        PaymentForm paymentForm = PaymentForm.builder()
-                .payment(Payment.CASH_AND_POINT)
-                .cash(500)
-                .order_id(orderTable.getId()).build();
-
-        String content = objectMapper.writeValueAsString(paymentForm);
-        mockMvc.perform(put("/order/payment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     @DisplayName("현금 결제")
     void cashPayment()throws Exception{
-        PaymentForm paymentForm = PaymentForm.builder()
+        RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.CASH)
-                .order_id(order_id).build();
-        String content = objectMapper.writeValueAsString(paymentForm);
+                .orderId(order_id).build();
+        String content = objectMapper.writeValueAsString(requestPayment);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
         assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
@@ -284,66 +240,66 @@ class OrderControllerTest {
     @DisplayName("결제실패-포인트부족")
     void payment_fail_point_not_enough()throws Exception{
 
-        OrderForm orderForm = new OrderForm();
-        orderForm.setDesignerName("사장님");
-        orderForm.setMenuName("menu2");
-        orderForm.setMemberPhoneNumber("000");
+        RequestOrder requestOrder = new RequestOrder();
+        requestOrder.setDesignerName("사장님");
+        requestOrder.setMenuName("menu2");
+        requestOrder.setMemberPhoneNumber("000");
         //"yyyy-MM-dd'T'HH:mm:ss"
-        orderForm.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
-        orderForm.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
-        OrderTable orderTable = orderService.saveOrder(orderForm);
+        requestOrder.setReservationStart(LocalDateTime.of(9999,12,1,12,0));
+        requestOrder.setReservationEnd(LocalDateTime.of(9999,12,1,12,30));
+        ResponseOrder orderTable = orderService.saveOrder(requestOrder);
 
-        PaymentForm paymentForm = PaymentForm.builder()
+        RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(orderTable.getId()).build();
-        String content = objectMapper.writeValueAsString(paymentForm);
+                .orderId(orderTable.getOrderId()).build();
+        String content = objectMapper.writeValueAsString(requestPayment);
 
 
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
 
-
+        Member member = memberRepository.findByPhone(orderTable.getMemberPhoneNumber()).orElseThrow();
         assertThat(orderTable.getPayment()).isEqualTo(Payment.NOT_PAYMENT);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
+        assertThat(member.getMemberShipPoint()).isEqualTo(10000);
     }
 
     @Test
     @DisplayName("결제실패-중복결제")
     void payment_fail_duplicate_payment()throws Exception{
-        PaymentForm paymentForm = PaymentForm.builder()
+        RequestPayment requestPayment = RequestPayment.builder()
                 .payment(Payment.POINT)
-                .order_id(order_id).build();
-        String content = objectMapper.writeValueAsString(paymentForm);
+                .orderId(order_id).build();
+        String content = objectMapper.writeValueAsString(requestPayment);
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
         orderTable.setPayment(Payment.CASH);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
     @DisplayName("예약시간 변경 - 성공")
     void order_edit()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+        RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(order_id)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getReservationStart()).isEqualTo(startTime);
         assertThat(orderTable.getReservationEnd()).isEqualTo(startTime.plusMinutes(30));
@@ -353,14 +309,14 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(예약 시작 시간이 예약 종료시간보다 늦을수 없습니다)")
     void order_edit_fail_overTime()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+         RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(order_id)
                 .reservationStart(startTime.plusMinutes(30))
                 .reservationEnd(startTime).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isBadRequest());
@@ -370,17 +326,17 @@ class OrderControllerTest {
     @DisplayName("예약시간 변경 - 실패(해당하는 예약이 없음)")
     void order_edit_fail_not_found_order()throws  Exception{
         LocalDateTime startTime = LocalDateTime.now();
-        OrderTimeEditForm editForm = OrderTimeEditForm.builder()
+        RequestOrderTimeEdit editForm = RequestOrderTimeEdit.builder()
                 .id(999L)
                 .reservationStart(startTime)
                 .reservationEnd(startTime.plusMinutes(30)).build();
 
         String content = objectMapper.writeValueAsString(editForm);
 
-        mockMvc.perform(put("/order/time")
+        mockMvc.perform(put("/order/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -413,18 +369,18 @@ class OrderControllerTest {
     @Test
     @DisplayName("메뉴 변경 - 성공(추가)")
     void order_edit_menu_add()throws  Exception{
-        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
-                .menuName("menu2")
-                .orderId(order_id).build();
+        RequestOrderMenuEdit requestOrderMenuEdit = new RequestOrderMenuEdit();
+        requestOrderMenuEdit.setMenuName("menu2");
+        requestOrderMenuEdit.setOrderId(order_id);
 
-        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+        String content = objectMapper.writeValueAsString(requestOrderMenuEdit);
 
-        mockMvc.perform(put("/order/menu/add")
+        mockMvc.perform(put("/order/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getMenus().size()).isEqualTo(2);
     }
@@ -432,17 +388,17 @@ class OrderControllerTest {
     @Test
     @DisplayName("메뉴 변경 - 성공(삭제)")
     void order_edit_menu_delete()throws Exception{
-        OrderMenuEditForm orderMenuEditForm = OrderMenuEditForm.builder()
-                .menuName("menu")
-                .orderId(order_id).build();
-        String content = objectMapper.writeValueAsString(orderMenuEditForm);
+        RequestOrderMenuEdit requestOrderMenuEdit = new RequestOrderMenuEdit();
+        requestOrderMenuEdit.setMenuName("menu");
+        requestOrderMenuEdit.setOrderId(order_id);
+        String content = objectMapper.writeValueAsString(requestOrderMenuEdit);
 
-        mockMvc.perform(put("/order/menu/delete")
+        mockMvc.perform(delete("/order/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
 
         assertThat(orderTable.getMenus().size()).isEqualTo(0);
     }
@@ -451,7 +407,7 @@ class OrderControllerTest {
     @DisplayName("예약 취소 -성공")
     void order_cancel() throws Exception{
         mockMvc.perform(delete("/order/"+order_id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         boolean result = orderRepository.existsById(order_id);
         assertThat(result).isFalse();
@@ -461,16 +417,16 @@ class OrderControllerTest {
     @DisplayName("예약 취소 -실패(해당하는 주문이없음)")
     void order_cancel_fail() throws Exception{
         mockMvc.perform(delete("/order/4888"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("예약 취소 -실패(이미 결제가 완료됨)")
     void order_cancel_already_payment_fail() throws Exception{
-        OrderTable orderTable = orderRepository.findById(order_id).get();
+        OrderTable orderTable = orderService.findByOrderId(order_id);
         orderTable.setPayment(Payment.CASH);
         mockMvc.perform(delete("/order/"+order_id))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
 
     }
 
