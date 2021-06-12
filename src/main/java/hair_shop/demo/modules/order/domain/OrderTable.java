@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
@@ -47,6 +49,7 @@ import org.hibernate.annotations.CreationTimestamp;
 public class OrderTable {
 
     @Id
+    @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -64,6 +67,7 @@ public class OrderTable {
     private Payment payment = Payment.NOT_PAYMENT;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     @JsonBackReference
     private Member member;
 
@@ -72,6 +76,7 @@ public class OrderTable {
     private Set<Menu> menus = new HashSet<>();
 
     @ManyToOne
+    @JoinColumn(name = "designer_id")
     private Designer designers;
 
     public Integer totalPrice() {

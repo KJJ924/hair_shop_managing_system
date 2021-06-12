@@ -21,6 +21,7 @@ import lombok.Setter;
 public class MemberShip {
 
     @Id
+    @Column(name = "membership_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

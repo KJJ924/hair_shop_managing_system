@@ -31,6 +31,7 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Member {
 
     @Id
+    @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -50,7 +51,7 @@ public class Member {
     private Set<OrderTable> orderList = new HashSet<>();
 
     @OneToOne
-    @JoinColumn(name = "memberShip_id")
+    @JoinColumn(name = "membership_id")
     private MemberShip memberShip;
 
     @Lob
