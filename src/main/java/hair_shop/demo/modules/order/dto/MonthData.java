@@ -20,9 +20,9 @@ public class MonthData {
 
     public static List<MonthData> remakeMonthData(Map<Integer, List<OrderTable>> daySeparated) {
         List<MonthData> monthData = new ArrayList<>();
-        Set<Integer> DayKey = daySeparated.keySet();
+        Set<Integer> dayKey = daySeparated.keySet();
 
-        for (Integer day : DayKey) {
+        for (Integer day : dayKey) {
             List<OrderTable> orderTables = daySeparated.get(day);
             int expectPrice = orderTables.stream().mapToInt(OrderTable::totalPrice).sum();
             int resultPrice = orderTables.stream().filter(OrderTable::checkPayment).mapToInt(OrderTable::totalPrice).sum();
