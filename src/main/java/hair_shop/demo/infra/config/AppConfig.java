@@ -1,4 +1,4 @@
-package hair_shop.demo.Infra.config;
+package hair_shop.demo.infra.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;

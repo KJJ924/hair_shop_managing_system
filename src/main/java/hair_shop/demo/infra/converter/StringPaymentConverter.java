@@ -1,4 +1,4 @@
-package hair_shop.demo.Infra.converter;
+package hair_shop.demo.infra.converter;
 
 import hair_shop.demo.modules.order.domain.Payment;
 import org.springframework.core.convert.converter.Converter;

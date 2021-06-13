@@ -1,4 +1,4 @@
-package hair_shop.demo.Infra.apiMessage;
+package hair_shop.demo.infra.apiMessage;
 import lombok.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
