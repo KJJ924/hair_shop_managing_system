@@ -1,6 +1,7 @@
 package hair_shop.demo.modules.order.dto.request;
 
 import hair_shop.demo.modules.order.domain.Payment;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RequestPayment {
+
+    @ApiModelProperty(value = "결제 방식", required = true, example = "CASH")
     private Payment payment;
+
+    @ApiModelProperty(value = "주문번호", required = true, example = "1")
     private Long orderId;
 
     @Builder
