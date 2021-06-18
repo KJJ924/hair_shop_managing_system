@@ -5,6 +5,7 @@ import hair_shop.demo.modules.designer.service.DesignerService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.menu.exception.DuplicateMenuNameException;
 import hair_shop.demo.modules.menu.service.MenuService;
 import hair_shop.demo.modules.order.domain.Order;
 import hair_shop.demo.modules.order.dto.MonthData;
@@ -102,7 +103,7 @@ public class OrderService {
     }
 
     public Order findByOrderId(Long orderId) {
-        return orderRepository.findById(orderId)
+        return orderRepository.findByIdWithALL(orderId)
             .orElseThrow(NotFoundOrderException::new);
     }
 
@@ -117,6 +118,11 @@ public class OrderService {
     public ResponseOrder addMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
         Order order = findByOrderId(requestOrderMenuEdit.getOrderId());
         Menu menu = menuService.getMenu(requestOrderMenuEdit.getMenuName());
+
+        if(order.containsMenu(menu)){
+            throw new DuplicateMenuNameException();
+        }
+
         order.getOrderItems().add(orderItemRepository.save(OrderItem.createOrderItem(order, menu)));
 
         return ResponseOrder.toMapper(order);
