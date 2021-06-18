@@ -103,7 +103,7 @@ public class OrderService {
     }
 
     public Order findByOrderId(Long orderId) {
-        return orderRepository.findByIdWithALL(orderId)
+        return orderRepository.findByIdWithAll(orderId)
             .orElseThrow(NotFoundOrderException::new);
     }
 
