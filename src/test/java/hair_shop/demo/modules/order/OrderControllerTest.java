@@ -201,7 +201,7 @@ class OrderControllerTest {
                 .payment(Payment.POINT)
                 .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
-        mockMvc.perform(put("/order/payment")
+        mockMvc.perform(post("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)).andDo(print())
                 .andExpect(status().isOk());
@@ -223,7 +223,7 @@ class OrderControllerTest {
                 .payment(Payment.CASH)
                 .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
-        mockMvc.perform(put("/order/payment")
+        mockMvc.perform(post("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andExpect(status().isOk());

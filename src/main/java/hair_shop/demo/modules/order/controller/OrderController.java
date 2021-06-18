@@ -66,7 +66,7 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getWeekData(from, to));
     }
 
-    @PutMapping("/order/payment")
+    @PostMapping("/order/payment")
     @ApiOperation(value="예약 결제하기", notes="결제 타입별로 예약을 결제합니다(CASH,POINT)")
     public ResponseEntity<ResponsePayment> payment(@RequestBody RequestPayment requestPayment) {
         return ResponseEntity.ok(orderService.payment(requestPayment));
