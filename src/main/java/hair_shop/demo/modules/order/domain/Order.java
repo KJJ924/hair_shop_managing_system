@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.menu.domain.Menu;
+import hair_shop.demo.modules.menu.exception.NotFoundMenuException;
+import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,8 +14,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,10 +26,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,7 +50,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @NamedEntityGraph(name = "order.withAll", attributeNodes = {
-    @NamedAttributeNode("menus"),
+    @NamedAttributeNode("orderItems"),
 })
 public class Order {
 
@@ -54,6 +58,22 @@ public class Order {
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "designer_id")
+    private Designer designers;
+
+    @Builder.Default
+    @OneToMany(mappedBy ="order",cascade = CascadeType.REMOVE)
+    private Set<OrderItem> orderItems = new HashSet<>();
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Payment payment = Payment.NOT_PAYMENT;
 
     @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationStart;
@@ -64,28 +84,8 @@ public class Order {
     @CreationTimestamp
     private LocalDate createAt;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private Payment payment = Payment.NOT_PAYMENT;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @Builder.Default
-    @ManyToMany
-    private Set<Menu> menus = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "designer_id")
-    private Designer designers;
-
     public Integer totalPrice() {
-        int totalPrice = 0;
-        for (Menu menu : menus) {
-            totalPrice += menu.getPrice();
-        }
-        return totalPrice;
+        return orderItems.stream().mapToInt(OrderItem::getPrice).sum();
     }
 
     public static Map<Integer, List<Order>> daySeparated(List<Order> data) {
@@ -102,12 +102,12 @@ public class Order {
         return tableMap;
     }
 
-    public void cashPayment(){
+    public void cashPayment() {
         this.payment = Payment.CASH;
         member.registerVisitDate();
     }
 
-    public int pointPayment(){
+    public int pointPayment() {
         int remainingPoint = member.changePoint(totalPrice());
         this.payment = Payment.POINT;
         member.registerVisitDate();
@@ -115,7 +115,7 @@ public class Order {
     }
 
     public List<String> menuList() {
-        return menus.stream().map(Menu::getName).collect(Collectors.toList());
+        return orderItems.stream().map(o ->o.getMenu().getName()).collect(Collectors.toList());
     }
 
     public String getMemberPhone() {
@@ -134,27 +134,18 @@ public class Order {
         return !this.payment.equals(Payment.NOT_PAYMENT);
     }
 
-    public boolean menuAdd(Menu menu) {
-        if (!this.menus.contains(menu)) {
-            menus.add(menu);
-            return true;
-        }
-        // 이미 자료구조가 Set 이여서 중복 검사 안해도 되는데 메세지를 전달해야하니 ...
-        return false;
-    }
 
-
-    public boolean menuDelete(Menu menu) {
-        if (this.menus.contains(menu)) {
-            menus.remove(menu);
-            return true;
-        }
-        return false;
+    public OrderItem menuDelete(Menu menu) {
+        OrderItem target = orderItems.stream()
+            .filter(items -> Objects.equals(items.getMenu(),menu))
+            .findFirst()
+            .orElseThrow(NotFoundMenuException::new);
+        this.orderItems.remove(target);
+        return target;
     }
 
     public void changeReservationTime(LocalDateTime start, LocalDateTime end) {
         this.reservationStart = start;
         this.reservationEnd = end;
     }
-
 }
