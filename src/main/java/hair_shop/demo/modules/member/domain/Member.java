@@ -1,13 +1,9 @@
 package hair_shop.demo.modules.member.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
-import hair_shop.demo.modules.order.domain.OrderTable;
 import hair_shop.demo.modules.order.payment.exception.InsufficientPointException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,10 +43,6 @@ public class Member {
     @CreationTimestamp
     private LocalDate joinedAt;
 
-    @OneToMany(mappedBy = "member")
-    @JsonManagedReference
-    private Set<OrderTable> orderList = new HashSet<>();
-
     @OneToOne
     @JoinColumn(name = "membership_id")
     private MemberShip memberShip;
@@ -74,10 +65,6 @@ public class Member {
             return this.memberShip.getPoint();
         }
         return 0;
-    }
-
-    public void addOrder(OrderTable orderTable) {
-        orderList.add(orderTable);
     }
 
     public void addDescription(String description) {

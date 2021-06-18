@@ -12,14 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public interface MemberRepository  extends JpaRepository<Member, Long> {
-    @Query("select a from Member a LEFT join fetch  a.memberShip " +
-            "LEFT join fetch a.orderList s LEFT join fetch s.menus where a.phone = :phoneNumber")
+
     Optional<Member> findByPhone(@Param("phoneNumber") String phoneNumber);
 
     boolean existsByPhone(String phone);
-
-    Member findWithPhoneByPhone(String memberPhoneNumber);
-
 
     @Query("select a from Member a where a.lastVisitDate <:recentTime")
     List<Member> findByLastVisitDateBetween(@Param("recentTime") LocalDate now);
