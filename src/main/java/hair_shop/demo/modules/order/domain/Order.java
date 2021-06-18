@@ -102,6 +102,10 @@ public class Order {
         return tableMap;
     }
 
+    public boolean containsMenu(Menu menu){
+        return orderItems.stream().map(OrderItem::getMenu).anyMatch(m->Objects.equals(m,menu));
+    }
+
     public void cashPayment() {
         this.payment = Payment.CASH;
         member.registerVisitDate();

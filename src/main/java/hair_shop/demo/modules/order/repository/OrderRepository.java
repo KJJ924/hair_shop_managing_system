@@ -1,6 +1,7 @@
 package hair_shop.demo.modules.order.repository;
 
 import hair_shop.demo.modules.order.domain.Order;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,14 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface OrderRepository extends JpaRepository<Order,Long> {
+
+
+    @Query("select o from Order o "
+        + "join fetch o.designers "
+        + "join fetch o.member "
+        + "left join fetch o.orderItems i left join fetch i.menu "
+        + "where o.id = :id")
+    Optional<Order> findByIdWithAll(Long id);
 
     @EntityGraph(value = "order.withAll",type = EntityGraph.EntityGraphType.LOAD)
     List<Order> findByCreateAtBetweenOrderByCreateAt(LocalDate standardMonth, LocalDate plusMont);
