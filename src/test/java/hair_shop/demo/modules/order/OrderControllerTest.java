@@ -382,7 +382,7 @@ class OrderControllerTest {
 
         Order order = orderService.findByOrderId(order_id);
 
-        assertThat(order.getMenus().size()).isEqualTo(2);
+        assertThat(order.getOrderItems().size()).isEqualTo(2);
     }
 
     @Test
@@ -400,7 +400,7 @@ class OrderControllerTest {
 
         Order order = orderService.findByOrderId(order_id);
 
-        assertThat(order.getMenus().size()).isEqualTo(0);
+        assertThat(order.getOrderItems().size()).isZero();
     }
 
     @Test
