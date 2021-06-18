@@ -1,7 +1,7 @@
 package hair_shop.demo.modules.order.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import hair_shop.demo.modules.order.domain.Payment;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,19 +31,19 @@ public class ResponseOrder {
     private LocalDateTime reservationEnd;
     private LocalDate createAt;
 
-    public ResponseOrder(OrderTable orderTable) {
-        this.orderId = orderTable.getId();
-        this.payment = orderTable.getPayment();
-        this.menuList = orderTable.menuList();
-        this.price = orderTable.totalPrice();
-        this.memberPhoneNumber = orderTable.getMemberPhone();
-        this.designerName = orderTable.getDesignerName();
-        this.reservationStart = orderTable.getReservationStart();
-        this.reservationEnd = orderTable.getReservationEnd();
-        this.createAt = orderTable.getCreateAt();
+    public ResponseOrder(Order order) {
+        this.orderId = order.getId();
+        this.payment = order.getPayment();
+        this.menuList = order.menuList();
+        this.price = order.totalPrice();
+        this.memberPhoneNumber = order.getMemberPhone();
+        this.designerName = order.getDesignerName();
+        this.reservationStart = order.getReservationStart();
+        this.reservationEnd = order.getReservationEnd();
+        this.createAt = order.getCreateAt();
     }
 
-    public static ResponseOrder toMapper(OrderTable orderTable){
-        return new ResponseOrder(orderTable);
+    public static ResponseOrder toMapper(Order order){
+        return new ResponseOrder(order);
     }
 }

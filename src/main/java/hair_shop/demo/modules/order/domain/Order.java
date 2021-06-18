@@ -1,6 +1,5 @@
 package hair_shop.demo.modules.order.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
@@ -27,6 +26,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +36,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+
+@Table(name = "Orders")
 @Entity
 @EqualsAndHashCode(of = "id")
 @Getter
@@ -46,7 +48,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NamedEntityGraph(name = "order.withAll", attributeNodes = {
     @NamedAttributeNode("menus"),
 })
-public class OrderTable {
+public class Order {
 
     @Id
     @Column(name = "order_id")
@@ -68,7 +70,6 @@ public class OrderTable {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    @JsonBackReference
     private Member member;
 
     @Builder.Default
@@ -87,11 +88,11 @@ public class OrderTable {
         return totalPrice;
     }
 
-    public static Map<Integer, List<OrderTable>> daySeparated(List<OrderTable> data) {
-        Map<Integer, List<OrderTable>> tableMap = new LinkedHashMap<>();
+    public static Map<Integer, List<Order>> daySeparated(List<Order> data) {
+        Map<Integer, List<Order>> tableMap = new LinkedHashMap<>();
         data.forEach(orderTable -> {
             int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
-            List<OrderTable> orderList = tableMap.get(dayOfMonth);
+            List<Order> orderList = tableMap.get(dayOfMonth);
             if (orderList == null) {
                 tableMap.put(dayOfMonth, new ArrayList<>(Collections.singletonList(orderTable)));
             } else {

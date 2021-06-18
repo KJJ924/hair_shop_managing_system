@@ -18,7 +18,7 @@ import hair_shop.demo.modules.member.membership.service.MemberShipService;
 import hair_shop.demo.modules.member.repository.MemberRepository;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.menu.repository.MenuRepository;
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.RequestOrder;
@@ -206,11 +206,11 @@ class OrderControllerTest {
                 .content(content)).andDo(print())
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
+        Order order = orderService.findByOrderId(order_id);
 
-        assertThat(orderTable.getPayment()).isEqualTo(Payment.POINT);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(9000);
-        assertThat(orderTable.getMember().getLastVisitDate())
+        assertThat(order.getPayment()).isEqualTo(Payment.POINT);
+        assertThat(order.getMember().getMemberShipPoint()).isEqualTo(9000);
+        assertThat(order.getMember().getLastVisitDate())
                 .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
 
 
@@ -228,11 +228,11 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
+        Order order = orderService.findByOrderId(order_id);
 
-        assertThat(orderTable.getPayment()).isEqualTo(Payment.CASH);
-        assertThat(orderTable.getMember().getMemberShipPoint()).isEqualTo(10000);
-        assertThat(orderTable.getMember().getLastVisitDate())
+        assertThat(order.getPayment()).isEqualTo(Payment.CASH);
+        assertThat(order.getMember().getMemberShipPoint()).isEqualTo(10000);
+        assertThat(order.getMember().getLastVisitDate())
                 .isBetween(LocalDate.now().minusDays(1),LocalDate.now());
     }
 
@@ -274,8 +274,8 @@ class OrderControllerTest {
                 .orderId(order_id).build();
         String content = objectMapper.writeValueAsString(requestPayment);
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
-        orderTable.setPayment(Payment.CASH);
+        Order order = orderService.findByOrderId(order_id);
+        order.setPayment(Payment.CASH);
         mockMvc.perform(put("/order/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
@@ -299,10 +299,10 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
+        Order order = orderService.findByOrderId(order_id);
 
-        assertThat(orderTable.getReservationStart()).isEqualTo(startTime);
-        assertThat(orderTable.getReservationEnd()).isEqualTo(startTime.plusMinutes(30));
+        assertThat(order.getReservationStart()).isEqualTo(startTime);
+        assertThat(order.getReservationEnd()).isEqualTo(startTime.plusMinutes(30));
     }
 
     @Test
@@ -356,7 +356,7 @@ class OrderControllerTest {
     @DisplayName(" 선택 일 범위 만큼의 주문 현황 받기")
     void order_week_data()throws  Exception{
         LocalDate date = LocalDate.of(2020, 12, 1);
-        Map<Integer, List<OrderTable>> weekData = orderService.getWeekData(date, date.plusDays(2));
+        Map<Integer, List<Order>> weekData = orderService.getWeekData(date, date.plusDays(2));
         String content = objectMapper.writeValueAsString(weekData);
         mockMvc.perform(get("/week")
                 .param("from","2020-12-01")
@@ -380,9 +380,9 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
+        Order order = orderService.findByOrderId(order_id);
 
-        assertThat(orderTable.getMenus().size()).isEqualTo(2);
+        assertThat(order.getMenus().size()).isEqualTo(2);
     }
 
     @Test
@@ -398,9 +398,9 @@ class OrderControllerTest {
                 .content(content))
                 .andExpect(status().isOk());
 
-        OrderTable orderTable = orderService.findByOrderId(order_id);
+        Order order = orderService.findByOrderId(order_id);
 
-        assertThat(orderTable.getMenus().size()).isEqualTo(0);
+        assertThat(order.getMenus().size()).isEqualTo(0);
     }
 
     @Test
@@ -423,8 +423,8 @@ class OrderControllerTest {
     @Test
     @DisplayName("예약 취소 -실패(이미 결제가 완료됨)")
     void order_cancel_already_payment_fail() throws Exception{
-        OrderTable orderTable = orderService.findByOrderId(order_id);
-        orderTable.setPayment(Payment.CASH);
+        Order order = orderService.findByOrderId(order_id);
+        order.setPayment(Payment.CASH);
         mockMvc.perform(delete("/order/"+order_id))
                 .andExpect(status().is4xxClientError());
 

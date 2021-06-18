@@ -2,7 +2,7 @@ package hair_shop.demo.modules.order.payment.service;
 
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class PaymentService {
 
-    public ResponsePayment paymentFactory(RequestPayment requestPayment, OrderTable order) {
+    public ResponsePayment paymentFactory(RequestPayment requestPayment, Order order) {
         if (order.checkPayment()) {
             throw new PaymentCompleteException();
         }
@@ -33,7 +33,7 @@ public class PaymentService {
         return pointPaymentProcess(order);
     }
 
-    private ResponsePayment cashPaymentProcess(OrderTable order) {
+    private ResponsePayment cashPaymentProcess(Order order) {
         order.cashPayment();
         return ResponsePayment.builder()
             .paymentType(Payment.CASH.getValue())
@@ -42,7 +42,7 @@ public class PaymentService {
             .build();
     }
 
-    private ResponsePayment pointPaymentProcess(OrderTable order) {
+    private ResponsePayment pointPaymentProcess(Order order) {
         paymentValidation(order.getMember());
 
         int remainingPoint = order.pointPayment();

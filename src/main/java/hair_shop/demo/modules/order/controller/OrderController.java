@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -53,15 +54,15 @@ public class OrderController {
     @GetMapping("/month")
     @ApiOperation(value="기준달로부터 한달 매출통계보기", notes="일별 매출액(예상금액,실제매출)을 출력합니다.")
     public ResponseEntity<Object> getMonthData(
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from) {
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from) {
         return ResponseEntity.ok(orderService.getMonthData(from, from.plusMonths(1)));
     }
 
     @GetMapping("/week")
     @ApiOperation(value="선택한 기간 만큼의 예약보기", notes="선택한 기간만큼의 일별 예약 현황을 출력합니다.")
     public ResponseEntity<Object> getWeekData(
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return ResponseEntity.ok(orderService.getWeekData(from, to));
     }
 

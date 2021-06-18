@@ -6,7 +6,7 @@ import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.menu.service.MenuService;
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.RequestOrder;
 import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
@@ -48,7 +48,7 @@ public class OrderService {
             throw new TimeOverReservationStartException();
         }
 
-        OrderTable order = OrderTable.builder()
+        Order order = Order.builder()
             .designers(designer)
             .member(member)
             .reservationStart(requestOrder.getReservationStart())
@@ -56,30 +56,30 @@ public class OrderService {
             .build();
         order.menuAdd(menu);
 
-        member.addOrder(orderRepository.save(order));
+        orderRepository.save(order);
 
         return ResponseOrder.toMapper(order);
     }
 
     public ResponseOrder getOrder(Long orderId) {
-        OrderTable order = findByOrderId(orderId);
+        Order order = findByOrderId(orderId);
         return ResponseOrder.toMapper(order);
     }
 
     public List<MonthData> getMonthData(LocalDate from, LocalDate to) {
-        List<OrderTable> orderList = orderRepository.findByMonthDate(from, to);
-        Map<Integer, List<OrderTable>> daySeparated = OrderTable.daySeparated(orderList);
+        List<Order> orderList = orderRepository.findByMonthDate(from, to);
+        Map<Integer, List<Order>> daySeparated = Order.daySeparated(orderList);
         return MonthData.remakeMonthData(daySeparated);
     }
 
-    public Map<Integer, List<OrderTable>> getWeekData(LocalDate from, LocalDate to) {
-        List<OrderTable> orderList = orderRepository
+    public Map<Integer, List<Order>> getWeekData(LocalDate from, LocalDate to) {
+        List<Order> orderList = orderRepository
             .findByCreateAtBetweenOrderByCreateAt(from, to);
-        return OrderTable.daySeparated(orderList);
+        return Order.daySeparated(orderList);
     }
 
     public ResponsePayment payment(RequestPayment requestPayment) {
-        OrderTable order = findByOrderId(requestPayment.getOrderId());
+        Order order = findByOrderId(requestPayment.getOrderId());
         return paymentService.paymentFactory(requestPayment, order);
     }
 
@@ -88,7 +88,7 @@ public class OrderService {
             throw new TimeOverReservationStartException();
         }
 
-        OrderTable order = findByOrderId(form.getId());
+        Order order = findByOrderId(form.getId());
 
         LocalDateTime start = form.getReservationStart();
         LocalDateTime end = form.getReservationEnd();
@@ -98,25 +98,25 @@ public class OrderService {
         return ResponseOrder.toMapper(order);
     }
 
-    public OrderTable findByOrderId(Long orderId) {
+    public Order findByOrderId(Long orderId) {
         return orderRepository.findById(orderId)
             .orElseThrow(NotFoundOrderException::new);
     }
 
     public ResponseOrder deleteMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
-        OrderTable order = findByOrderId(requestOrderMenuEdit.getOrderId());
+        Order order = findByOrderId(requestOrderMenuEdit.getOrderId());
         order.menuDelete(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
         return ResponseOrder.toMapper(order);
     }
 
     public ResponseOrder addMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
-        OrderTable order = findByOrderId(requestOrderMenuEdit.getOrderId());
+        Order order = findByOrderId(requestOrderMenuEdit.getOrderId());
         order.menuAdd(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
         return ResponseOrder.toMapper(order);
     }
 
     public void deleteOrder(Long orderId) {
-        OrderTable order = findByOrderId(orderId);
+        Order order = findByOrderId(orderId);
         if(order.checkPayment()){
             throw new PaidReservationException();
         }

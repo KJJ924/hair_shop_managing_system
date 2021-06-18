@@ -1,6 +1,6 @@
 package hair_shop.demo.modules.order.repository;
 
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,12 +11,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public interface OrderRepository extends JpaRepository<OrderTable,Long> {
+public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @EntityGraph(value = "order.withAll",type = EntityGraph.EntityGraphType.LOAD)
-    List<OrderTable> findByCreateAtBetweenOrderByCreateAt(LocalDate standardMonth, LocalDate plusMont);
+    List<Order> findByCreateAtBetweenOrderByCreateAt(LocalDate standardMonth, LocalDate plusMont);
 
-    @Query("select a from OrderTable a " + "join fetch a.menus "+
+    @Query("select a from Order a " + "join fetch a.menus "+
             "where :fromDate <=a.createAt and a.createAt <:toDate ")
-    List<OrderTable> findByMonthDate(@Param("fromDate") LocalDate date ,@Param("toDate") LocalDate to);
+    List<Order> findByMonthDate(@Param("fromDate") LocalDate date ,@Param("toDate") LocalDate to);
 }

@@ -1,6 +1,6 @@
 package hair_shop.demo.modules.order.dto;
 
-import hair_shop.demo.modules.order.domain.OrderTable;
+import hair_shop.demo.modules.order.domain.Order;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,14 +18,14 @@ public class MonthData {
     private int resultSales;
 
 
-    public static List<MonthData> remakeMonthData(Map<Integer, List<OrderTable>> daySeparated) {
+    public static List<MonthData> remakeMonthData(Map<Integer, List<Order>> daySeparated) {
         List<MonthData> monthData = new ArrayList<>();
         Set<Integer> dayKey = daySeparated.keySet();
 
         for (Integer day : dayKey) {
-            List<OrderTable> orderTables = daySeparated.get(day);
-            int expectPrice = orderTables.stream().mapToInt(OrderTable::totalPrice).sum();
-            int resultPrice = orderTables.stream().filter(OrderTable::checkPayment).mapToInt(OrderTable::totalPrice).sum();
+            List<Order> orders = daySeparated.get(day);
+            int expectPrice = orders.stream().mapToInt(Order::totalPrice).sum();
+            int resultPrice = orders.stream().filter(Order::checkPayment).mapToInt(Order::totalPrice).sum();
             monthData.add(MonthData.builder()
                     .day(day)
                     .expectSales(expectPrice)
