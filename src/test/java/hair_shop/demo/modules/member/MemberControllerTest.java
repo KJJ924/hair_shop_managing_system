@@ -101,10 +101,10 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("선택 회원 받기")
+    @DisplayName("선택 회원 받기-(전화번호)")
     void getMember() throws Exception{
         Member member = memberService.findByPhone("1234");
-        String content = objectMapper.writeValueAsString(member);
+        String content = objectMapper.writeValueAsString(ResponseMemberCommon.toMapper(member));
         mockMvc.perform(get("/member/1234"))
                 .andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -32,11 +32,11 @@ public class MemberController {
 
     @GetMapping("/{phoneNumber}")
     @ApiOperation(value="회원 조회(핸드폰번호)", notes="회원 정보를 조회")
-    public ResponseEntity<Object> getMember(
+    public ResponseEntity<ResponseMemberCommon> getMember(
         @ApiParam(value = "회원 핸드폰번호",example = "01012345678")
         @PathVariable String phoneNumber) {
         Member member = memberService.findByPhone(phoneNumber);
-        return ResponseEntity.ok(member);
+        return ResponseEntity.ok(ResponseMemberCommon.toMapper(member));
     }
 
     @PostMapping
