@@ -72,7 +72,7 @@ public class Member {
         this.description = description;
     }
 
-    public void registerVisitDate() {
+    public void updateVisitDate() {
         this.lastVisitDate = LocalDate.now();
     }
 
