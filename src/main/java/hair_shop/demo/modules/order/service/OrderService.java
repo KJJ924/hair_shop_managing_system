@@ -60,7 +60,7 @@ public class OrderService {
             .build();
 
         orderRepository.save(order);
-        order.getOrderItems().add(orderItemRepository.save(OrderItem.createOrderItem(order, menu)));
+        orderItemRepository.save(OrderItem.createOrderItem(order, menu));
 
         return ResponseOrder.toMapper(order);
     }
@@ -123,7 +123,7 @@ public class OrderService {
             throw new DuplicateMenuNameException();
         }
 
-        order.getOrderItems().add(orderItemRepository.save(OrderItem.createOrderItem(order, menu)));
+        orderItemRepository.save(OrderItem.createOrderItem(order, menu));
 
         return ResponseOrder.toMapper(order);
     }

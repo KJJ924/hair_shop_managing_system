@@ -3,10 +3,14 @@ package hair_shop.demo.modules.order.dto.request;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class RequestOrder {
 
     @NotBlank
