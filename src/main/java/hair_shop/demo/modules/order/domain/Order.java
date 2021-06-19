@@ -3,6 +3,7 @@ package hair_shop.demo.modules.order.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.menu.domain.Menu;
 import hair_shop.demo.modules.menu.exception.NotFoundMenuException;
 import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
@@ -106,18 +107,6 @@ public class Order {
         return orderItems.stream().map(OrderItem::getMenu).anyMatch(m->Objects.equals(m,menu));
     }
 
-    public void cashPayment() {
-        this.payment = Payment.CASH;
-        member.registerVisitDate();
-    }
-
-    public int pointPayment() {
-        int remainingPoint = member.changePoint(totalPrice());
-        this.payment = Payment.POINT;
-        member.registerVisitDate();
-        return remainingPoint;
-    }
-
     public List<String> menuList() {
         return orderItems.stream().map(o ->o.getMenu().getName()).collect(Collectors.toList());
     }
@@ -151,5 +140,20 @@ public class Order {
     public void changeReservationTime(LocalDateTime start, LocalDateTime end) {
         this.reservationStart = start;
         this.reservationEnd = end;
+    }
+
+    void cashPayment() {
+        this.payment = Payment.CASH;
+        member.updateVisitDate();
+    }
+
+    int pointPayment() {
+        if(!member.isMemberShip()){
+            throw new NotMemberShipException();
+        }
+        int remainingPoint = member.changePoint(totalPrice());
+        this.payment = Payment.POINT;
+        member.updateVisitDate();
+        return remainingPoint;
     }
 }
