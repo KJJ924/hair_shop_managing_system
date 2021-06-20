@@ -1,6 +1,5 @@
 package hair_shop.demo.modules.order.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
@@ -72,10 +71,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Payment payment = Payment.NOT_PAYMENT;
 
-    @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationStart;
 
-    @JsonFormat(pattern = "yyyy/MM/dd/HH:mm")
     private LocalDateTime reservationEnd;
 
     @CreationTimestamp
