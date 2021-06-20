@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,14 +73,13 @@ public class OrderService {
 
     public List<MonthData> getMonthData(LocalDate from, LocalDate to) {
         List<Order> orderList = orderRepository.findByMonthDate(from, to);
-        Map<Integer, List<Order>> daySeparated = Order.daySeparated(orderList);
-        return MonthData.remakeMonthData(daySeparated);
+        return MonthData.remakeMonthData(daySeparated(orderList));
     }
 
-    public Map<Integer, List<Order>> getWeekData(LocalDate from, LocalDate to) {
-        List<Order> orderList = orderRepository
+    public Map<LocalDate, List<ResponseOrder>> getWeekData(LocalDate from, LocalDate to) {
+        List<Order> orders = orderRepository
             .findByCreateAtBetweenOrderByCreateAt(from, to);
-        return Order.daySeparated(orderList);
+        return daySeparated(orders);
     }
 
     public ResponsePayment payment(RequestPayment requestPayment) {
@@ -134,5 +134,10 @@ public class OrderService {
             throw new PaidReservationException();
         }
         orderRepository.delete(order);
+    }
+
+    private Map<LocalDate, List<ResponseOrder>> daySeparated(List<Order> orders) {
+        return orders.stream().map(ResponseOrder::toMapper)
+            .collect(Collectors.groupingBy(order -> order.getReservationStart().toLocalDate()));
     }
 }

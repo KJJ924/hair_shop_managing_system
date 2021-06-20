@@ -356,7 +356,7 @@ class OrderControllerTest {
     @DisplayName(" 선택 일 범위 만큼의 주문 현황 받기")
     void order_week_data()throws  Exception{
         LocalDate date = LocalDate.of(2020, 12, 1);
-        Map<Integer, List<Order>> weekData = orderService.getWeekData(date, date.plusDays(2));
+        Map<LocalDate, List<ResponseOrder>> weekData = orderService.getWeekData(date, date.plusDays(2));
         String content = objectMapper.writeValueAsString(weekData);
         mockMvc.perform(get("/week")
                 .param("from","2020-12-01")

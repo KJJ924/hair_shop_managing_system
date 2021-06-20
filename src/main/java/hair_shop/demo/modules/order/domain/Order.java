@@ -9,12 +9,8 @@ import hair_shop.demo.modules.menu.exception.NotFoundMenuException;
 import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -87,20 +83,6 @@ public class Order {
 
     public Integer totalPrice() {
         return orderItems.stream().mapToInt(OrderItem::getPrice).sum();
-    }
-
-    public static Map<Integer, List<Order>> daySeparated(List<Order> data) {
-        Map<Integer, List<Order>> tableMap = new LinkedHashMap<>();
-        data.forEach(orderTable -> {
-            int dayOfMonth = orderTable.getReservationStart().getDayOfMonth();
-            List<Order> orderList = tableMap.get(dayOfMonth);
-            if (orderList == null) {
-                tableMap.put(dayOfMonth, new ArrayList<>(Collections.singletonList(orderTable)));
-            } else {
-                orderList.add(orderTable);
-            }
-        });
-        return tableMap;
     }
 
     public boolean containsMenu(Menu menu){
