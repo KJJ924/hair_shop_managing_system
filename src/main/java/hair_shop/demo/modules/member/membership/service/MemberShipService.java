@@ -1,13 +1,13 @@
 package hair_shop.demo.modules.member.membership.service;
 
-import hair_shop.demo.modules.member.service.MemberService;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.domain.MemberShip;
 import hair_shop.demo.modules.member.membership.dto.request.MemberShipForm;
 import hair_shop.demo.modules.member.membership.dto.response.ResponseMemberShip;
-import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.member.membership.error.MemberShipAlreadyException;
+import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.member.membership.repository.MemberShipRepository;
+import hair_shop.demo.modules.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,8 @@ public class MemberShipService {
     }
 
     private MemberShip saveMemberShip(Member member, int point) {
-        MemberShip memberShip = memberShipRepository.save(MemberShip.create(member.getPhone(),point));
+        MemberShip memberShip = memberShipRepository
+            .save(MemberShip.create(member.getPhone(), point));
         member.setMemberShip(memberShip);
         return memberShip;
     }

@@ -25,7 +25,7 @@ public class MemberShip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true ,name = "MEMBER_PHONE")
+    @Column(unique = true, name = "MEMBER_PHONE")
     private String memberPhone;
 
     private int point;
@@ -36,14 +36,14 @@ public class MemberShip {
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime expirationDate;
 
-    private MemberShip(String memberPhone,Integer point) {
+    private MemberShip(String memberPhone, Integer point) {
         this.memberPhone = memberPhone;
         this.point = point;
         this.creationDate = LocalDateTime.now();
         this.expirationDate = this.creationDate.plusYears(1);
     }
 
-    public static MemberShip create(String memberPhone,int point){
-        return new MemberShip(memberPhone,point);
+    public static MemberShip create(String memberPhone, int point) {
+        return new MemberShip(memberPhone, point);
     }
 }

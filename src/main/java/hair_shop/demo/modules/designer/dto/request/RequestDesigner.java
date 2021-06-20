@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RequestDesigner {
+
     @ApiModelProperty(value = "디자이너 이름", required = true, example = "디자이너")
     private String name;
 }

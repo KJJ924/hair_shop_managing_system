@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
-public interface MemberRepository  extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m left join fetch m.memberShip where m.phone = :phoneNumber")
     Optional<Member> findByPhone(@Param("phoneNumber") String phoneNumber);

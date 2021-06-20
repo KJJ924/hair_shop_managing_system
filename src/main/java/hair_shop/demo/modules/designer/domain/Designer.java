@@ -13,7 +13,8 @@ import lombok.Setter;
 
 @Entity
 @EqualsAndHashCode(of = "id")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Designer {
 
@@ -22,14 +23,14 @@ public class Designer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true , nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     private Designer(String name) {
         this.name = name;
     }
 
-    public static Designer name(String name){
+    public static Designer name(String name) {
         return new Designer(name);
     }
 }

@@ -22,7 +22,7 @@ public class RequestMemberForm {
     @ApiModelProperty(value = "회원 이름", required = true, example = "홍길동")
     private String name;
 
-    public Member toEntity(){
+    public Member toEntity() {
         return Member.builder().name(name).phone(phone).build();
     }
 }

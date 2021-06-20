@@ -10,6 +10,7 @@ import lombok.Getter;
 
 @Getter
 public class ErrorResponse {
+
     private final int statusCode;
     private final String message;
 
@@ -18,8 +19,8 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public static ErrorResponse of (int statusCode, String message){
-        return new ErrorResponse(statusCode,message);
+    public static ErrorResponse of(int statusCode, String message) {
+        return new ErrorResponse(statusCode, message);
     }
 
 }

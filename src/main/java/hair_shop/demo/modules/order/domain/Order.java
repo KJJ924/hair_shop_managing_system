@@ -64,7 +64,7 @@ public class Order {
     private Designer designers;
 
     @Builder.Default
-    @OneToMany(mappedBy ="order",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @Builder.Default
@@ -82,12 +82,12 @@ public class Order {
         return orderItems.stream().mapToInt(OrderItem::getPrice).sum();
     }
 
-    public boolean containsMenu(Menu menu){
-        return orderItems.stream().map(OrderItem::getMenu).anyMatch(m->Objects.equals(m,menu));
+    public boolean containsMenu(Menu menu) {
+        return orderItems.stream().map(OrderItem::getMenu).anyMatch(m -> Objects.equals(m, menu));
     }
 
     public List<String> menuList() {
-        return orderItems.stream().map(o ->o.getMenu().getName()).collect(Collectors.toList());
+        return orderItems.stream().map(o -> o.getMenu().getName()).collect(Collectors.toList());
     }
 
     public String getMemberPhone() {
@@ -109,7 +109,7 @@ public class Order {
 
     public OrderItem menuDelete(Menu menu) {
         OrderItem target = orderItems.stream()
-            .filter(items -> Objects.equals(items.getMenu(),menu))
+            .filter(items -> Objects.equals(items.getMenu(), menu))
             .findFirst()
             .orElseThrow(NotFoundMenuException::new);
         this.orderItems.remove(target);
@@ -127,7 +127,7 @@ public class Order {
     }
 
     int pointPayment() {
-        if(!member.isMemberShip()){
+        if (!member.isMemberShip()) {
             throw new NotMemberShipException();
         }
         int remainingPoint = member.changePoint(totalPrice());

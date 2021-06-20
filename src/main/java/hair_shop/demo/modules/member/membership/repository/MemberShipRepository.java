@@ -8,4 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public interface MemberShipRepository extends JpaRepository<MemberShip, Long> {
+
 }

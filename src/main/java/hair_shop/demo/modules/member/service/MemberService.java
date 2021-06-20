@@ -55,6 +55,7 @@ public class MemberService {
     public Member findByPhone(String phone) {
         return memberRepository.findByPhone(phone).orElseThrow(NotFoundMemberException::new);
     }
+
     private List<ResponseMemberCommon> changeResponseMemberCommonList(List<Member> memberList) {
         return memberList.stream()
             .map(ResponseMemberCommon::toMapper)

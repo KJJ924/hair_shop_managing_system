@@ -22,14 +22,14 @@ public class MemberShipController {
     private final MemberShipService memberShipService;
 
     @PostMapping
-    @ApiOperation(value="회원권 추가", notes="선택한 회원에게 회원권을 추가합니다.")
+    @ApiOperation(value = "회원권 추가", notes = "선택한 회원에게 회원권을 추가합니다.")
     public ResponseEntity<ResponseMemberShip> createMemberShip(
         @RequestBody MemberShipForm memberShipForm) {
         return ResponseEntity.ok(memberShipService.createMemberShip(memberShipForm));
     }
 
     @PutMapping("/point")
-    @ApiOperation(value="포인트 추가", notes="선택한 회원에게 입력한 포인트만큼 포인트를 추가합니다.")
+    @ApiOperation(value = "포인트 추가", notes = "선택한 회원에게 입력한 포인트만큼 포인트를 추가합니다.")
     public ResponseEntity<ResponseMemberShip> addPoint(@RequestBody MemberShipForm memberShipForm) {
         return ResponseEntity.ok(memberShipService.addPoint(memberShipForm));
     }

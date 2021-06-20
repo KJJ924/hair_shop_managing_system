@@ -43,7 +43,7 @@ public class ResponseOrder {
         this.createAt = order.getCreateAt();
     }
 
-    public static ResponseOrder toMapper(Order order){
+    public static ResponseOrder toMapper(Order order) {
         return new ResponseOrder(order);
     }
 }

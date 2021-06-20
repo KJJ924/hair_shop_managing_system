@@ -119,7 +119,7 @@ public class OrderService {
         Order order = findByOrderId(requestOrderMenuEdit.getOrderId());
         Menu menu = menuService.getMenu(requestOrderMenuEdit.getMenuName());
 
-        if(order.containsMenu(menu)){
+        if (order.containsMenu(menu)) {
             throw new DuplicateMenuNameException();
         }
 

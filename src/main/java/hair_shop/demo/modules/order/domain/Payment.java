@@ -3,7 +3,7 @@ package hair_shop.demo.modules.order.domain;
 import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
 
 public enum Payment {
-    CASH("현금"){
+    CASH("현금") {
         @Override
         public ResponsePayment process(Order order) {
             order.cashPayment();
@@ -28,7 +28,7 @@ public enum Payment {
                 .build();
         }
     },
-    NOT_PAYMENT("미결제"){
+    NOT_PAYMENT("미결제") {
         @Override
         public ResponsePayment process(Order order) {
             return ResponsePayment.builder().build();
