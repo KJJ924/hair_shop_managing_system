@@ -18,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,16 +56,16 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "designer_id")
     private Designer designers;
 
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @Builder.Default
@@ -107,13 +108,12 @@ public class Order {
     }
 
 
-    public OrderItem menuDelete(Menu menu) {
+    public void menuDelete(Menu menu) {
         OrderItem target = orderItems.stream()
             .filter(items -> Objects.equals(items.getMenu(), menu))
             .findFirst()
             .orElseThrow(NotFoundMenuException::new);
         this.orderItems.remove(target);
-        return target;
     }
 
     public void changeReservationTime(LocalDateTime start, LocalDateTime end) {

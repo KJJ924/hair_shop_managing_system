@@ -18,7 +18,6 @@ import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.PaidReservationException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
-import hair_shop.demo.modules.order.orderitem.repository.OrderItemRepository;
 import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
 import hair_shop.demo.modules.order.payment.service.PaymentService;
 import hair_shop.demo.modules.order.repository.OrderRepository;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
 
     private final MenuService menuService;
     private final DesignerService designerService;
@@ -60,9 +58,8 @@ public class OrderService {
             .reservationEnd(requestOrder.getReservationEnd())
             .build();
 
+        OrderItem.createOrderItem(order, menu);
         orderRepository.save(order);
-        orderItemRepository.save(OrderItem.createOrderItem(order, menu));
-
         return ResponseOrder.toMapper(order);
     }
 
@@ -109,9 +106,7 @@ public class OrderService {
 
     public ResponseOrder deleteMenu(RequestOrderMenuEdit requestOrderMenuEdit) {
         Order order = findByOrderId(requestOrderMenuEdit.getOrderId());
-        OrderItem orderItem = order
-            .menuDelete(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
-        orderItemRepository.delete(orderItem);
+        order.menuDelete(menuService.getMenu(requestOrderMenuEdit.getMenuName()));
         return ResponseOrder.toMapper(order);
     }
 
@@ -122,14 +117,14 @@ public class OrderService {
         if (order.containsMenu(menu)) {
             throw new DuplicateMenuNameException();
         }
-
-        orderItemRepository.save(OrderItem.createOrderItem(order, menu));
-
+        OrderItem.createOrderItem(order, menu);
         return ResponseOrder.toMapper(order);
     }
 
     public void deleteOrder(Long orderId) {
-        Order order = findByOrderId(orderId);
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(NotFoundOrderException::new);
+
         if (order.checkPayment()) {
             throw new PaidReservationException();
         }
