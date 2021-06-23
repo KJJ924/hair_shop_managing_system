@@ -2,7 +2,7 @@ package hair_shop.demo.modules.base;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author dkansk924@naver.com
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class BaseController {
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("OK");
     }
