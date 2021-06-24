@@ -4,17 +4,12 @@ import hair_shop.demo.modules.designer.domain.Designer;
 import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.membership.error.NotMemberShipException;
 import hair_shop.demo.modules.menu.domain.Menu;
-import hair_shop.demo.modules.menu.exception.NotFoundMenuException;
 import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,7 +21,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -65,8 +59,12 @@ public class Order {
     private Designer designers;
 
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    @Embedded
+    private OrderItems orderItems = new OrderItems();
+
+    public void addMenu(Menu menu) {
+        this.orderItems.addOrderItem(new OrderItem(this, menu));
+    }
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -79,16 +77,21 @@ public class Order {
     @CreationTimestamp
     private LocalDate createAt;
 
+
     public Integer totalPrice() {
-        return orderItems.stream().mapToInt(OrderItem::getPrice).sum();
+        return orderItems.totalPrice();
     }
 
     public boolean containsMenu(Menu menu) {
-        return orderItems.stream().map(OrderItem::getMenu).anyMatch(m -> Objects.equals(m, menu));
+        return orderItems.containsMenu(menu);
     }
 
     public List<String> menuList() {
-        return orderItems.stream().map(o -> o.getMenu().getName()).collect(Collectors.toList());
+        return orderItems.menuList();
+    }
+
+    public void menuDelete(Menu menu) {
+        orderItems.menuDelete(menu);
     }
 
     public String getMemberPhone() {
@@ -107,14 +110,6 @@ public class Order {
         return !this.payment.equals(Payment.NOT_PAYMENT);
     }
 
-
-    public void menuDelete(Menu menu) {
-        OrderItem target = orderItems.stream()
-            .filter(items -> Objects.equals(items.getMenu(), menu))
-            .findFirst()
-            .orElseThrow(NotFoundMenuException::new);
-        this.orderItems.remove(target);
-    }
 
     public void changeReservationTime(LocalDateTime start, LocalDateTime end) {
         this.reservationStart = start;

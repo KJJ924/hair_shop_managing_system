@@ -23,8 +23,8 @@ import hair_shop.demo.modules.order.domain.Payment;
 import hair_shop.demo.modules.order.dto.MonthData;
 import hair_shop.demo.modules.order.dto.request.RequestOrder;
 import hair_shop.demo.modules.order.dto.request.RequestOrderMenuEdit;
-import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.request.RequestOrderTimeEdit;
+import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.repository.OrderRepository;
 import hair_shop.demo.modules.order.service.OrderService;
@@ -382,7 +382,7 @@ class OrderControllerTest {
 
         Order order = orderService.findByOrderId(order_id);
 
-        assertThat(order.getOrderItems().size()).isEqualTo(2);
+        assertThat(order.menuList().size()).isEqualTo(2);
     }
 
     @Test
@@ -400,7 +400,7 @@ class OrderControllerTest {
 
         Order order = orderService.findByOrderId(order_id);
 
-        assertThat(order.getOrderItems().size()).isZero();
+        assertThat(order.menuList().size()).isZero();
     }
 
     @Test

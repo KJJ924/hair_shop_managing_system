@@ -17,7 +17,6 @@ import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.PaidReservationException;
 import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
-import hair_shop.demo.modules.order.orderitem.domain.OrderItem;
 import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
 import hair_shop.demo.modules.order.payment.service.PaymentService;
 import hair_shop.demo.modules.order.repository.OrderRepository;
@@ -58,7 +57,7 @@ public class OrderService {
             .reservationEnd(requestOrder.getReservationEnd())
             .build();
 
-        OrderItem.createOrderItem(order, menu);
+        order.addMenu(menu);
         orderRepository.save(order);
         return ResponseOrder.toMapper(order);
     }
@@ -117,7 +116,8 @@ public class OrderService {
         if (order.containsMenu(menu)) {
             throw new DuplicateMenuNameException();
         }
-        OrderItem.createOrderItem(order, menu);
+        order.addMenu(menu);
+
         return ResponseOrder.toMapper(order);
     }
 

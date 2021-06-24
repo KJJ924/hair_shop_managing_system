@@ -42,16 +42,9 @@ public class OrderItem {
 
     private int price;
 
-    private OrderItem(Order order, Menu menu) {
+    public OrderItem(Order order, Menu menu) {
         this.order = order;
         this.menu = menu;
         this.price = menu.getPrice();
     }
-
-    public static OrderItem createOrderItem(Order order, Menu menu) {
-        OrderItem orderItem = new OrderItem(order, menu);
-        order.getOrderItems().add(orderItem);
-        return orderItem;
-    }
-
 }
