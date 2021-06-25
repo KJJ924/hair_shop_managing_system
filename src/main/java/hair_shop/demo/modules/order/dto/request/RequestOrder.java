@@ -1,5 +1,6 @@
 package hair_shop.demo.modules.order.dto.request;
 
+import hair_shop.demo.infra.vaild.annotation.StartAndEndTimeCheck;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 @NoArgsConstructor
+@StartAndEndTimeCheck(startDate = "reservationStart", endDate = "reservationEnd")
 public class RequestOrder {
 
     @NotBlank
@@ -33,8 +35,4 @@ public class RequestOrder {
     @ApiModelProperty(value = "예약 끝나는시간", required = true, example = "2021-06-16T12:40")
     private LocalDateTime reservationEnd;
 
-
-    public boolean isAfter() {
-        return reservationStart.isAfter(this.reservationEnd);
-    }
 }
