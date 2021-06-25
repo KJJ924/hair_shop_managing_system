@@ -16,7 +16,6 @@ import hair_shop.demo.modules.order.dto.request.RequestPayment;
 import hair_shop.demo.modules.order.dto.response.ResponseOrder;
 import hair_shop.demo.modules.order.exception.NotFoundOrderException;
 import hair_shop.demo.modules.order.exception.PaidReservationException;
-import hair_shop.demo.modules.order.exception.TimeOverReservationStartException;
 import hair_shop.demo.modules.order.payment.dto.response.ResponsePayment;
 import hair_shop.demo.modules.order.payment.service.PaymentService;
 import hair_shop.demo.modules.order.repository.OrderRepository;
@@ -45,10 +44,6 @@ public class OrderService {
         Designer designer = designerService.findByName(requestOrder.getDesignerName());
         Member member = memberService.findByPhone(requestOrder.getMemberPhoneNumber());
         Menu menu = menuService.getMenu(requestOrder.getMenuName());
-
-        if (requestOrder.isAfter()) {
-            throw new TimeOverReservationStartException();
-        }
 
         Order order = Order.builder()
             .designers(designer)
@@ -84,10 +79,6 @@ public class OrderService {
     }
 
     public ResponseOrder editTime(RequestOrderTimeEdit form) {
-        if (form.isAfter()) {
-            throw new TimeOverReservationStartException();
-        }
-
         Order order = findByOrderId(form.getId());
 
         LocalDateTime start = form.getReservationStart();
