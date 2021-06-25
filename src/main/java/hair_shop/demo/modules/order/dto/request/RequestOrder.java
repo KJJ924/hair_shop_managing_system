@@ -4,6 +4,7 @@ import hair_shop.demo.infra.vaild.annotation.StartAndEndTimeCheck;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,10 +29,12 @@ public class RequestOrder {
     private String designerName;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @NotNull
     @ApiModelProperty(value = "예약 시작시간", required = true, example = "2021-06-16T11:40")
     private LocalDateTime reservationStart;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @NotNull
     @ApiModelProperty(value = "예약 끝나는시간", required = true, example = "2021-06-16T12:40")
     private LocalDateTime reservationEnd;
 
