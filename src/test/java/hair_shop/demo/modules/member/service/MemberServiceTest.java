@@ -6,10 +6,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import hair_shop.demo.error.ErrorCode;
+import hair_shop.demo.modules.member.domain.Member;
 import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
 import hair_shop.demo.modules.member.dto.response.ResponseMemberCommon;
 import hair_shop.demo.modules.member.exception.DuplicationMemberException;
+import hair_shop.demo.modules.member.exception.NotFoundMemberException;
 import hair_shop.demo.modules.member.repository.MemberRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,5 +69,44 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.saveMember(requestMemberForm))
             .isInstanceOf(DuplicationMemberException.class)
             .hasMessage(ErrorCode.DUPLICATE_MEMBER.getMessage());
+    }
+
+
+    @Test
+    @DisplayName("Member 찾기(핸드폰번호) 성공")
+    void MemberFindByPhoneNumber() {
+        //given
+        memberService = new MemberService(memberRepository);
+        String memberPhoneNumber = "01000000000";
+
+        Member member = Member.builder()
+            .name("재준")
+            .phone(memberPhoneNumber)
+            .build();
+
+        //when
+        when(memberRepository.findByPhone(memberPhoneNumber)).thenReturn(Optional.of(member));
+        Member findByMember = memberService.findByPhone(memberPhoneNumber);
+
+        //then
+        assertThat(findByMember).isNotNull();
+        assertThat(findByMember.getPhone()).isEqualTo(memberPhoneNumber);
+    }
+
+
+    @Test
+    @DisplayName("Member 찾기(핸드폰번호) 실패 - 존재하지 않는 회원")
+    void MemberFindByPhoneNumber_fail() {
+        //given
+        memberService = new MemberService(memberRepository);
+        String memberPhoneNumber = "01000000000";
+
+        //when
+        when(memberRepository.findByPhone(memberPhoneNumber)).thenReturn(Optional.empty());
+
+        //then
+        assertThatThrownBy(() -> memberService.findByPhone(memberPhoneNumber))
+            .isInstanceOf(NotFoundMemberException.class)
+            .hasMessage(ErrorCode.NOT_FOUND_MEMBER.getMessage());
     }
 }
