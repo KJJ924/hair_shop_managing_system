@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import hair_shop.demo.error.ErrorCode;
 import hair_shop.demo.modules.member.domain.Member;
+import hair_shop.demo.modules.member.dto.request.RequestMemberAddDescriptionForm;
 import hair_shop.demo.modules.member.dto.request.RequestMemberForm;
 import hair_shop.demo.modules.member.dto.response.ResponseMemberCommon;
 import hair_shop.demo.modules.member.exception.DuplicationMemberException;
@@ -104,5 +105,49 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.findByPhone(memberPhoneNumber))
             .isInstanceOf(NotFoundMemberException.class)
             .hasMessage(ErrorCode.NOT_FOUND_MEMBER.getMessage());
+    }
+
+    @Test
+    @DisplayName("Member 기타사항 추가 - 성공")
+    void addDescription() {
+        //given
+        String phoneNumber = "01000000000";
+        Member member = Member.builder()
+            .name("재준")
+            .phone(phoneNumber)
+            .build();
+
+        RequestMemberAddDescriptionForm form = new RequestMemberAddDescriptionForm();
+        form.setPhone(phoneNumber);
+        form.setDescription("addDescription");
+
+        given(memberRepository.findByPhone(phoneNumber)).willReturn(Optional.of(member));
+
+        //when
+        ResponseMemberCommon resultMember = memberService.addDescription(form);
+
+        //then
+        assertThat(resultMember).isNotNull();
+        assertThat(resultMember.getPhone()).isEqualTo(phoneNumber);
+        assertThat(resultMember.getDescription()).isEqualTo(form.getDescription());
+    }
+
+    @Test
+    @DisplayName("Member 기타사항 추가 - 실패(존재하지 않는 회원)")
+    void addDescription_fail() {
+        //given
+        String phoneNumber = "01000000000";
+
+        RequestMemberAddDescriptionForm form = new RequestMemberAddDescriptionForm();
+        form.setPhone(phoneNumber);
+        form.setDescription("addDescription");
+
+        given(memberRepository.findByPhone(phoneNumber)).willReturn(Optional.empty());
+
+        //when
+        assertThatThrownBy(() -> memberService.addDescription(form))
+            .isInstanceOf(NotFoundMemberException.class)
+            .hasMessage(ErrorCode.NOT_FOUND_MEMBER.getMessage());
+
     }
 }
